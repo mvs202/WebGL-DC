@@ -26,7 +26,7 @@ body {
 <script>
 // Mesh = Geometry + Material
 var scene, camera, renderer;
-var globalScale = 0.025;  // how to convert meters to pixels
+var globalScale = 0.022;  // how to convert meters to pixels
 var light;
 var ground;
 var lastTime;
@@ -90,38 +90,23 @@ function WashingtonMonument(lat, lng) {
   return obelisk;
   }
 
+function makeCylinder(radiusTop, radiusBottom, height, segments, floor) {
+  var geometry = new THREE.CylinderGeometry(radiusTop, radiusBottom, height, segments);
+  var cylinder = new THREE.Mesh(geometry);
+  cylinder.position.y = height/2 + floor;
+  cylinder.updateMatrix();
+  return cylinder;
+  }
+
 function DupontFountain(lat, lng) {
   var singleGeometry = new THREE.Geometry();
-  var geometry = new THREE.CylinderGeometry(28.9, 28.9, 0.3, 48);  // radiusTop, radiusBottom, height, segments
-  var circle = new THREE.Mesh(geometry);
-  circle.position.y = 0.15;
-  circle.updateMatrix();
-  singleGeometry.merge(circle.geometry, circle.matrix);
-  var geometry = new THREE.CylinderGeometry(20.2, 20.2, 2.3, 36);
-  var circle = new THREE.Mesh(geometry);
-  circle.position.y = 1.15;
-  circle.updateMatrix();
-  singleGeometry.merge(circle.geometry, circle.matrix);
-  var geometry = new THREE.CylinderGeometry(15.4, 15.4, 3.4, 24);
-  var circle = new THREE.Mesh(geometry);
-  circle.position.y = 1.7;
-  circle.updateMatrix();
-  singleGeometry.merge(circle.geometry, circle.matrix);
-  var geometry = new THREE.CylinderGeometry(3.5, 3.5, 4.1, 24);
-  var circle = new THREE.Mesh(geometry);
-  circle.position.y = 2.05;
-  circle.updateMatrix();
-  singleGeometry.merge(circle.geometry, circle.matrix);
-  var geometry = new THREE.CylinderGeometry(2.2, 2.2, 9.0, 24);
-  var circle = new THREE.Mesh(geometry);
-  circle.position.y = 4.5;
-  circle.updateMatrix();
-  singleGeometry.merge(circle.geometry, circle.matrix);
-  var geometry = new THREE.CylinderGeometry(5.3, 5.3, 1.4, 24);
-  var circle = new THREE.Mesh(geometry);
-  circle.position.y = 9.7;
-  circle.updateMatrix();
-  singleGeometry.merge(circle.geometry, circle.matrix);
+  var cyl = makeCylinder(28.9, 28.9, 0.3, 48, 0.0);  singleGeometry.merge(cyl.geometry, cyl.matrix);  // lowest base
+  var cyl = makeCylinder(20.2, 20.2, 2.3, 36, 0.0);  singleGeometry.merge(cyl.geometry, cyl.matrix);  // walkable circumference
+  var cyl = makeCylinder(15.4, 15.4, 3.4, 24, 0.0);  singleGeometry.merge(cyl.geometry, cyl.matrix);  // pool container
+  var cyl = makeCylinder( 3.5,  3.5, 4.1, 24, 0.0);  singleGeometry.merge(cyl.geometry, cyl.matrix);  // pedestal base
+  var cyl = makeCylinder( 2.2,  3.5, 0.3, 24, 4.1);  singleGeometry.merge(cyl.geometry, cyl.matrix);  // pedestal base's bevel
+  var cyl = makeCylinder( 2.2,  2.2, 9.0, 24, 0.0);  singleGeometry.merge(cyl.geometry, cyl.matrix);  // pedestal column
+  var cyl = makeCylinder( 5.3,  2.3, 1.4, 24, 9.0);  singleGeometry.merge(cyl.geometry, cyl.matrix);  // upper bowl
   var fountain = new THREE.Mesh(singleGeometry, new THREE.MeshLambertMaterial({color: 0xffeeff}));
   fountain.scale.x = fountain.scale.y = fountain.scale.z = globalScale;
   fountain.position.x = lngToX(lng);
@@ -253,7 +238,7 @@ function init() {
   scene.add(WashingtonMonument(38.889376, -77.035246));
   scene.add(LincolnMemorial(38.889376, -77.050153));
   scene.add(DupontFountain(38.909662, -77.043415));
-  lastTime = window.performance ? performance.now() : Date.now(); 
+  lastTime = window.performance ? performance.now() : Date.now();
   }
 
 function checkMouse(e) {
