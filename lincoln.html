@@ -1,4 +1,4 @@
-<<!DOCTYPE html>
+<!DOCTYPE html>
 html>
 <head>
 <title>Lincoln Memorial CaBi Trips</title>
@@ -21,10 +21,14 @@ body {
 </head>
 <body>
 <script src="../../lib/three.min.js"></script>
+<script src="../../lib/Projector.js"></script>
+<script src="../../lib/MapControls.js"></script>
 <script>
 // Mesh = Geometry + Material
 var scene, camera, renderer;
+var globalScale = 0.025;  // how to convert meters to pixels
 var light;
+var ground;
 var lastTime;
 var minLng, maxLng, minLat, maxLat;
 var worldWidth = 400;
@@ -79,11 +83,51 @@ function WashingtonMonument(lat, lng) {
       }
     }
   obelisk = new THREE.Mesh(obeliskGeometry, new THREE.MeshLambertMaterial({vertexColors: THREE.VertexColors}));
-  obelisk.scale.x = obelisk.scale.y = obelisk.scale.z = 0.033;
+  obelisk.scale.x = obelisk.scale.y = obelisk.scale.z = globalScale;
   obelisk.position.x = lngToX(lng);
   obelisk.position.z = latToZ(lat);
   obelisk.updateMatrix();
   return obelisk;
+  }
+
+function DupontFountain(lat, lng) {
+  var singleGeometry = new THREE.Geometry();
+  var geometry = new THREE.CylinderGeometry(28.9, 28.9, 0.3, 48);  // radiusTop, radiusBottom, height, segments
+  var circle = new THREE.Mesh(geometry);
+  circle.position.y = 0.15;
+  circle.updateMatrix();
+  singleGeometry.merge(circle.geometry, circle.matrix);
+  var geometry = new THREE.CylinderGeometry(20.2, 20.2, 2.3, 36);
+  var circle = new THREE.Mesh(geometry);
+  circle.position.y = 1.15;
+  circle.updateMatrix();
+  singleGeometry.merge(circle.geometry, circle.matrix);
+  var geometry = new THREE.CylinderGeometry(15.4, 15.4, 3.4, 24);
+  var circle = new THREE.Mesh(geometry);
+  circle.position.y = 1.7;
+  circle.updateMatrix();
+  singleGeometry.merge(circle.geometry, circle.matrix);
+  var geometry = new THREE.CylinderGeometry(3.5, 3.5, 4.1, 24);
+  var circle = new THREE.Mesh(geometry);
+  circle.position.y = 2.05;
+  circle.updateMatrix();
+  singleGeometry.merge(circle.geometry, circle.matrix);
+  var geometry = new THREE.CylinderGeometry(2.2, 2.2, 9.0, 24);
+  var circle = new THREE.Mesh(geometry);
+  circle.position.y = 4.5;
+  circle.updateMatrix();
+  singleGeometry.merge(circle.geometry, circle.matrix);
+  var geometry = new THREE.CylinderGeometry(5.3, 5.3, 1.4, 24);
+  var circle = new THREE.Mesh(geometry);
+  circle.position.y = 9.7;
+  circle.updateMatrix();
+  singleGeometry.merge(circle.geometry, circle.matrix);
+  var fountain = new THREE.Mesh(singleGeometry, new THREE.MeshLambertMaterial({color: 0xffeeff}));
+  fountain.scale.x = fountain.scale.y = fountain.scale.z = globalScale;
+  fountain.position.x = lngToX(lng);
+  fountain.position.z = latToZ(lat);
+  fountain.updateMatrix();
+  return fountain;
   }
 
 function LincolnMemorial(lat, lng) {
@@ -136,7 +180,7 @@ function LincolnMemorial(lat, lng) {
     singleGeometry.merge(cylinder.geometry, cylinder.matrix);
     }
   var memorial = new THREE.Mesh(singleGeometry, new THREE.MeshLambertMaterial({color: 0xffeeff}));
-  memorial.scale.x = memorial.scale.y = memorial.scale.z = 0.033;
+  memorial.scale.x = memorial.scale.y = memorial.scale.z = globalScale;
   memorial.position.x = lngToX(lng);
   memorial.position.z = latToZ(lat);
   memorial.updateMatrix();
@@ -166,12 +210,16 @@ function init() {
   renderer.setClearColor(0x202040);
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
-  camera = new THREE.PerspectiveCamera(40, window.innerWidth/window.innerHeight, 1, 400);
+  camera = new THREE.PerspectiveCamera(50, window.innerWidth/window.innerHeight, 1, 10000);
   camera.position.x = lngToX(-77.052115);
-  camera.position.x = lngToX(-77.053);
-  camera.position.z = latToZ(38.888776);
-  camera.position.y = 0.3;
+  camera.position.x = lngToX(-77.058);
+  camera.position.z = latToZ(38.887);
+  camera.position.y = 5;
   camera.up.set(0, 1, 0);
+  controls = new MapControls(camera, render);
+  lookingAt.point.x = lngToX(-77.035246);
+  lookingAt.point.z = latToZ( 38.889376);
+  camera.lookAt(lookingAt.point);
   camera.updateMatrix();
   scene = new THREE.Scene();
   scene.fog = new THREE.FogExp2(0x000000, 0.0015);  // color, density
@@ -184,7 +232,7 @@ function init() {
     var curve = new THREE.CatmullRomCurve3([
       new THREE.Vector3(lngToX(-77.049426), 0, latToZ(38.888251)),  // LincolnMemorial cabi station
       new THREE.Vector3(lngToX((LincolnTraffic[i].lng + -77.050153)/2), 10 + LincolnTraffic[i].trips/2000, latToZ((LincolnTraffic[i].lat + 38.889376)/2)),
-      new THREE.Vector3(lngToX(LincolnTraffic[i].lng), 0, latToZ(LincolnTraffic[i].lat))  // corner of map
+      new THREE.Vector3(lngToX(LincolnTraffic[i].lng), 0, latToZ(LincolnTraffic[i].lat))
       ]);
     var geometry = new THREE.Geometry();
     geometry.vertices = curve.getPoints(50);
@@ -192,19 +240,20 @@ function init() {
     var splineObject = new THREE.Line(geometry, material);
     scene.add(splineObject);
     }
-  var floorGeometry = new THREE.PlaneGeometry(worldWidth, worldHeight);
-  var floorMaterial = new THREE.MeshBasicMaterial({side: THREE.DoubleSide});
+  var groundGeometry = new THREE.PlaneGeometry(worldWidth, worldHeight);
+  var groundMaterial = new THREE.MeshBasicMaterial({side: THREE.DoubleSide});
   var textureLoader = new THREE.TextureLoader();
   textureLoader.load('region512.png', function(texture) {
-    floorMaterial.map = texture; 
-    var floor = new THREE.Mesh(floorGeometry, floorMaterial);
-    floor.rotation.x = -Math.PI/2;  // change from vertical to horizontal
-    floor.rotation.z = Math.PI;  // have south end of image (the bottom) be closest to us
-    scene.add(floor);
+    groundMaterial.map = texture;
+    ground = new THREE.Mesh(groundGeometry, groundMaterial);
+    ground.rotation.x = -Math.PI/2;  // change from vertical to horizontal
+    ground.rotation.z = Math.PI;  // have south end of image (the bottom) be closest to us
+    scene.add(ground);
     });
   scene.add(WashingtonMonument(38.889376, -77.035246));
   scene.add(LincolnMemorial(38.889376, -77.050153));
-  lastTime = window.performance ? performance.now() : Date.now();
+  scene.add(DupontFountain(38.909662, -77.043415));
+  lastTime = window.performance ? performance.now() : Date.now(); 
   }
 
 function checkMouse(e) {
@@ -228,20 +277,31 @@ function checkKeyboard(e) {
 
 function animate() {
   requestAnimationFrame(animate);
+  controls.update();
   var time = (window.performance ? performance.now() : Date.now())/1000;
+  /*
   var horSpeed = Math.floor(8*(window.innerWidth/2 - cursor.x)/window.innerWidth);  // -4 to 4
   var verSpeed = Math.floor(8*(window.innerHeight/2 - cursor.y)/window.innerHeight);  // -4 to 4
   var lookingAt = camera.getWorldDirection();
   var theta = Math.atan2(lookingAt.x, lookingAt.z);
-  camera.position.x = camera.position.x + 0.05*(horSpeed*Math.cos(theta) + verSpeed*Math.sin(theta));
-  camera.position.z = camera.position.z + 0.05*(horSpeed*Math.sin(theta) + verSpeed*Math.cos(theta));
+  //camera.position.x = camera.position.x + 0.03*(horSpeed*Math.cos(theta) + verSpeed*Math.sin(theta));
+  //camera.position.z = camera.position.z + 0.03*(horSpeed*Math.sin(theta) + verSpeed*Math.cos(theta));
+  camera.position.x = camera.position.x + 0.03*horSpeed*Math.cos(theta);
+  camera.position.z = camera.position.z + 0.03*horSpeed*Math.sin(theta);
+  //camera.position.x = camera.position.x + 0.03*(horSpeed*Math.cos(theta));
+  //camera.position.z = camera.position.z + 0.03*(horSpeed*Math.sin(theta));
+  console.log(theta)
   camera.updateMatrix();
+  camera.updateProjectionMatrix();
+  */
   renderer.render(scene, camera);
   lastTime = time;
   }
 
-document.addEventListener("mousemove", checkMouse);
-document.addEventListener("touchstart", checkMouse);
+function render() {
+  renderer.render(scene, camera);
+  }
+
 document.addEventListener("keypress", checkKeyboard);
 init();
 animate();
