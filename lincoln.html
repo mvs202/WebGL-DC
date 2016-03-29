@@ -109,6 +109,36 @@ function DupontFountain(lat, lng) {
   return fountain;
   }
 
+function JeffersonMemorial(lat, lng) {
+  var geometry = new THREE.Geometry();
+  var cyl = makeCylinder(25.5, 25.5, 0.9, 48,  0.0);  geometry.merge(cyl.geometry, cyl.matrix);  // lowest base
+  var cyl = makeCylinder(24.0, 24.0, 1.8, 36,  0.0);  geometry.merge(cyl.geometry, cyl.matrix);  // 1st step up
+  var cyl = makeCylinder(22.5, 22.5, 2.7, 24,  0.0);  geometry.merge(cyl.geometry, cyl.matrix);  // 2nd step up
+  var cyl = makeCylinder(22.5, 22.5, 4.7, 24, 15.7);  geometry.merge(cyl.geometry, cyl.matrix);  // roof over columns
+  var cyl = makeCylinder(18.0, 18.0, 3.3, 24, 20.4);  geometry.merge(cyl.geometry, cyl.matrix);  // lower base of the dome
+  var cyl = makeCylinder(15.4, 15.4, 2.4, 24, 23.7);  geometry.merge(cyl.geometry, cyl.matrix);  // upper base of the dome
+  var spheregeo = new THREE.SphereGeometry(14, 12, 9, 0, 2*Math.PI, 0, Math.PI/2);
+  var dome = new THREE.Mesh(spheregeo);
+  dome.position.y = 24;
+  dome.scale.y = 0.67;
+  dome.updateMatrix();
+  geometry.merge(dome.geometry, dome.matrix);
+  var cylgeo = new THREE.CylinderGeometry(0.9, 0.9, 13, 24);  // radiusTop, radiusBottom, height, segments
+  var column = new THREE.Mesh(cylgeo);
+  for (var i = 0; i < 36; i++) {  // 36 columns
+    var distFromXAxis = sign(           i - 17.5)*Math.min(3.5, 9 - Math.abs(      i % 18 - 8.5));
+    var distFromZAxis = sign((i + 9) % 36 - 17.5)*Math.min(5.5, 9 - Math.abs((i + 9) % 18 - 8.5));
+    column.position.set(20.5*Math.sin(Math.PI*i/18), 9.2, 20.5*Math.cos(Math.PI*i/18));
+    column.updateMatrix();
+    geometry.merge(column.geometry, column.matrix);
+    }
+  var memorial = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({color: 0xffeeff}));
+  memorial.scale.x = memorial.scale.y = memorial.scale.z = globalScale;
+  memorial.position.set(lngToX(lng), 0, latToZ(lat));
+  memorial.updateMatrix();
+  return memorial;
+  }
+
 function LincolnMemorial(lat, lng) {
   var columnWidth = 61/23;  // about 2.65 meters
   var memorialWidth = columnWidth*23;  // 23 = 12 columns + 11 spaces
@@ -121,7 +151,7 @@ function LincolnMemorial(lat, lng) {
   box = makeBox(memorialDepth +  4,  1, memorialWidth +  4,  0.0);  geometry.merge(box.geometry, box.matrix);  // lower base
   var cylgeo = new THREE.CylinderGeometry(columnWidth/2 - 0.1, columnWidth/2 - 0.01, 16, 24);  // radiusTop, radiusBottom, height, segments
   var cylinder = new THREE.Mesh(cylgeo);
-  for (var i = 0; i < 36; i++) {
+  for (var i = 0; i < 36; i++) {  // 36 columns
     var distFromXAxis = sign(           i - 17.5)*Math.min(3.5, 9 - Math.abs(      i % 18 - 8.5));
     var distFromZAxis = sign((i + 9) % 36 - 17.5)*Math.min(5.5, 9 - Math.abs((i + 9) % 18 - 8.5));
     cylinder.position.set(2*columnWidth*distFromXAxis, 11, 2*columnWidth*distFromZAxis);
@@ -200,6 +230,7 @@ function init() {
     });
   scene.add(WashingtonMonument(38.889376, -77.035246));
   scene.add(LincolnMemorial(38.889376, -77.050153));
+  scene.add(JeffersonMemorial(38.881398, -77.036513));
   scene.add(DupontFountain(38.909662, -77.043415));
   lastTime = window.performance ? performance.now() : Date.now();
   }
