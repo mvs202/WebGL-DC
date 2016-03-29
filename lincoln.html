@@ -69,23 +69,9 @@ function WashingtonMonument(lat, lng) {
   obeliskGeometry.faces.push(new THREE.Face3(6, 7, 8));
   obeliskGeometry.faces.push(new THREE.Face3(5, 6, 8));
   obeliskGeometry.faces.push(new THREE.Face3(7, 4, 8));
-  obeliskGeometry.computeFaceNormals();  // required when using MeshNormalMaterial
-  var c1 = new THREE.Color();
-  var c2 = new THREE.Color();
-  c1.setHSL(0, 0, 1.0);
-  c2.setHSL(0, 0, 0.8);
-  for (var i = 0; i < obeliskGeometry.faces.length; i++) {
-    if (i % 4 < 2) {
-      obeliskGeometry.faces[i].color.set(c1);
-      }
-    else {
-      obeliskGeometry.faces[i].color.set(c2);
-      }
-    }
   obelisk = new THREE.Mesh(obeliskGeometry, new THREE.MeshLambertMaterial({vertexColors: THREE.VertexColors}));
   obelisk.scale.x = obelisk.scale.y = obelisk.scale.z = globalScale;
-  obelisk.position.x = lngToX(lng);
-  obelisk.position.z = latToZ(lat);
+  obelisk.position.set(lngToX(lng), 0, latToZ(lat));
   obelisk.updateMatrix();
   return obelisk;
   }
@@ -98,16 +84,24 @@ function makeCylinder(radiusTop, radiusBottom, height, segments, floor) {
   return cylinder;
   }
 
+function makeBox(depth, height, width, floor) {
+  var box = new THREE.CubeGeometry(depth, height, width);
+  var mesh = new THREE.Mesh(box);
+  mesh.position.y = height/2 + floor;
+  mesh.updateMatrix();
+  return mesh;
+  }
+
 function DupontFountain(lat, lng) {
-  var singleGeometry = new THREE.Geometry();
-  var cyl = makeCylinder(28.9, 28.9, 0.3, 48, 0.0);  singleGeometry.merge(cyl.geometry, cyl.matrix);  // lowest base
-  var cyl = makeCylinder(20.2, 20.2, 2.3, 36, 0.0);  singleGeometry.merge(cyl.geometry, cyl.matrix);  // walkable circumference
-  var cyl = makeCylinder(15.4, 15.4, 3.4, 24, 0.0);  singleGeometry.merge(cyl.geometry, cyl.matrix);  // pool container
-  var cyl = makeCylinder( 3.5,  3.5, 4.1, 24, 0.0);  singleGeometry.merge(cyl.geometry, cyl.matrix);  // pedestal base
-  var cyl = makeCylinder( 2.2,  3.5, 0.3, 24, 4.1);  singleGeometry.merge(cyl.geometry, cyl.matrix);  // pedestal base's bevel
-  var cyl = makeCylinder( 2.2,  2.2, 9.0, 24, 0.0);  singleGeometry.merge(cyl.geometry, cyl.matrix);  // pedestal column
-  var cyl = makeCylinder( 5.3,  2.3, 1.4, 24, 9.0);  singleGeometry.merge(cyl.geometry, cyl.matrix);  // upper bowl
-  var fountain = new THREE.Mesh(singleGeometry, new THREE.MeshLambertMaterial({color: 0xffeeff}));
+  var geometry = new THREE.Geometry();
+  var cyl = makeCylinder(28.9, 28.9, 0.3, 48, 0.0);  geometry.merge(cyl.geometry, cyl.matrix);  // lowest base
+  var cyl = makeCylinder(20.2, 20.2, 2.3, 36, 0.0);  geometry.merge(cyl.geometry, cyl.matrix);  // walkable circumference
+  var cyl = makeCylinder(15.4, 15.4, 3.4, 24, 0.0);  geometry.merge(cyl.geometry, cyl.matrix);  // pool container
+  var cyl = makeCylinder( 3.5,  3.5, 4.1, 24, 0.0);  geometry.merge(cyl.geometry, cyl.matrix);  // pedestal base
+  var cyl = makeCylinder( 2.2,  3.5, 0.3, 24, 4.1);  geometry.merge(cyl.geometry, cyl.matrix);  // pedestal base's bevel
+  var cyl = makeCylinder( 2.2,  2.2, 9.0, 24, 0.0);  geometry.merge(cyl.geometry, cyl.matrix);  // pedestal column
+  var cyl = makeCylinder( 5.3,  2.3, 1.4, 24, 9.0);  geometry.merge(cyl.geometry, cyl.matrix);  // upper bowl
+  var fountain = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({color: 0xffeeff}));
   fountain.scale.x = fountain.scale.y = fountain.scale.z = globalScale;
   fountain.position.x = lngToX(lng);
   fountain.position.z = latToZ(lat);
@@ -119,55 +113,24 @@ function LincolnMemorial(lat, lng) {
   var columnWidth = 61/23;  // about 2.65 meters
   var memorialWidth = columnWidth*23;  // 23 = 12 columns + 11 spaces
   var memorialDepth = columnWidth*15;  // 15 = 8 columns + 7 spaces
-  var singleGeometry = new THREE.Geometry();
-  cube = new THREE.CubeGeometry(memorialDepth - 11, 29, memorialWidth - 11);
-  var mesh = new THREE.Mesh(cube);
-  mesh.position.y = 29/2;
-  mesh.updateMatrix();
-  singleGeometry.merge(mesh.geometry, mesh.matrix);
-  cube = new THREE.CubeGeometry(memorialDepth, 4, memorialWidth);
-  var mesh = new THREE.Mesh(cube);
-  mesh.position.y = 21;
-  mesh.updateMatrix();
-  singleGeometry.merge(mesh.geometry, mesh.matrix);
-  cube = new THREE.CubeGeometry(memorialDepth,  3, memorialWidth);
-  var mesh = new THREE.Mesh(cube);
-  mesh.position.y = 3/2;
-  mesh.updateMatrix();
-  singleGeometry.merge(mesh.geometry, mesh.matrix);
-  cube = new THREE.CubeGeometry(memorialDepth + 2,  2, memorialWidth + 2);
-  var mesh = new THREE.Mesh(cube);
-  mesh.position.y = 2/2;
-  mesh.updateMatrix();
-  singleGeometry.merge(mesh.geometry, mesh.matrix);
-  cube = new THREE.CubeGeometry(memorialDepth + 4,  1, memorialWidth + 4);
-  var mesh = new THREE.Mesh(cube);
-  mesh.position.y = 1/2;
-  mesh.updateMatrix();
-  singleGeometry.merge(mesh.geometry, mesh.matrix);
-  var geometry = new THREE.CylinderGeometry(columnWidth/2 - 0.1, columnWidth/2 - 0.01, 16, 24);  // radiusTop, radiusBottom, height, segments
-  for (var i = 0; i < 24; i++) {
-    var cylinder = new THREE.Mesh(geometry);
-    cylinder.position.y = 11;
-    cylinder.position.x = 20 - 1.33;
-    cylinder.position.z = (i % 12 - 5.5)*2*61/23;
-    if (i >= 12) {cylinder.position.x *= -1;}
+  var geometry = new THREE.Geometry();
+  box = makeBox(memorialDepth - 11, 29, memorialWidth - 11,  0.0);  geometry.merge(box.geometry, box.matrix);  // interior container
+  box = makeBox(memorialDepth,       4, memorialWidth,      19.0);  geometry.merge(box.geometry, box.matrix);  // roof over columns
+  box = makeBox(memorialDepth,       3, memorialWidth,       0.0);  geometry.merge(box.geometry, box.matrix);  // walkable circumference
+  box = makeBox(memorialDepth +  2,  2, memorialWidth +  2,  0.0);  geometry.merge(box.geometry, box.matrix);  // upper base
+  box = makeBox(memorialDepth +  4,  1, memorialWidth +  4,  0.0);  geometry.merge(box.geometry, box.matrix);  // lower base
+  var cylgeo = new THREE.CylinderGeometry(columnWidth/2 - 0.1, columnWidth/2 - 0.01, 16, 24);  // radiusTop, radiusBottom, height, segments
+  var cylinder = new THREE.Mesh(cylgeo);
+  for (var i = 0; i < 36; i++) {
+    var distFromXAxis = sign(           i - 17.5)*Math.min(3.5, 9 - Math.abs(      i % 18 - 8.5));
+    var distFromZAxis = sign((i + 9) % 36 - 17.5)*Math.min(5.5, 9 - Math.abs((i + 9) % 18 - 8.5));
+    cylinder.position.set(2*columnWidth*distFromXAxis, 11, 2*columnWidth*distFromZAxis);
     cylinder.updateMatrix();
-    singleGeometry.merge(cylinder.geometry, cylinder.matrix);
+    geometry.merge(cylinder.geometry, cylinder.matrix);
     }
-  for (var i = 0; i < 12; i++) {
-    var cylinder = new THREE.Mesh(geometry);
-    cylinder.position.y = 11;
-    cylinder.position.x = (i % 6 - 2.5)*2*61/23;
-    cylinder.position.z = 5.5*2*61/23;
-    if (i >= 6) {cylinder.position.z *= -1;}
-    cylinder.updateMatrix();
-    singleGeometry.merge(cylinder.geometry, cylinder.matrix);
-    }
-  var memorial = new THREE.Mesh(singleGeometry, new THREE.MeshLambertMaterial({color: 0xffeeff}));
+  var memorial = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({color: 0xffeeff}));
   memorial.scale.x = memorial.scale.y = memorial.scale.z = globalScale;
-  memorial.position.x = lngToX(lng);
-  memorial.position.z = latToZ(lat);
+  memorial.position.set(lngToX(lng), 0, latToZ(lat));
   memorial.updateMatrix();
   return memorial;
   }
@@ -258,6 +221,10 @@ function checkKeyboard(e) {
     lookingAt.point.z = latToZ( 38.889376);
     }
   camera.lookAt(lookingAt.point);
+  }
+
+function sign(x) {
+  return x ? x < 0 ? -1 : 1 : 0;
   }
 
 function animate() {
