@@ -93,6 +93,16 @@ function makeBox(depth, height, width, floor) {
   return mesh;
   }
 
+function makeCube(depth, height, width, dx, dz) {
+  var box = new THREE.CubeGeometry(depth, height, width);
+  var mesh = new THREE.Mesh(box);
+  mesh.position.y = height/2;
+  mesh.position.x = dx;
+  mesh.position.z = dz;
+  mesh.updateMatrix();
+  return mesh;
+  }
+
 function DupontFountain(lat, lng) {
   var geometry = new THREE.Geometry();
   var cyl = makeCylinder(28.9, 28.9, 0.3, 48, 0.0);  geometry.merge(cyl.geometry, cyl.matrix);  // lowest base
@@ -190,6 +200,31 @@ function LincolnMemorial(lat, lng) {
   return memorial;
   }
 
+function Capitol(lat, lng) {
+  var geometry = new THREE.Geometry();
+  box = makeCube(68.0, 31.0,  54.6,  7.1,   0.0); geometry.merge(box.geometry, box.matrix);  // central section 
+  box = makeCube(48.4, 31.0,  28.4, -5.0,  41.5); geometry.merge(box.geometry, box.matrix);  // northern midsection
+  box = makeCube(48.4, 31.0,  28.4, -5.0, -41.5); geometry.merge(box.geometry, box.matrix);  // southern midsection
+  box = makeCube(24.0, 31.0, 139.0, -7.0,   0.0); geometry.merge(box.geometry, box.matrix);  // central north-south axis
+  box = makeCube(75.4, 31.0,  45.0,  0.0,  92.0); geometry.merge(box.geometry, box.matrix);  // Senate chamber
+  box = makeCube(75.4, 31.0,  45.0,  0.0, -92.0); geometry.merge(box.geometry, box.matrix);  // House chamber
+  var cyl = makeCylinder(17.5, 17.5, 46.2, 48, 0.0);  geometry.merge(cyl.geometry, cyl.matrix);  // lower base of the dome ... should be 20?
+  var cyl = makeCylinder(16.0, 16.0, 56.2, 48, 0.0);  geometry.merge(cyl.geometry, cyl.matrix);  // upper base of the dome
+  var cyl = makeCylinder( 2.0,  2.0, 81.2, 48, 0.0);  geometry.merge(cyl.geometry, cyl.matrix);  // tholos
+  var cyl = makeCylinder( 1.0,  2.0, 86.2, 48, 0.0);  geometry.merge(cyl.geometry, cyl.matrix);  // statue on top
+  var spheregeo = new THREE.SphereGeometry(15, 12, 9, 0, 2*Math.PI, 0, Math.PI/2);
+  var dome = new THREE.Mesh(spheregeo);
+  dome.position.y = 56.2;
+  dome.scale.y = 1.3333333;
+  dome.updateMatrix();
+  geometry.merge(dome.geometry, dome.matrix);
+  var capitol = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({color: 0xffeeff}));
+  capitol.scale.x = capitol.scale.y = capitol.scale.z = globalScale;
+  capitol.position.set(lngToX(lng), 0, latToZ(lat));
+  capitol.updateMatrix();
+  return capitol;
+  }
+
 function latToZ(lat) {
   return worldHeight*(lat - minLat)/(maxLat - minLat) - worldHeight/2;
   }
@@ -258,6 +293,7 @@ function init() {
   scene.add(JeffersonMemorial(38.881398, -77.036513));
   scene.add(DupontFountain(38.909662, -77.043415));
   scene.add(Pentagon(38.870998, -77.055964));
+  scene.add(Capitol(38.889791, -77.009108));
   lastTime = window.performance ? performance.now() : Date.now();
   }
 
