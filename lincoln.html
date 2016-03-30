@@ -378,6 +378,7 @@ function animate() {
     vector.project(camera);
     LincolnTraffic[i].label.style.left = vector.x*widthHalf + widthHalf - 1 + "px";
     LincolnTraffic[i].label.style.bottom = vector.y*heightHalf + heightHalf + 5 + "px";
+    LincolnTraffic[i].label.style.zIndex = Math.round(2048*(1 - vector.z)) + "";
     LincolnTraffic[i].label.style.visibility = vector.z < 0 || vector.z > 0.82 ? "hidden" : "visible";
     }
   lastTime = time;
