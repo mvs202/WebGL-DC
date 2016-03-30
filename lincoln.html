@@ -202,7 +202,7 @@ function LincolnMemorial(lat, lng) {
 
 function Capitol(lat, lng) {
   var geometry = new THREE.Geometry();
-  box = makeCube(68.0, 31.0,  54.6,  7.1,   0.0); geometry.merge(box.geometry, box.matrix);  // central section 
+  box = makeCube(68.0, 31.0,  54.6,  7.1,   0.0); geometry.merge(box.geometry, box.matrix);  // central section
   box = makeCube(48.4, 31.0,  28.4, -5.0,  41.5); geometry.merge(box.geometry, box.matrix);  // northern midsection
   box = makeCube(48.4, 31.0,  28.4, -5.0, -41.5); geometry.merge(box.geometry, box.matrix);  // southern midsection
   box = makeCube(24.0, 31.0, 139.0, -7.0,   0.0); geometry.merge(box.geometry, box.matrix);  // central north-south axis
@@ -242,6 +242,39 @@ function setBoundary(background, south, west, north, east, w, h) {
   sheight = h;
   }
 
+function infoBitmap(text) {
+  var canvas = document.createElement('canvas');
+  var size = 1024;
+  canvas.width = size;
+  canvas.height = size;
+  var context = canvas.getContext('2d');
+  context.lineWidth = 32;
+  context.strokeStyle = "#FFFF00";
+  context.fillStyle = "#FF0000";
+  width=size; height=size/4; radius = 96;
+  context.beginPath();
+  context.moveTo(radius, 0);
+  context.lineTo(width - radius, 0);
+  context.quadraticCurveTo(width, 0, width, radius);
+  context.lineTo(width, height - radius);
+  context.quadraticCurveTo(width, height, width - radius, height);
+  context.lineTo(radius, height);
+  context.quadraticCurveTo(0, height, 0, height - radius);
+  context.lineTo(0, radius);
+  context.quadraticCurveTo(0, 0, radius, 0);
+  context.closePath();
+  context.fill();
+  context.stroke();
+  context.fillStyle = '#FFFFFF';
+  context.textAlign = 'center';
+  context.font = 'Bold 160px Arial';
+  context.fillText(text, size/2, radius + 96);
+  var amap = new THREE.Texture(canvas);
+  amap.needsUpdate = true; 
+  //var cabiMaterial = new THREE.SpriteMaterial({map: new THREE.TextureLoader().load("cabi.png")});
+  return new THREE.SpriteMaterial({map: amap});
+  }
+
 function init() {
   setBoundary("region512.png", 38.78854, -77.27364, 39.12946, -76.83205, 640, 640);
   renderer = new THREE.WebGLRenderer({antialias: true, alpha: false});
@@ -277,6 +310,13 @@ function init() {
     var material = new THREE.LineBasicMaterial({color: 0xff0000});
     var splineObject = new THREE.Line(geometry, material);
     scene.add(splineObject);
+    var sprite = new THREE.Sprite(infoBitmap(LincolnTraffic[i].trips + " trips"));
+    sprite.position.y = 0.01;
+    sprite.position.x = lngToX(LincolnTraffic[i].lng);
+    sprite.position.z = latToZ(LincolnTraffic[i].lat);
+    sprite.scale.set(0.16, 0.16, 0.16);
+    sprite.updateMatrix();
+    scene.add(sprite);
     }
   var groundGeometry = new THREE.PlaneGeometry(worldWidth, worldHeight);
   var groundMaterial = new THREE.MeshBasicMaterial({side: THREE.DoubleSide});
