@@ -169,6 +169,28 @@ function makeCube(depth, height, width, dx, dz) {
   return mesh;
   }
 
+function AlexandriaLodge(lat, lng) {
+  var geometry = new THREE.Geometry();
+  box = makeBox(68,  1.0, 78,  0.0);  geometry.merge(box.geometry, box.matrix);  // interior container
+  box = makeBox(50, 18.9, 60,  0.0);  geometry.merge(box.geometry, box.matrix);  // interior container
+  box = makeBox(22, 27.5, 34,  0.0);  geometry.merge(box.geometry, box.matrix);  // interior container
+  box = makeBox(16, 46.5, 22,  0.0);  geometry.merge(box.geometry, box.matrix);  // interior container
+  box = makeBox(14, 63.8, 18,  0.0);  geometry.merge(box.geometry, box.matrix);  // interior container
+  box = makeBox(10, 79.2, 14,  0.0);  geometry.merge(box.geometry, box.matrix);  // interior container
+  box = makeBox( 8, 86.0, 10,  0.0);  geometry.merge(box.geometry, box.matrix);  // interior container
+  box = makeCube(18, 22.6, 15, 0, 24.5);  geometry.merge(box.geometry, box.matrix);  // interior container
+  for (var i = 0; i < 10; i++) {
+    box = makeBox(7 - i*0.5, 87.4 + 1.4*i, 9 - i*0.5,  0.0);  geometry.merge(box.geometry, box.matrix);  // interior container
+    }
+  var lodge = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({color: 0xffeeff}));
+  lodge.scale.x = lodge.scale.y = lodge.scale.z = globalScale;
+  lodge.rotation.y = -Math.PI*0.55555555555;
+  lodge.position.x = lngToX(lng);
+  lodge.position.z = latToZ(lat);
+  lodge.updateMatrix();
+  return lodge;
+  }
+
 function DupontFountain(lat, lng) {
   var geometry = new THREE.Geometry();
   var cyl = makeCylinder(28.9, 28.9, 0.3, 48, 0.0);  geometry.merge(cyl.geometry, cyl.matrix);  // lowest base
@@ -379,6 +401,7 @@ function init() {
   scene.add(RFKStadium(        38.889825, -76.971950));
   scene.add(JeffersonMemorial( 38.881398, -77.036513));
   scene.add(Pentagon(          38.870998, -77.055964));
+  scene.add(AlexandriaLodge(   38.807510, -77.065934));
   lastTime = window.performance ? performance.now() : Date.now();
   }
 
