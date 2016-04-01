@@ -109,6 +109,47 @@ function WashingtonMonument(lat, lng) {
   return obelisk;
   }
 
+function WhiteHouse(lat, lng) {
+  var geometry = new THREE.Geometry();
+  box = makeBox(51, 13.5, 26,  0.0);  geometry.merge(box.geometry, box.matrix);  // main building
+  box = makeBox(31,  1.0,  6, 13.5);  geometry.merge(box.geometry, box.matrix);  // sun roof
+  box = makeBox(14,  1.0, 13, 0);
+  box.position.set(0, 11.5, 19.5);
+  box.updateMatrix();
+  geometry.merge(box.geometry, box.matrix);  // north portico
+  var box = makeCylinder(9, 9, 1, 28, 11.5);
+  box.position.set(0, 12, -11);
+  box.updateMatrix();
+  geometry.merge(box.geometry, box.matrix);  // south balcony roof
+  var box = makeCylinder(9, 9, 3.5, 28, 0);
+  box.position.set(0, 1.75, -11);
+  box.updateMatrix();
+  geometry.merge(box.geometry, box.matrix);  // south balcony base
+  var cylgeo = new THREE.CylinderGeometry(0.25, 0.25, 8, 8);  // radiusTop, radiusBottom, height, segments
+  var column = new THREE.Mesh(cylgeo);
+  for (var i = 0; i < 8; i++) {  // south balcony columns
+    column.position.set(4.25*Math.cos(Math.PI*i/7), 7.5, -4.25*Math.sin(Math.PI*i/7) - 15);
+    column.updateMatrix();
+    geometry.merge(column.geometry, column.matrix);
+    }
+  var cylgeo = new THREE.CylinderGeometry(0.5, 0.5, 11, 8);  // radiusTop, radiusBottom, height, segments
+  var column = new THREE.Mesh(cylgeo);
+  column.position.set(-6.5, 5.5, 21.5);  column.updateMatrix();  geometry.merge(column.geometry, column.matrix);
+  column.position.set(-6.5, 5.5, 18.5);  column.updateMatrix();  geometry.merge(column.geometry, column.matrix);
+  column.position.set(-6.5, 5.5, 25.5);  column.updateMatrix();  geometry.merge(column.geometry, column.matrix);
+  column.position.set(-2.2, 5.5, 25.5);  column.updateMatrix();  geometry.merge(column.geometry, column.matrix);
+  column.position.set( 2.2, 5.5, 25.5);  column.updateMatrix();  geometry.merge(column.geometry, column.matrix);
+  column.position.set( 6.5, 5.5, 25.5);  column.updateMatrix();  geometry.merge(column.geometry, column.matrix);
+  column.position.set( 6.5, 5.5, 21.5);  column.updateMatrix();  geometry.merge(column.geometry, column.matrix);
+  column.position.set( 6.5, 5.5, 18.5);  column.updateMatrix();  geometry.merge(column.geometry, column.matrix);
+  var whitehouse = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({color: 0xffeeff}));
+  whitehouse.scale.x = whitehouse.scale.y = whitehouse.scale.z = globalScale;
+  whitehouse.position.x = lngToX(lng);
+  whitehouse.position.z = latToZ(lat);
+  whitehouse.updateMatrix();
+  return whitehouse;
+  }
+
 function makeRoundObject(pattern, segments, lat, lng) {
   // build an object that has rotational symmetry around the Y axis; similar to a lathe
   // pattern:  array of {x, y} points defining the shapes's cutaway silhouette in the 1st quadrant of the X-Y Plane
@@ -162,25 +203,46 @@ function makeBox(depth, height, width, floor) {
 function makeCube(depth, height, width, dx, dz) {
   var box = new THREE.CubeGeometry(depth, height, width);
   var mesh = new THREE.Mesh(box);
-  mesh.position.y = height/2;
-  mesh.position.x = dx;
-  mesh.position.z = dz;
+  mesh.position.set(dx, height/2, dz);
   mesh.updateMatrix();
   return mesh;
   }
 
+function makeTruncatedPyramid(lowerWidth, lowerDepth, upperWidth, upperDepth, height, dx, dy, dz) {
+  var geometry = new THREE.Geometry();
+  geometry.vertices.push(new THREE.Vector3( lowerWidth/2,      0,  lowerDepth/2));
+  geometry.vertices.push(new THREE.Vector3(-lowerWidth/2,      0,  lowerDepth/2));
+  geometry.vertices.push(new THREE.Vector3(-lowerWidth/2,      0, -lowerDepth/2));
+  geometry.vertices.push(new THREE.Vector3( lowerWidth/2,      0, -lowerDepth/2));
+  geometry.vertices.push(new THREE.Vector3( upperWidth/2, height,  upperDepth/2));
+  geometry.vertices.push(new THREE.Vector3(-upperWidth/2, height,  upperDepth/2));
+  geometry.vertices.push(new THREE.Vector3(-upperWidth/2, height, -upperDepth/2));
+  geometry.vertices.push(new THREE.Vector3( upperWidth/2, height, -upperDepth/2));
+  console.log("AAA")
+  geometry.faces.push(new THREE.Face3(0, 4, 5), new THREE.Face3(0, 5, 1));
+  geometry.faces.push(new THREE.Face3(1, 5, 6), new THREE.Face3(1, 6, 2));
+  geometry.faces.push(new THREE.Face3(2, 6, 7), new THREE.Face3(2, 7, 3));
+  geometry.faces.push(new THREE.Face3(3, 7, 4), new THREE.Face3(3, 4, 0));
+  geometry.faces.push(new THREE.Face3(4, 7, 6), new THREE.Face3(4, 6, 5));  // roof
+  geometry.computeFaceNormals();  // required to show directional light
+  var pyramid = new THREE.Mesh(geometry);
+  pyramid.position.set(dx, dy, dz);
+  pyramid.updateMatrix();
+  return pyramid;
+  }
+
 function AlexandriaLodge(lat, lng) {
   var geometry = new THREE.Geometry();
-  box = makeBox(68,  1.0, 78,  0.0);  geometry.merge(box.geometry, box.matrix);  // interior container
-  box = makeBox(50, 18.9, 60,  0.0);  geometry.merge(box.geometry, box.matrix);  // interior container
-  box = makeBox(22, 27.5, 34,  0.0);  geometry.merge(box.geometry, box.matrix);  // interior container
-  box = makeBox(16, 46.5, 22,  0.0);  geometry.merge(box.geometry, box.matrix);  // interior container
-  box = makeBox(14, 63.8, 18,  0.0);  geometry.merge(box.geometry, box.matrix);  // interior container
-  box = makeBox(10, 79.2, 14,  0.0);  geometry.merge(box.geometry, box.matrix);  // interior container
-  box = makeBox( 8, 86.0, 10,  0.0);  geometry.merge(box.geometry, box.matrix);  // interior container
-  box = makeCube(18, 22.6, 15, 0, 24.5);  geometry.merge(box.geometry, box.matrix);  // interior container
+  box = makeBox(68,  1.0, 78,  0.0);      geometry.merge(box.geometry, box.matrix);  // basement level
+  box = makeBox(50, 18.9, 60,  0.0);      geometry.merge(box.geometry, box.matrix);  // main structure
+  box = makeBox(22, 27.5, 34,  0.0);      geometry.merge(box.geometry, box.matrix);  // 2nd segment
+  box = makeBox(16, 46.5, 22,  0.0);      geometry.merge(box.geometry, box.matrix);  // 3rd segment
+  box = makeBox(14, 63.8, 18,  0.0);      geometry.merge(box.geometry, box.matrix);  //
+  box = makeBox(10, 79.2, 14,  0.0);      geometry.merge(box.geometry, box.matrix);  //
+  box = makeBox( 8, 86.0, 10,  0.0);      geometry.merge(box.geometry, box.matrix);  //
+  box = makeCube(18, 22.6, 15, 0, 24.5);  geometry.merge(box.geometry, box.matrix);  // front extrusion
   for (var i = 0; i < 10; i++) {
-    box = makeBox(7 - i*0.5, 87.4 + 1.4*i, 9 - i*0.5,  0.0);  geometry.merge(box.geometry, box.matrix);  // interior container
+    box = makeBox(7 - i*0.5, 87.4 + 1.4*i, 9 - i*0.5,  0.0);  geometry.merge(box.geometry, box.matrix);  // pyramidal top
     }
   var lodge = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({color: 0xffeeff}));
   lodge.scale.x = lodge.scale.y = lodge.scale.z = globalScale;
@@ -347,14 +409,12 @@ function init() {
   setBoundary("region512.png", 38.78854, -77.27364, 39.12946, -76.83205, 640, 640);
   renderer = new THREE.WebGLRenderer({antialias: true, alpha: false});
   renderer.setClearColor(0x202040);
-  console.log(window.innerWidth, window.innerHeight);
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.body.appendChild(renderer.domElement);
   camera = new THREE.PerspectiveCamera(50, window.innerWidth/window.innerHeight, 1, 10000);
-  camera.position.x = lngToX(-77.052115);
   camera.position.x = lngToX(-77.058);
   camera.position.z = latToZ(38.887);
-  camera.position.y = 5;
+  camera.position.y = 3;
   camera.up.set(0, 1, 0);
   controls = new MapControls(camera, render);
   lookingAt.point.x = lngToX(-77.035246);
@@ -395,6 +455,8 @@ function init() {
     scene.add(ground);
     });
   scene.add(DupontFountain(    38.909662, -77.043415));
+  scene.add(WhiteHouse(        38.897681, -77.036500));
+  //scene.add(makeTruncatedPyramid(11, 11, 2, 2, 4, lngToX(-77.049426), 1, latToZ(38.888251)));
   scene.add(LincolnMemorial(   38.889376, -77.050153));
   scene.add(WashingtonMonument(38.889376, -77.035246));
   scene.add(Capitol(           38.889791, -77.009108));
