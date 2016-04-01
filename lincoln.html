@@ -118,17 +118,17 @@ function WhiteHouse(lat, lng) {
   box.updateMatrix();
   geometry.merge(box.geometry, box.matrix);  // north portico
   var box = makeCylinder(9, 9, 1, 28, 11.5);
-  box.position.set(0, 12, -11);
+  box.position.set(0, 12, -13);
   box.updateMatrix();
   geometry.merge(box.geometry, box.matrix);  // south balcony roof
   var box = makeCylinder(9, 9, 3.5, 28, 0);
-  box.position.set(0, 1.75, -11);
+  box.position.set(0, 1.75, -13);
   box.updateMatrix();
   geometry.merge(box.geometry, box.matrix);  // south balcony base
   var cylgeo = new THREE.CylinderGeometry(0.25, 0.25, 8, 8);  // radiusTop, radiusBottom, height, segments
   var column = new THREE.Mesh(cylgeo);
   for (var i = 0; i < 8; i++) {  // south balcony columns
-    column.position.set(4.25*Math.cos(Math.PI*i/7), 7.5, -4.25*Math.sin(Math.PI*i/7) - 15);
+    column.position.set(8.75*Math.cos(Math.PI*i/7), 7.5, -8.75*Math.sin(Math.PI*i/7) - 13);
     column.updateMatrix();
     geometry.merge(column.geometry, column.matrix);
     }
@@ -414,7 +414,7 @@ function init() {
   camera = new THREE.PerspectiveCamera(50, window.innerWidth/window.innerHeight, 1, 10000);
   camera.position.x = lngToX(-77.058);
   camera.position.z = latToZ(38.887);
-  camera.position.y = 3;
+  camera.position.y = 1.5;
   camera.up.set(0, 1, 0);
   controls = new MapControls(camera, render);
   lookingAt.point.x = lngToX(-77.035246);

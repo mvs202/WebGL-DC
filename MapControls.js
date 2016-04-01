@@ -14,11 +14,11 @@ MapControls = function ( object, renderFunction, domElement ) {
 	this.zoomSpeed = 1.0;
 	this.minDistance = 0;
 	this.maxDistance = Infinity;
-	this.rotateSpeed = 0.3;
+	this.rotateSpeed = 0.25;
 
 	// How far you can orbit vertically, upper and lower limits.
-	this.minPolarAngle = 0; // radians
-	this.maxPolarAngle = Math.PI / 2; // radians
+	this.minPolarAngle = Math.PI*0.12; // radians
+	this.maxPolarAngle = Math.PI*0.48; // radians
 
 	// internals
 	var scope = this;
