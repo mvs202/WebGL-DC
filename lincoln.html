@@ -59,7 +59,7 @@ canvas {
 <script>
 // Mesh = Geometry + Material
 var scene, camera, renderer;
-var globalScale = 0.022;  // how to convert meters to pixels
+var globalScale = 0.012;  // how to convert meters to pixels
 var light;
 var ground;
 var lastTime;
@@ -207,7 +207,7 @@ function makeCube(depth, height, width, dx, dz) {
   mesh.position.set(dx, height/2, dz);
   mesh.updateMatrix();
   return mesh;
-  } 
+  }
 
 function AlexandriaLodge(lat, lng) {
   var geometry = new THREE.Geometry();
@@ -315,6 +315,30 @@ function JeffersonMemorial(lat, lng) {
   return memorial;
   }
 
+function KennedyCenter(lat, lng) {
+  var geometry = new THREE.Geometry();
+  box = makeBox(144.5,  0.1, 210.0,  0.0);  box.position.x = -5.5; box.updateMatrix(); geometry.merge(box.geometry, box.matrix);  // patio circumference
+  box = makeBox( 94.5, 20.0, 199.0,  0.1);  geometry.merge(box.geometry, box.matrix);  // main section
+  box = makeBox(105.5,  1.0, 210.0, 20.1);  geometry.merge(box.geometry, box.matrix);  // main overhang
+  box = makeBox( 83.5,    8, 188.0, 21.1);  geometry.merge(box.geometry, box.matrix);  // upper section
+  box = makeBox( 90.5,  0.9, 195.0, 29.1);  geometry.merge(box.geometry, box.matrix);  // upper overhang
+  var cylgeo = new THREE.CylinderGeometry(0.25, 0.25, 20.0, 8);  // radiusTop, radiusBottom, height, segments
+  var cylinder = new THREE.Mesh(cylgeo);
+  for (var i = 0; i < 23; i++) {
+    cylinder.position.set( 52.0, 10.5, 104.5 - 9.5*i);  cylinder.updateMatrix();  geometry.merge(cylinder.geometry, cylinder.matrix);
+    cylinder.position.set(-52.0, 10.5, 104.5 - 9.5*i);  cylinder.updateMatrix();  geometry.merge(cylinder.geometry, cylinder.matrix);
+    }
+  for (var i = 0; i < 10; i++) {
+    cylinder.position.set(42.75 - 9.5*i, 10.5,  104.75);  cylinder.updateMatrix();  geometry.merge(cylinder.geometry, cylinder.matrix);
+    cylinder.position.set(42.75 - 9.5*i, 10.5, -104.75);  cylinder.updateMatrix();  geometry.merge(cylinder.geometry, cylinder.matrix);
+    }
+  var building = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({color: 0xffeeff}));
+  building.scale.x = building.scale.y = building.scale.z = globalScale;
+  building.position.set(lngToX(lng), 0, latToZ(lat));
+  building.updateMatrix();
+  return building;
+  }
+
 function LincolnMemorial(lat, lng) {
   var columnWidth = 61/23;  // about 2.65 meters
   var memorialWidth = columnWidth*23;  // 23 = 12 columns + 11 spaces
@@ -392,7 +416,7 @@ function init() {
   camera = new THREE.PerspectiveCamera(50, window.innerWidth/window.innerHeight, 1, 10000);
   camera.position.x = lngToX(-77.058);
   camera.position.z = latToZ(38.887);
-  camera.position.y = 1.5;
+  camera.position.y = 0.4;
   camera.up.set(0, 1, 0);
   controls = new MapControls(camera, render);
   lookingAt.point.x = lngToX(-77.035246);
@@ -416,7 +440,7 @@ function init() {
         ]);
       var geometry = new THREE.Geometry();
       geometry.vertices = curve.getPoints(50);
-      var material = new THREE.LineBasicMaterial({color: 0xff0000});
+      var material = new THREE.LineBasicMaterial({color: 0xff0000, opacity: 0.8, transparent: true});
       LincolnTraffic[i].splineObject[j - 1] = new THREE.Line(geometry, material);
       }
     LincolnTraffic[i].label = document.createElement('div');
@@ -436,10 +460,11 @@ function init() {
     });
   scene.add(DupontFountain(    38.909662, -77.043415));
   scene.add(WhiteHouse(        38.897681, -77.036500));
+  scene.add(KennedyCenter(     38.895927, -77.055687));
   scene.add(LincolnMemorial(   38.889376, -77.050153));
   scene.add(WashingtonMonument(38.889376, -77.035246));
-  scene.add(Capitol(           38.889791, -77.009108));
-  scene.add(RFKStadium(        38.889825, -76.971950));
+  scene.add(Capitol(           38.889376, -77.009108));
+  scene.add(RFKStadium(        38.889376, -76.971950));
   scene.add(JeffersonMemorial( 38.881398, -77.036513));
   scene.add(Pentagon(          38.870998, -77.055964));
   scene.add(AlexandriaLodge(   38.807510, -77.065934));
@@ -454,10 +479,15 @@ function checkMouse(e) {
 function checkKeyboard(e) {
   var key = e.which || e.keyCode;
   // console.log(key)
-  if (key == 108) {  // "L" for Lincoln Memorial:
-    lookingAt.point.x = lngToX(-77.050153);
-    lookingAt.point.z = latToZ( 38.889376);
+  if (key == 107) {  // "K"
+    lookingAt.point.x = lngToX(-77.055687);
+    lookingAt.point.z = latToZ( 38.895927);
+    camera.position.y = 0.2;
     }
+  if (key == 108) {  // "L" for Lincoln Memorial:
+      lookingAt.point.x = lngToX(-77.050153);
+      lookingAt.point.z = latToZ( 38.889376);
+      }
   if (key == 119) {  // "W" for Washington Monument:
     lookingAt.point.x = lngToX(-77.035246);
     lookingAt.point.z = latToZ( 38.889376);
@@ -518,7 +548,7 @@ function animate() {
     LincolnTraffic[i].label.style.left = vector.x*widthHalf + widthHalf + "px";
     LincolnTraffic[i].label.style.bottom = vector.y*heightHalf + heightHalf + 20 + "px";
     LincolnTraffic[i].label.style.zIndex = Math.round(2048*(1 - vector.z)) + "";
-    LincolnTraffic[i].label.style.visibility = vector.z >= 0 && vector.z + 0.16*Math.abs(vector.x) < 0.92 ? "visible" : "hidden";
+    LincolnTraffic[i].label.style.visibility = vector.z >= 0 && vector.z + 0.16*Math.abs(vector.x) < 0.9 ? "visible" : "hidden";
     }
   lastTime = time;
   }
