@@ -579,7 +579,7 @@ function animate() {
     LincolnTraffic[i].label.style.left = vector.x*widthHalf + widthHalf + "px";
     LincolnTraffic[i].label.style.bottom = vector.y*heightHalf + heightHalf + 20 + "px";
     LincolnTraffic[i].label.style.zIndex = Math.round(2048*(1 - vector.z)) + "";
-    LincolnTraffic[i].label.style.visibility = vector.z >= 0 && vector.z + 0.2*Math.abs(vector.x) < 0.9 ? "visible" : "hidden";
+    LincolnTraffic[i].label.style.visibility = showStations && vector.z >= 0 && vector.z + 0.2*Math.abs(vector.x) < 0.9 ? "visible" : "hidden";
     }
   lastTime = time;
   }
@@ -591,17 +591,19 @@ function render() {
 var CaBiSplineIndex = -1;
 var CaBiSplineDelta = 0;
 var CaBiSplineSteps = 24;
+var showStations = true;
 
-function toggleData(button) {
+function toggleStns() {
+  showStations = !showStations;
+  }
+
+function toggleData() {
   if (CaBiSplineIndex < CaBiSplineSteps/2) {
     CaBiSplineDelta = 1;
-    document.getElementById('showData').innerHTML = "hide data";
     }
   else {
     CaBiSplineDelta = -1;
-    document.getElementById('showData').innerHTML = "show data";
-    }
-  showData *= -1;
+    } 
   }
 
 document.addEventListener("keydown", checkKeyboard);
@@ -614,6 +616,7 @@ animate();
   k: look at Kennedy Center<br>
   l: look at Lincoln Memorial<br>
   w: look at Washington Monument<br>
-  <button id=showData onclick="toggleData(this)">show data</button></div>
+  <label><input type=checkbox id=cbox1 checked onchange="toggleStns()">show CaBi stations</label><br>
+  <label><input type=checkbox id=cbox1 onchange="toggleData()">show CaBi data</label>
 </body>
 </html>
