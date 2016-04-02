@@ -44,11 +44,11 @@ canvas {
   }
 #controls {
   position: absolute;
+  padding: 0px 8px;
   left: 0px;
   top: 0px;
   color: #000000;
   background-color: rgba(255, 255, 255, 0.6);
-  text-align: center;
   }
 </style>
 <script src="../../lib/three.min.js"></script>
@@ -325,12 +325,12 @@ function KennedyCenter(lat, lng) {
   var cylgeo = new THREE.CylinderGeometry(0.25, 0.25, 20.0, 8);  // radiusTop, radiusBottom, height, segments
   var cylinder = new THREE.Mesh(cylgeo);
   for (var i = 0; i < 23; i++) {
-    cylinder.position.set( 52.0, 10.5, 104.5 - 9.5*i);  cylinder.updateMatrix();  geometry.merge(cylinder.geometry, cylinder.matrix);
-    cylinder.position.set(-52.0, 10.5, 104.5 - 9.5*i);  cylinder.updateMatrix();  geometry.merge(cylinder.geometry, cylinder.matrix);
+    cylinder.position.set( 52.0, 10.05, 104.5 - 9.5*i);  cylinder.updateMatrix();  geometry.merge(cylinder.geometry, cylinder.matrix);
+    cylinder.position.set(-52.0, 10.05, 104.5 - 9.5*i);  cylinder.updateMatrix();  geometry.merge(cylinder.geometry, cylinder.matrix);
     }
   for (var i = 0; i < 10; i++) {
-    cylinder.position.set(42.75 - 9.5*i, 10.5,  104.75);  cylinder.updateMatrix();  geometry.merge(cylinder.geometry, cylinder.matrix);
-    cylinder.position.set(42.75 - 9.5*i, 10.5, -104.75);  cylinder.updateMatrix();  geometry.merge(cylinder.geometry, cylinder.matrix);
+    cylinder.position.set(42.75 - 9.5*i, 10.05,  104.75);  cylinder.updateMatrix();  geometry.merge(cylinder.geometry, cylinder.matrix);
+    cylinder.position.set(42.75 - 9.5*i, 10.05, -104.75);  cylinder.updateMatrix();  geometry.merge(cylinder.geometry, cylinder.matrix);
     }
   var building = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({color: 0xffeeff}));
   building.scale.x = building.scale.y = building.scale.z = globalScale;
@@ -462,7 +462,7 @@ function init() {
   scene.add(WhiteHouse(        38.897681, -77.036500));
   scene.add(KennedyCenter(     38.895927, -77.055687));
   scene.add(LincolnMemorial(   38.889376, -77.050153));
-  scene.add(WashingtonMonument(38.889376, -77.035246));
+  scene.add(WashingtonMonument(38.889457, -77.035237));
   scene.add(Capitol(           38.889376, -77.009108));
   scene.add(RFKStadium(        38.889376, -76.971950));
   scene.add(JeffersonMemorial( 38.881398, -77.036513));
@@ -478,21 +478,28 @@ function checkMouse(e) {
 
 function checkKeyboard(e) {
   var key = e.which || e.keyCode;
-  // console.log(key)
-  if (key == 107) {  // "K"
+  console.log(key)
+  if (key == 38) {  // up arrow
+    camera.position.y *= 1.1;
+    }
+  if (key == 40) {  // down arrow
+    camera.position.y *= 0.9;
+    }
+  if (key == 75) {  // "K"
     lookingAt.point.x = lngToX(-77.055687);
     lookingAt.point.z = latToZ( 38.895927);
-    camera.position.y = 0.2;
+    camera.lookAt(lookingAt.point);
     }
-  if (key == 108) {  // "L" for Lincoln Memorial:
-      lookingAt.point.x = lngToX(-77.050153);
-      lookingAt.point.z = latToZ( 38.889376);
-      }
-  if (key == 119) {  // "W" for Washington Monument:
+  if (key == 76) {  // "L" for Lincoln Memorial:
+    lookingAt.point.x = lngToX(-77.050153);
+    lookingAt.point.z = latToZ( 38.889376);
+    camera.lookAt(lookingAt.point);
+    }
+  if (key == 87) {  // "W" for Washington Monument:
     lookingAt.point.x = lngToX(-77.035246);
     lookingAt.point.z = latToZ( 38.889376);
+    camera.lookAt(lookingAt.point);
     }
-  camera.lookAt(lookingAt.point);
   }
 
 function sign(x) {
@@ -548,7 +555,7 @@ function animate() {
     LincolnTraffic[i].label.style.left = vector.x*widthHalf + widthHalf + "px";
     LincolnTraffic[i].label.style.bottom = vector.y*heightHalf + heightHalf + 20 + "px";
     LincolnTraffic[i].label.style.zIndex = Math.round(2048*(1 - vector.z)) + "";
-    LincolnTraffic[i].label.style.visibility = vector.z >= 0 && vector.z + 0.16*Math.abs(vector.x) < 0.9 ? "visible" : "hidden";
+    LincolnTraffic[i].label.style.visibility = vector.z >= 0 && vector.z + 0.2*Math.abs(vector.x) < 0.9 ? "visible" : "hidden";
     }
   lastTime = time;
   }
@@ -573,10 +580,16 @@ function toggleData(button) {
   showData *= -1;
   }
 
-document.addEventListener("keypress", checkKeyboard);
+document.addEventListener("keydown", checkKeyboard);
 init();
 animate();
 </script>
-<div id=controls ><button id=showData onclick="toggleData(this)">show data</button></div>
+<div id=controls >left-mouse button: pan & dolley<br>
+  right-mouse button: rotate XZ/YZ<br>
+  up/down arrows: move up/down<br>
+  k: look at Kennedy Center<br>
+  l: look at Lincoln Memorial<br>
+  w: look at Washington Monument<br>
+  <button id=showData onclick="toggleData(this)">show data</button></div>
 </body>
 </html>
