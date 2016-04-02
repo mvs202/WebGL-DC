@@ -209,6 +209,29 @@ function makeCube(depth, height, width, dx, dz) {
   return mesh;
   }
 
+function AirSpaceMuseum(lat, lng) {
+  var geometry = new THREE.Geometry();
+  box = makeBox(196, 20, 61, 0);  geometry.merge(box.geometry, box.matrix);
+  box = makeBox( 25, 25, 69, 0);  box.position.x = -29.5; box.updateMatrix();  geometry.merge(box.geometry, box.matrix);
+  box = makeBox( 25, 25, 69, 0);  box.position.x =  29.5; box.updateMatrix();  geometry.merge(box.geometry, box.matrix);
+  box = makeBox( 25, 25, 25, 0);  box.position.x =  88.5; box.position.z =  21; box.updateMatrix();  geometry.merge(box.geometry, box.matrix);
+  box = makeBox( 11, 25, 17, 0);  box.position.x =  81.5; box.position.z =   0; box.updateMatrix();  geometry.merge(box.geometry, box.matrix);
+  box = makeBox( 25, 25, 25, 0);  box.position.x =  88.5; box.position.z = -21; box.updateMatrix();  geometry.merge(box.geometry, box.matrix);
+  box = makeBox( 25, 25, 25, 0);  box.position.x = -88.5; box.position.z =  21; box.updateMatrix();  geometry.merge(box.geometry, box.matrix);
+  box = makeBox( 11, 25, 17, 0);  box.position.x = -81.5; box.position.z =   0; box.updateMatrix();  geometry.merge(box.geometry, box.matrix);
+  box = makeBox( 25, 25, 25, 0);  box.position.x = -88.5; box.position.z = -21; box.updateMatrix();  geometry.merge(box.geometry, box.matrix);
+  box = makeBox(152, 21, 13, 0);                          box.position.z = -15; box.updateMatrix();  geometry.merge(box.geometry, box.matrix);
+  box = makeBox( 22, 17, 12, 4);  box.position.x = -59.0; box.position.z = -27.5; box.updateMatrix();  geometry.merge(box.geometry, box.matrix);
+  box = makeBox( 22, 17, 12, 4);                          box.position.z = -27.5; box.updateMatrix();  geometry.merge(box.geometry, box.matrix);
+  box = makeBox( 22, 17, 12, 4);  box.position.x =  59.0; box.position.z = -27.5; box.updateMatrix();  geometry.merge(box.geometry, box.matrix);
+  var museum = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({color: 0xffeeff}));
+  museum.scale.x = museum.scale.y = museum.scale.z = globalScale;
+  museum.position.x = lngToX(lng);
+  museum.position.z = latToZ(lat);
+  museum.updateMatrix();
+  return museum;
+  }
+
 function AlexandriaLodge(lat, lng) {
   var geometry = new THREE.Geometry();
   box = makeBox(68,  1.0, 78,  0.0);      geometry.merge(box.geometry, box.matrix);  // basement level
@@ -465,6 +488,7 @@ function init() {
   scene.add(WashingtonMonument(38.889457, -77.035237));
   scene.add(Capitol(           38.889376, -77.009108));
   scene.add(RFKStadium(        38.889376, -76.971950));
+  scene.add(AirSpaceMuseum(    38.888186, -77.019922));
   scene.add(JeffersonMemorial( 38.881398, -77.036513));
   scene.add(Pentagon(          38.870998, -77.055964));
   scene.add(AlexandriaLodge(   38.807510, -77.065934));
