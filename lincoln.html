@@ -271,6 +271,47 @@ function DupontFountain(lat, lng) {
   return fountain;
   }
 
+function Hirshhorn(lat, lng) {
+  var museum = [{x: 17.5, y:  4.3},  // interior bottom
+                {x: 35.0, y:  4.3},  // exterior bottom; lower bevel
+                {x: 35.0, y:  6.3},  // exterior bottom; bevel elbow
+                {x: 35.2, y:  6.3},  // exterior bottom; outer bevel
+                {x: 35.2, y: 19.7},  // exterior top; outer bevel
+                {x: 35.0, y: 19.7},  // exterior top; bevel elbow
+                {x: 35.0, y: 21.7},  // exterior top; upper bevel
+                {x: 17.5, y: 21.7},  // interior top
+                {x: 17.5, y:  4.3}];
+  return makeRoundObject(museum, 32, lat, lng);
+  }
+
+function HirshhornFeet(lat, lng) {
+  var geometry = new THREE.Geometry();
+  for (var i = 0; i < 4; i++) {
+    var theta = Math.PI*i/2 + Math.PI/4;
+    geometry.vertices.push(new THREE.Vector3(34.0*Math.sin(theta - 0.11), 0.0, 34.0*Math.cos(theta - 0.11)));  // 0
+    geometry.vertices.push(new THREE.Vector3(35.0*Math.sin(theta - 0.13), 4.3, 35.0*Math.cos(theta - 0.13)));  // 1
+    geometry.vertices.push(new THREE.Vector3(35.0*Math.sin(theta + 0.13), 4.3, 35.0*Math.cos(theta + 0.13)));  // 2
+    geometry.vertices.push(new THREE.Vector3(34.0*Math.sin(theta + 0.11), 0.0, 34.0*Math.cos(theta + 0.11)));  // 3
+    geometry.vertices.push(new THREE.Vector3(18.5*Math.sin(theta - 0.11), 0.0, 18.5*Math.cos(theta - 0.11)));  // 4
+    geometry.vertices.push(new THREE.Vector3(17.5*Math.sin(theta - 0.13), 4.3, 17.5*Math.cos(theta - 0.13)));  // 5
+    geometry.vertices.push(new THREE.Vector3(17.5*Math.sin(theta + 0.13), 4.3, 17.5*Math.cos(theta + 0.13)));  // 6
+    geometry.vertices.push(new THREE.Vector3(18.5*Math.sin(theta + 0.11), 0.0, 18.5*Math.cos(theta + 0.11)));  // 7
+    }
+  for (var i = 0; i < 4; i++) {
+    var segment = 8*i;
+    geometry.faces.push(new THREE.Face3(segment + 0, segment + 2, segment + 1), new THREE.Face3(segment + 0, segment + 3, segment + 2));
+    geometry.faces.push(new THREE.Face3(segment + 3, segment + 6, segment + 2), new THREE.Face3(segment + 3, segment + 7, segment + 6));
+    geometry.faces.push(new THREE.Face3(segment + 5, segment + 7, segment + 4), new THREE.Face3(segment + 5, segment + 6, segment + 7));
+    geometry.faces.push(new THREE.Face3(segment + 1, segment + 4, segment + 0), new THREE.Face3(segment + 1, segment + 5, segment + 4));
+    }
+  geometry.computeFaceNormals();  // required to show directional light
+  var shape = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({vertexColors: THREE.VertexColors}));
+  shape.scale.x = shape.scale.y = shape.scale.z = globalScale;
+  shape.position.set(lngToX(lng), 0, latToZ(lat));
+  shape.updateMatrix();
+  return shape;
+  }
+
 function RFKStadium(lat, lng) {
   var stadium = [{x: 104, y:  0.0},  // exterior foot
                  {x: 104, y: 22.5},  // top of lower wall
@@ -488,6 +529,8 @@ function init() {
   scene.add(WashingtonMonument(38.889457, -77.035237));
   scene.add(Capitol(           38.889376, -77.009108));
   scene.add(RFKStadium(        38.889376, -76.971950));
+  scene.add(Hirshhorn(         38.888175, -77.023042));
+  scene.add(HirshhornFeet(     38.888175, -77.023042));
   scene.add(AirSpaceMuseum(    38.888186, -77.019922));
   scene.add(JeffersonMemorial( 38.881398, -77.036513));
   scene.add(Pentagon(          38.870998, -77.055964));
@@ -603,7 +646,7 @@ function toggleData() {
     }
   else {
     CaBiSplineDelta = -1;
-    } 
+    }
   }
 
 document.addEventListener("keydown", checkKeyboard);
