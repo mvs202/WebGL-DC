@@ -254,6 +254,112 @@ function AlexandriaLodge(lat, lng) {
   return lodge;
   }
 
+function addXRoofedBox(geometry, depth, height, width, roofHeight, roofIndent) {
+  var base = geometry.vertices.length;
+  addBoxSides(geometry, depth, height, width);
+  // roof points:
+  geometry.vertices.push(new THREE.Vector3( depth/2 - roofIndent, height + roofHeight, 0));
+  geometry.vertices.push(new THREE.Vector3(-depth/2 + roofIndent, height + roofHeight, 0));
+  // roof segments:
+  geometry.faces.push(new THREE.Face3(base + 4, base + 9, base + 5), new THREE.Face3(base + 4, base + 8, base + 9));
+  geometry.faces.push(new THREE.Face3(base + 5, base + 9, base + 6));
+  geometry.faces.push(new THREE.Face3(base + 6, base + 8, base + 7), new THREE.Face3(base + 6, base + 9, base + 8));
+  geometry.faces.push(new THREE.Face3(base + 7, base + 8, base + 4));
+  }
+
+function addYRoofedBox(geometry, depth, height, width, roofHeight, roofIndent) {
+  var base = geometry.vertices.length;
+  addBoxSides(geometry, depth, height, width);
+  // roof points:
+  geometry.vertices.push(new THREE.Vector3(0, height + roofHeight,  width/2 - roofIndent));
+  geometry.vertices.push(new THREE.Vector3(0, height + roofHeight, -width/2 + roofIndent));
+  // roof segments:
+  geometry.faces.push(new THREE.Face3(base + 7, base + 8, base + 4), new THREE.Face3(base + 7, base + 9, base + 8));
+  geometry.faces.push(new THREE.Face3(base + 4, base + 8, base + 5));
+  geometry.faces.push(new THREE.Face3(base + 5, base + 9, base + 6), new THREE.Face3(base + 5, base + 8, base + 9));
+  geometry.faces.push(new THREE.Face3(base + 6, base + 9, base + 7));
+  }
+
+function addBoxSides(geometry, depth, height, width) {
+  var base = geometry.vertices.length;
+  // base of box:
+  geometry.vertices.push(new THREE.Vector3( depth/2,      0, width/2));
+  geometry.vertices.push(new THREE.Vector3(-depth/2,      0, width/2));
+  geometry.vertices.push(new THREE.Vector3(-depth/2,      0,-width/2));
+  geometry.vertices.push(new THREE.Vector3( depth/2,      0,-width/2));
+  // top of box:
+  geometry.vertices.push(new THREE.Vector3( depth/2, height, width/2));
+  geometry.vertices.push(new THREE.Vector3(-depth/2, height, width/2));
+  geometry.vertices.push(new THREE.Vector3(-depth/2, height,-width/2));
+  geometry.vertices.push(new THREE.Vector3( depth/2, height,-width/2));
+  // four walls:
+  geometry.faces.push(new THREE.Face3(base + 0, base + 5, base + 1), new THREE.Face3(base + 0, base + 4, base + 5));
+  geometry.faces.push(new THREE.Face3(base + 1, base + 6, base + 2), new THREE.Face3(base + 1, base + 5, base + 6));
+  geometry.faces.push(new THREE.Face3(base + 2, base + 7, base + 3), new THREE.Face3(base + 2, base + 6, base + 7));
+  geometry.faces.push(new THREE.Face3(base + 3, base + 4, base + 0), new THREE.Face3(base + 3, base + 7, base + 4));
+  }
+
+function addCylinderDome(geometry, radius, baseHeight, domeHeight) {
+  var base = geometry.vertices.length;
+  var cylSegments = 24;
+  for (var i = 0; i < cylSegments; i++) {
+    var theta = 2*Math.PI*i/cylSegments;
+    geometry.vertices.push(new THREE.Vector3(radius*Math.sin(theta),          0, radius*Math.cos(theta)));  // floor
+    geometry.vertices.push(new THREE.Vector3(radius*Math.sin(theta), baseHeight, radius*Math.cos(theta)));  // straight up to base of dome
+    for (var j = 1; j < 8; j++) {
+      var phi = (Math.PI/2)*j/8;
+      var sinPhi = Math.sin(phi);  // 0 to 1
+      var cosPhi = Math.cos(phi);  // 1 to 0
+      geometry.vertices.push(new THREE.Vector3(radius*cosPhi*Math.sin(theta), baseHeight + domeHeight*sinPhi, radius*cosPhi*Math.cos(theta)));
+      }
+    }
+  var top = geometry.vertices.length;
+  geometry.vertices.push(new THREE.Vector3(0, baseHeight + domeHeight, 0));
+  var chunk = 9;  // number of points per slice
+  for (var i = 0; i < cylSegments; i++) {
+    var sliceA = base + chunk*i;
+    var sliceB = base + chunk*((i + 1) % cylSegments);
+    for (var j = 0; j < chunk - 1; j++) {
+      var k = j + 1;
+      geometry.faces.push(new THREE.Face3(sliceA + j, sliceB + k, sliceA + k), new THREE.Face3(sliceA + j, sliceB + j, sliceB + k));
+      }
+    geometry.faces.push(new THREE.Face3(sliceA + chunk - 1, sliceB + chunk - 1, top));
+    }
+  }
+
+function addBox(geometry, depth, height, width) {
+  var base = geometry.vertices.length;
+  addBoxSides(geometry, depth, height, width);
+  // add top:
+  geometry.faces.push(new THREE.Face3(base + 4, base + 6, base + 5), new THREE.Face3(base + 4, base + 7, base + 6));
+  }
+
+function shiftVertices(vertices, dx, dy, dz) {
+  for (var i = 0; i < vertices.length; i++) {
+    vertices[i].x += dx;
+    vertices[i].y += dy;
+    vertices[i].z += dz;
+    }
+  }
+
+function NaturalHistoryMuseum(lat, lng) {
+  var geometry = new THREE.Geometry();
+  addXRoofedBox(geometry, 36,  28, 28, 6, 0);
+  addYRoofedBox(geometry, 28,  28, 42, 6, 0);
+  addBox(geometry, 170, 24, 36);
+  addCylinderDome(geometry, 12, 34, 10);
+  shiftVertices(geometry.vertices, 0, 0, -43);
+  addBox(geometry, 271, 18, 54);
+  addBox(geometry, 150, 24, 74);
+  addBox(geometry,  36, 30, 90);
+  geometry.computeFaceNormals();  // required to show directional light
+  var mesh = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({vertexColors: THREE.VertexColors}));
+  mesh.scale.x = mesh.scale.y = mesh.scale.z = globalScale;
+  mesh.position.set(lngToX(lng), 0, latToZ(lat));
+  mesh.updateMatrix();
+  return mesh;
+  }
+
 function DupontFountain(lat, lng) {
   var geometry = new THREE.Geometry();
   var cyl = makeCylinder(28.9, 28.9, 0.3, 48, 0.0);  geometry.merge(cyl.geometry, cyl.matrix);  // lowest base
@@ -522,19 +628,20 @@ function init() {
     ground.rotation.z = Math.PI;  // have south end of image (the bottom) be closest to us
     scene.add(ground);
     });
-  scene.add(DupontFountain(    38.909662, -77.043415));
-  scene.add(WhiteHouse(        38.897681, -77.036500));
-  scene.add(KennedyCenter(     38.895927, -77.055687));
-  scene.add(LincolnMemorial(   38.889376, -77.050153));
-  scene.add(WashingtonMonument(38.889457, -77.035237));
-  scene.add(Capitol(           38.889376, -77.009108));
-  scene.add(RFKStadium(        38.889376, -76.971950));
-  scene.add(Hirshhorn(         38.888175, -77.023042));
-  scene.add(HirshhornFeet(     38.888175, -77.023042));
-  scene.add(AirSpaceMuseum(    38.888186, -77.019922));
-  scene.add(JeffersonMemorial( 38.881398, -77.036513));
-  scene.add(Pentagon(          38.870998, -77.055964));
-  scene.add(AlexandriaLodge(   38.807510, -77.065934));
+  scene.add(DupontFountain(      38.909662, -77.043415));
+  scene.add(WhiteHouse(          38.897681, -77.036500));
+  scene.add(KennedyCenter(       38.895927, -77.055687));
+  scene.add(NaturalHistoryMuseum(38.891338, -77.026126));
+  scene.add(LincolnMemorial(     38.889376, -77.050153));
+  scene.add(WashingtonMonument(  38.889457, -77.035237));
+  scene.add(Capitol(             38.889376, -77.009108));
+  scene.add(RFKStadium(          38.889376, -76.971950));
+  scene.add(Hirshhorn(           38.888175, -77.023042));
+  scene.add(HirshhornFeet(       38.888175, -77.023042));
+  scene.add(AirSpaceMuseum(      38.888186, -77.019922));
+  scene.add(JeffersonMemorial(   38.881398, -77.036513));
+  scene.add(Pentagon(            38.870998, -77.055964));
+  scene.add(AlexandriaLodge(     38.807510, -77.065934));
   lastTime = window.performance ? performance.now() : Date.now();
   }
 
