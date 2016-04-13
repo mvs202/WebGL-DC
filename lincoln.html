@@ -261,21 +261,22 @@ function addYRoofedBox(geometry, dimensions, roofHeight, roofIndent) {
   geometry.faces.push(new THREE.Face3(base + 6, base + 9, base + 7));
   }
 
-function addBoxSides(geometry, dimensions) {
+function addBoxSides(geometry, dimensions, position) {
+  if (typeof position == 'undefined') {position = [0, 0, 0];}
   var base = geometry.vertices.length;
   var xHalf = dimensions[0]/2;
   var y = dimensions[1];
   var zHalf = dimensions[2]/2;
   // base of box:
-  geometry.vertices.push(new THREE.Vector3( xHalf, 0,  zHalf));
-  geometry.vertices.push(new THREE.Vector3(-xHalf, 0,  zHalf));
-  geometry.vertices.push(new THREE.Vector3(-xHalf, 0, -zHalf));
-  geometry.vertices.push(new THREE.Vector3( xHalf, 0, -zHalf));
+  geometry.vertices.push(new THREE.Vector3( xHalf + position[0], position[1],  zHalf + position[2]));
+  geometry.vertices.push(new THREE.Vector3(-xHalf + position[0], position[1],  zHalf + position[2]));
+  geometry.vertices.push(new THREE.Vector3(-xHalf + position[0], position[1], -zHalf + position[2]));
+  geometry.vertices.push(new THREE.Vector3( xHalf + position[0], position[1], -zHalf + position[2]));
   // top of box:
-  geometry.vertices.push(new THREE.Vector3( xHalf, y,  zHalf));
-  geometry.vertices.push(new THREE.Vector3(-xHalf, y,  zHalf));
-  geometry.vertices.push(new THREE.Vector3(-xHalf, y, -zHalf));
-  geometry.vertices.push(new THREE.Vector3( xHalf, y, -zHalf));
+  geometry.vertices.push(new THREE.Vector3( xHalf + position[0], y + position[1],  zHalf + position[2]));
+  geometry.vertices.push(new THREE.Vector3(-xHalf + position[0], y + position[1],  zHalf + position[2]));
+  geometry.vertices.push(new THREE.Vector3(-xHalf + position[0], y + position[1], -zHalf + position[2]));
+  geometry.vertices.push(new THREE.Vector3( xHalf + position[0], y + position[1], -zHalf + position[2]));
   // four walls:
   geometry.faces.push(new THREE.Face3(base + 0, base + 5, base + 1), new THREE.Face3(base + 0, base + 4, base + 5));
   geometry.faces.push(new THREE.Face3(base + 1, base + 6, base + 2), new THREE.Face3(base + 1, base + 5, base + 6));
@@ -311,9 +312,9 @@ function addCylinderDome(geometry, radius, baseHeight, domeHeight) {
     }
   }
 
-function addBox(geometry, dimensions) {
+function addBox(geometry, dimensions, position) {
   var base = geometry.vertices.length;
-  addBoxSides(geometry, dimensions);
+  addBoxSides(geometry, dimensions, position);
   // add top:
   geometry.faces.push(new THREE.Face3(base + 4, base + 6, base + 5), new THREE.Face3(base + 4, base + 7, base + 6));
   }
@@ -326,10 +327,16 @@ function shiftVertices(vertices, dx, dy, dz) {
     }
   }
 
-function NGWWest(lat, lng) {
+function NGAWest(lat, lng) {
   var geometry = new THREE.Geometry();
-  addYRoofedBox(geometry, [34, 28, 76], 6, 0);
+  addYRoofedBox(geometry, [34, 28, 76], 3, 0);
+  addBox(geometry, [178, 28, 30]);
   addBox(geometry, [238, 24, 50]);
+  addBox(geometry, [42, 24, 90], [-75, 0, 0]);
+  addBox(geometry, [42, 24, 90], [ 75, 0, 0]);
+  addBox(geometry, [42, 32, 30]);
+  addBox(geometry, [30, 32, 42]);
+  addCylinderDome(geometry, 16, 34, 10);
   return makeMesh(geometry, lat, lng);
   }
 
@@ -596,7 +603,7 @@ function init() {
   scene.add(WhiteHouse(          38.897681, -77.036500));
   scene.add(KennedyCenter(       38.895927, -77.055687));
   scene.add(NaturalHistoryMuseum(38.891338, -77.026126));
-  scene.add(NGWWest(             38.891306, -77.020017));
+  scene.add(NGAWest(             38.891306, -77.020017));
   scene.add(LincolnMemorial(     38.889376, -77.050153));
   scene.add(WashingtonMonument(  38.889457, -77.035237));
   scene.add(Capitol(             38.889376, -77.009108));
