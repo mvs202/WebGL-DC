@@ -233,12 +233,13 @@ function AlexandriaLodge(lat, lng) {
   return makeMesh(geometry, lat, lng);
   }
 
-function addXRoofedBox(geometry, depth, height, width, roofHeight, roofIndent) {
+function addXRoofedBox(geometry, dimensions, roofHeight, roofIndent) {
   var base = geometry.vertices.length;
-  addBoxSides(geometry, depth, height, width);
+  addBoxSides(geometry, dimensions);
   // roof points:
-  geometry.vertices.push(new THREE.Vector3( depth/2 - roofIndent, height + roofHeight, 0));
-  geometry.vertices.push(new THREE.Vector3(-depth/2 + roofIndent, height + roofHeight, 0));
+  var xRoofHalf = dimensions[0]/2 - roofIndent;
+  geometry.vertices.push(new THREE.Vector3( xRoofHalf, dimensions[1] + roofHeight, 0));
+  geometry.vertices.push(new THREE.Vector3(-xRoofHalf, dimensions[1] + roofHeight, 0));
   // roof segments:
   geometry.faces.push(new THREE.Face3(base + 4, base + 9, base + 5), new THREE.Face3(base + 4, base + 8, base + 9));
   geometry.faces.push(new THREE.Face3(base + 5, base + 9, base + 6));
@@ -246,12 +247,13 @@ function addXRoofedBox(geometry, depth, height, width, roofHeight, roofIndent) {
   geometry.faces.push(new THREE.Face3(base + 7, base + 8, base + 4));
   }
 
-function addYRoofedBox(geometry, depth, height, width, roofHeight, roofIndent) {
+function addYRoofedBox(geometry, dimensions, roofHeight, roofIndent) {
   var base = geometry.vertices.length;
-  addBoxSides(geometry, depth, height, width);
+  addBoxSides(geometry, dimensions);
   // roof points:
-  geometry.vertices.push(new THREE.Vector3(0, height + roofHeight,  width/2 - roofIndent));
-  geometry.vertices.push(new THREE.Vector3(0, height + roofHeight, -width/2 + roofIndent));
+  var zRoofHalf = dimensions[2]/2 - roofIndent;
+  geometry.vertices.push(new THREE.Vector3(0, dimensions[1] + roofHeight,  zRoofHalf));
+  geometry.vertices.push(new THREE.Vector3(0, dimensions[1] + roofHeight, -zRoofHalf));
   // roof segments:
   geometry.faces.push(new THREE.Face3(base + 7, base + 8, base + 4), new THREE.Face3(base + 7, base + 9, base + 8));
   geometry.faces.push(new THREE.Face3(base + 4, base + 8, base + 5));
@@ -259,18 +261,21 @@ function addYRoofedBox(geometry, depth, height, width, roofHeight, roofIndent) {
   geometry.faces.push(new THREE.Face3(base + 6, base + 9, base + 7));
   }
 
-function addBoxSides(geometry, depth, height, width) {
+function addBoxSides(geometry, dimensions) {
   var base = geometry.vertices.length;
+  var xHalf = dimensions[0]/2;
+  var y = dimensions[1];
+  var zHalf = dimensions[2]/2;
   // base of box:
-  geometry.vertices.push(new THREE.Vector3( depth/2,      0, width/2));
-  geometry.vertices.push(new THREE.Vector3(-depth/2,      0, width/2));
-  geometry.vertices.push(new THREE.Vector3(-depth/2,      0,-width/2));
-  geometry.vertices.push(new THREE.Vector3( depth/2,      0,-width/2));
+  geometry.vertices.push(new THREE.Vector3( xHalf, 0,  zHalf));
+  geometry.vertices.push(new THREE.Vector3(-xHalf, 0,  zHalf));
+  geometry.vertices.push(new THREE.Vector3(-xHalf, 0, -zHalf));
+  geometry.vertices.push(new THREE.Vector3( xHalf, 0, -zHalf));
   // top of box:
-  geometry.vertices.push(new THREE.Vector3( depth/2, height, width/2));
-  geometry.vertices.push(new THREE.Vector3(-depth/2, height, width/2));
-  geometry.vertices.push(new THREE.Vector3(-depth/2, height,-width/2));
-  geometry.vertices.push(new THREE.Vector3( depth/2, height,-width/2));
+  geometry.vertices.push(new THREE.Vector3( xHalf, y,  zHalf));
+  geometry.vertices.push(new THREE.Vector3(-xHalf, y,  zHalf));
+  geometry.vertices.push(new THREE.Vector3(-xHalf, y, -zHalf));
+  geometry.vertices.push(new THREE.Vector3( xHalf, y, -zHalf));
   // four walls:
   geometry.faces.push(new THREE.Face3(base + 0, base + 5, base + 1), new THREE.Face3(base + 0, base + 4, base + 5));
   geometry.faces.push(new THREE.Face3(base + 1, base + 6, base + 2), new THREE.Face3(base + 1, base + 5, base + 6));
@@ -306,9 +311,9 @@ function addCylinderDome(geometry, radius, baseHeight, domeHeight) {
     }
   }
 
-function addBox(geometry, depth, height, width) {
+function addBox(geometry, dimensions) {
   var base = geometry.vertices.length;
-  addBoxSides(geometry, depth, height, width);
+  addBoxSides(geometry, dimensions);
   // add top:
   geometry.faces.push(new THREE.Face3(base + 4, base + 6, base + 5), new THREE.Face3(base + 4, base + 7, base + 6));
   }
@@ -322,6 +327,10 @@ function shiftVertices(vertices, dx, dy, dz) {
   }
 
 function NGWWest(lat, lng) {
+  var geometry = new THREE.Geometry();
+  addYRoofedBox(geometry, [34, 28, 76], 6, 0);
+  addBox(geometry, [238, 24, 50]);
+  return makeMesh(geometry, lat, lng);
   }
 
 function makeMesh(geometry, lat, lng) {
@@ -335,14 +344,14 @@ function makeMesh(geometry, lat, lng) {
 
 function NaturalHistoryMuseum(lat, lng) {
   var geometry = new THREE.Geometry();
-  addXRoofedBox(geometry, 36,  28, 28, 6, 0);
-  addYRoofedBox(geometry, 28,  28, 42, 6, 0);
-  addBox(geometry, 170, 24, 36);
+  addXRoofedBox(geometry, [36,  28, 28], 6, 0);
+  addYRoofedBox(geometry, [28,  28, 42], 6, 0);
+  addBox(geometry, [170, 24, 36]);
   addCylinderDome(geometry, 12, 34, 10);
   shiftVertices(geometry.vertices, 0, 0, -43);  // move south
-  addBox(geometry, 271, 18, 54);
-  addBox(geometry, 150, 22, 74);
-  addBox(geometry,  36, 24, 90);
+  addBox(geometry, [271, 18, 54]);
+  addBox(geometry, [150, 22, 74]);
+  addBox(geometry, [ 36, 24, 90]);
   return makeMesh(geometry, lat, lng);
   }
 
@@ -511,7 +520,7 @@ function Capitol(lat, lng) {
   dome.position.y = 56.2;
   dome.scale.y = 1.3333333;
   dome.updateMatrix();
-  geometry.merge(dome.geometry, dome.matrix); 
+  geometry.merge(dome.geometry, dome.matrix);
   return makeMesh(geometry, lat, lng);
   }
 
@@ -587,6 +596,7 @@ function init() {
   scene.add(WhiteHouse(          38.897681, -77.036500));
   scene.add(KennedyCenter(       38.895927, -77.055687));
   scene.add(NaturalHistoryMuseum(38.891338, -77.026126));
+  scene.add(NGWWest(             38.891306, -77.020017));
   scene.add(LincolnMemorial(     38.889376, -77.050153));
   scene.add(WashingtonMonument(  38.889457, -77.035237));
   scene.add(Capitol(             38.889376, -77.009108));
