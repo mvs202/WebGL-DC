@@ -102,12 +102,7 @@ function WashingtonMonument(lat, lng) {
   obeliskGeometry.faces.push(new THREE.Face3(6, 7, 8));
   obeliskGeometry.faces.push(new THREE.Face3(5, 6, 8));
   obeliskGeometry.faces.push(new THREE.Face3(7, 4, 8));
-  obeliskGeometry.computeFaceNormals();  // required to show directional light
-  var obelisk = new THREE.Mesh(obeliskGeometry, new THREE.MeshLambertMaterial({vertexColors: THREE.VertexColors}));
-  obelisk.scale.x = obelisk.scale.y = obelisk.scale.z = globalScale;
-  obelisk.position.set(lngToX(lng), 0, latToZ(lat));
-  obelisk.updateMatrix();
-  return obelisk;
+  return makeMesh(obeliskGeometry, lat, lng);
   }
 
 function WhiteHouse(lat, lng) {
@@ -143,12 +138,7 @@ function WhiteHouse(lat, lng) {
   column.position.set( 6.5, 5.5, 25.5);  column.updateMatrix();  geometry.merge(column.geometry, column.matrix);
   column.position.set( 6.5, 5.5, 21.5);  column.updateMatrix();  geometry.merge(column.geometry, column.matrix);
   column.position.set( 6.5, 5.5, 18.5);  column.updateMatrix();  geometry.merge(column.geometry, column.matrix);
-  var whitehouse = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({color: 0xffeeff}));
-  whitehouse.scale.x = whitehouse.scale.y = whitehouse.scale.z = globalScale;
-  whitehouse.position.x = lngToX(lng);
-  whitehouse.position.z = latToZ(lat);
-  whitehouse.updateMatrix();
-  return whitehouse;
+  return makeMesh(geometry, lat, lng);
   }
 
 function makeRoundObject(pattern, segments, lat, lng) {
@@ -224,12 +214,7 @@ function AirSpaceMuseum(lat, lng) {
   box = makeBox( 22, 17, 12, 4);  box.position.x = -59.0; box.position.z = -27.5; box.updateMatrix();  geometry.merge(box.geometry, box.matrix);
   box = makeBox( 22, 17, 12, 4);                          box.position.z = -27.5; box.updateMatrix();  geometry.merge(box.geometry, box.matrix);
   box = makeBox( 22, 17, 12, 4);  box.position.x =  59.0; box.position.z = -27.5; box.updateMatrix();  geometry.merge(box.geometry, box.matrix);
-  var museum = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({color: 0xffeeff}));
-  museum.scale.x = museum.scale.y = museum.scale.z = globalScale;
-  museum.position.x = lngToX(lng);
-  museum.position.z = latToZ(lat);
-  museum.updateMatrix();
-  return museum;
+  return makeMesh(geometry, lat, lng);
   }
 
 function AlexandriaLodge(lat, lng) {
@@ -245,13 +230,7 @@ function AlexandriaLodge(lat, lng) {
   for (var i = 0; i < 10; i++) {
     box = makeBox(7 - i*0.5, 87.4 + 1.4*i, 9 - i*0.5,  0.0);  geometry.merge(box.geometry, box.matrix);  // pyramidal top
     }
-  var lodge = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({color: 0xffeeff}));
-  lodge.scale.x = lodge.scale.y = lodge.scale.z = globalScale;
-  lodge.rotation.y = -Math.PI*0.55555555555;
-  lodge.position.x = lngToX(lng);
-  lodge.position.z = latToZ(lat);
-  lodge.updateMatrix();
-  return lodge;
+  return makeMesh(geometry, lat, lng);
   }
 
 function addXRoofedBox(geometry, depth, height, width, roofHeight, roofIndent) {
@@ -342,22 +321,29 @@ function shiftVertices(vertices, dx, dy, dz) {
     }
   }
 
-function NaturalHistoryMuseum(lat, lng) {
-  var geometry = new THREE.Geometry();
-  addXRoofedBox(geometry, 36,  28, 28, 6, 0);
-  addYRoofedBox(geometry, 28,  28, 42, 6, 0);
-  addBox(geometry, 170, 24, 36);
-  addCylinderDome(geometry, 12, 34, 10);
-  shiftVertices(geometry.vertices, 0, 0, -43);
-  addBox(geometry, 271, 18, 54);
-  addBox(geometry, 150, 24, 74);
-  addBox(geometry,  36, 30, 90);
+function NGWWest(lat, lng) {
+  }
+
+function makeMesh(geometry, lat, lng) {
   geometry.computeFaceNormals();  // required to show directional light
   var mesh = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({vertexColors: THREE.VertexColors}));
   mesh.scale.x = mesh.scale.y = mesh.scale.z = globalScale;
   mesh.position.set(lngToX(lng), 0, latToZ(lat));
   mesh.updateMatrix();
   return mesh;
+  }
+
+function NaturalHistoryMuseum(lat, lng) {
+  var geometry = new THREE.Geometry();
+  addXRoofedBox(geometry, 36,  28, 28, 6, 0);
+  addYRoofedBox(geometry, 28,  28, 42, 6, 0);
+  addBox(geometry, 170, 24, 36);
+  addCylinderDome(geometry, 12, 34, 10);
+  shiftVertices(geometry.vertices, 0, 0, -43);  // move south
+  addBox(geometry, 271, 18, 54);
+  addBox(geometry, 150, 22, 74);
+  addBox(geometry,  36, 24, 90);
+  return makeMesh(geometry, lat, lng);
   }
 
 function DupontFountain(lat, lng) {
@@ -369,12 +355,7 @@ function DupontFountain(lat, lng) {
   var cyl = makeCylinder( 2.2,  3.5, 0.3, 24, 4.1);  geometry.merge(cyl.geometry, cyl.matrix);  // pedestal base's bevel
   var cyl = makeCylinder( 2.2,  2.2, 9.0, 24, 0.0);  geometry.merge(cyl.geometry, cyl.matrix);  // pedestal column
   var cyl = makeCylinder( 5.3,  2.3, 1.4, 24, 9.0);  geometry.merge(cyl.geometry, cyl.matrix);  // upper bowl
-  var fountain = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({color: 0xffeeff}));
-  fountain.scale.x = fountain.scale.y = fountain.scale.z = globalScale;
-  fountain.position.x = lngToX(lng);
-  fountain.position.z = latToZ(lat);
-  fountain.updateMatrix();
-  return fountain;
+  return makeMesh(geometry, lat, lng);
   }
 
 function Hirshhorn(lat, lng) {
@@ -410,12 +391,7 @@ function HirshhornFeet(lat, lng) {
     geometry.faces.push(new THREE.Face3(segment + 5, segment + 7, segment + 4), new THREE.Face3(segment + 5, segment + 6, segment + 7));
     geometry.faces.push(new THREE.Face3(segment + 1, segment + 4, segment + 0), new THREE.Face3(segment + 1, segment + 5, segment + 4));
     }
-  geometry.computeFaceNormals();  // required to show directional light
-  var shape = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({vertexColors: THREE.VertexColors}));
-  shape.scale.x = shape.scale.y = shape.scale.z = globalScale;
-  shape.position.set(lngToX(lng), 0, latToZ(lat));
-  shape.updateMatrix();
-  return shape;
+  return makeMesh(geometry, lat, lng);
   }
 
 function RFKStadium(lat, lng) {
@@ -447,12 +423,7 @@ function Pentagon(lat, lng) {
     geometry.faces.push(new THREE.Face3(a + 1, a + 2, b + 2), new THREE.Face3(a + 1, b + 2, b + 1));  // roof
     geometry.faces.push(new THREE.Face3(a + 2, a + 3, b + 3), new THREE.Face3(a + 2, b + 3, b + 2));  // outer wall
     }
-  geometry.computeFaceNormals();  // required to show directional light
-  var pentagon = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({vertexColors: THREE.VertexColors}));
-  pentagon.scale.x = pentagon.scale.y = pentagon.scale.z = globalScale;
-  pentagon.position.set(lngToX(lng), 0, latToZ(lat));
-  pentagon.updateMatrix();
-  return pentagon;
+  return makeMesh(geometry, lat, lng);
   }
 
 function JeffersonMemorial(lat, lng) {
@@ -478,11 +449,7 @@ function JeffersonMemorial(lat, lng) {
     column.updateMatrix();
     geometry.merge(column.geometry, column.matrix);
     }
-  var memorial = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({color: 0xffeeff}));
-  memorial.scale.x = memorial.scale.y = memorial.scale.z = globalScale;
-  memorial.position.set(lngToX(lng), 0, latToZ(lat));
-  memorial.updateMatrix();
-  return memorial;
+  return makeMesh(geometry, lat, lng);
   }
 
 function KennedyCenter(lat, lng) {
@@ -502,11 +469,7 @@ function KennedyCenter(lat, lng) {
     cylinder.position.set(42.75 - 9.5*i, 10.05,  104.75);  cylinder.updateMatrix();  geometry.merge(cylinder.geometry, cylinder.matrix);
     cylinder.position.set(42.75 - 9.5*i, 10.05, -104.75);  cylinder.updateMatrix();  geometry.merge(cylinder.geometry, cylinder.matrix);
     }
-  var building = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({color: 0xffeeff}));
-  building.scale.x = building.scale.y = building.scale.z = globalScale;
-  building.position.set(lngToX(lng), 0, latToZ(lat));
-  building.updateMatrix();
-  return building;
+  return makeMesh(geometry, lat, lng);
   }
 
 function LincolnMemorial(lat, lng) {
@@ -528,11 +491,7 @@ function LincolnMemorial(lat, lng) {
     cylinder.updateMatrix();
     geometry.merge(cylinder.geometry, cylinder.matrix);
     }
-  var memorial = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({color: 0xffeeff}));
-  memorial.scale.x = memorial.scale.y = memorial.scale.z = globalScale;
-  memorial.position.set(lngToX(lng), 0, latToZ(lat));
-  memorial.updateMatrix();
-  return memorial;
+  return makeMesh(geometry, lat, lng);
   }
 
 function Capitol(lat, lng) {
@@ -552,12 +511,8 @@ function Capitol(lat, lng) {
   dome.position.y = 56.2;
   dome.scale.y = 1.3333333;
   dome.updateMatrix();
-  geometry.merge(dome.geometry, dome.matrix);
-  var capitol = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({color: 0xffeeff}));
-  capitol.scale.x = capitol.scale.y = capitol.scale.z = globalScale;
-  capitol.position.set(lngToX(lng), 0, latToZ(lat));
-  capitol.updateMatrix();
-  return capitol;
+  geometry.merge(dome.geometry, dome.matrix); 
+  return makeMesh(geometry, lat, lng);
   }
 
 function latToZ(lat) {
