@@ -59,7 +59,7 @@ canvas {
 <script>
 // Mesh = Geometry + Material
 var scene, camera, renderer;
-var globalScale = 0.012;  // how to convert meters to pixels
+var globalScale = 0.011;  // how to convert meters to pixels
 var light;
 var ground;
 var lastTime;
@@ -233,13 +233,14 @@ function AlexandriaLodge(lat, lng) {
   return makeMesh(geometry, lat, lng);
   }
 
-function addXRoofedBox(geometry, dimensions, roofHeight, roofIndent) {
+function addXRoofedBox(geometry, dimensions, roofHeight, roofIndent, position) {
+  if (typeof position == 'undefined') {position = [0, 0, 0];}
   var base = geometry.vertices.length;
-  addBoxSides(geometry, dimensions);
+  addBoxSides(geometry, dimensions, position);
   // roof points:
   var xRoofHalf = dimensions[0]/2 - roofIndent;
-  geometry.vertices.push(new THREE.Vector3( xRoofHalf, dimensions[1] + roofHeight, 0));
-  geometry.vertices.push(new THREE.Vector3(-xRoofHalf, dimensions[1] + roofHeight, 0));
+  geometry.vertices.push(new THREE.Vector3( xRoofHalf + position[0], dimensions[1] + roofHeight + position[1], position[2]));
+  geometry.vertices.push(new THREE.Vector3(-xRoofHalf + position[0], dimensions[1] + roofHeight + position[1], position[2]));
   // roof segments:
   geometry.faces.push(new THREE.Face3(base + 4, base + 9, base + 5), new THREE.Face3(base + 4, base + 8, base + 9));
   geometry.faces.push(new THREE.Face3(base + 5, base + 9, base + 6));
@@ -247,13 +248,14 @@ function addXRoofedBox(geometry, dimensions, roofHeight, roofIndent) {
   geometry.faces.push(new THREE.Face3(base + 7, base + 8, base + 4));
   }
 
-function addYRoofedBox(geometry, dimensions, roofHeight, roofIndent) {
+function addYRoofedBox(geometry, dimensions, roofHeight, roofIndent, position) {
+  if (typeof position == 'undefined') {position = [0, 0, 0];}
   var base = geometry.vertices.length;
-  addBoxSides(geometry, dimensions);
+  addBoxSides(geometry, dimensions, position);
   // roof points:
   var zRoofHalf = dimensions[2]/2 - roofIndent;
-  geometry.vertices.push(new THREE.Vector3(0, dimensions[1] + roofHeight,  zRoofHalf));
-  geometry.vertices.push(new THREE.Vector3(0, dimensions[1] + roofHeight, -zRoofHalf));
+  geometry.vertices.push(new THREE.Vector3(position[0], dimensions[1] + roofHeight + position[1],  zRoofHalf + position[2]));
+  geometry.vertices.push(new THREE.Vector3(position[0], dimensions[1] + roofHeight + position[1], -zRoofHalf + position[2]));
   // roof segments:
   geometry.faces.push(new THREE.Face3(base + 7, base + 8, base + 4), new THREE.Face3(base + 7, base + 9, base + 8));
   geometry.faces.push(new THREE.Face3(base + 4, base + 8, base + 5));
@@ -312,16 +314,16 @@ function addCylinderDome(geometry, radius, baseHeight, domeHeight) {
     }
 }
 
-function addCylinderConeTop(geometry, radius, baseHeight, coneHeight) {
+function addCylinderConeTop(geometry, radius, baseHeight, coneHeight, cylSegments, position) {
+  if (typeof position == 'undefined') {position = [0, 0, 0];}
   var base = geometry.vertices.length;
-  var cylSegments = 24;
   for (var i = 0; i < cylSegments; i++) {
-    var theta = 2*Math.PI*i/cylSegments;
-    geometry.vertices.push(new THREE.Vector3(radius*Math.sin(theta),          0, radius*Math.cos(theta)));  // floor
-    geometry.vertices.push(new THREE.Vector3(radius*Math.sin(theta), baseHeight, radius*Math.cos(theta)));  // straight up to base of cone
+    var theta = 2*Math.PI*(i + 0.5)/cylSegments;  // the 0.5 puts a flat edge at the axes rather than a corner
+    geometry.vertices.push(new THREE.Vector3(radius*Math.sin(theta) + position[0],              position[1], radius*Math.cos(theta) + position[2]));  // floor
+    geometry.vertices.push(new THREE.Vector3(radius*Math.sin(theta) + position[0], baseHeight + position[1], radius*Math.cos(theta) + position[2]));  // straight up to base of cone
     }
   var top = geometry.vertices.length;
-  geometry.vertices.push(new THREE.Vector3(0, baseHeight + coneHeight, 0));
+  geometry.vertices.push(new THREE.Vector3(position[0], baseHeight + coneHeight + position[1], position[2]));
   for (var i = 0; i < cylSegments; i++) {
     var sliceA = base + 2*i;
     var sliceB = base + 2*((i + 1) % cylSegments);
@@ -483,11 +485,35 @@ function AfricanHistoryMuseum(lat, lng) {
   return makeMesh(geometry, lat, lng);
   }
 
+function SmithsonianCastle(lat, lng) {
+  var geometry = new THREE.Geometry();
+  addXRoofedBox(geometry, [98,  9, 15], 1, 0);  // main, lowest, structure
+  addXRoofedBox(geometry, [60, 16, 15], 4, 0);  // east-west corridor
+  addYRoofedBox(geometry, [ 8, 16, 32], 4, 0, [0, 0, 3]);  // north-south corridor
+  addRaisedPyramid(geometry, [5, 5], [0.5, 0.5], 30, 5, [-30, 0, 9.5]);  // eastern-half north tower
+  addRaisedPyramid(geometry, [7, 7], [0.5, 0.5], 30, 6, [-7.5, 0, 15.5]);  // eastern tower by north entrance
+  addYRoofedBox(geometry, [ 7, 24, 7], 6, 0, [7.5, 0, 15.5]);   // western tower by north entrance (base)
+  addCylinderConeTop(geometry, 3.4, 43, 0, 8, [7.5, 0, 15.5]);  // western tower by north entrance (top)
+  addCylinderConeTop(geometry, 3.0, 44, 0, 8, [7.5, 0, 15.5]);  // western tower by north entrance (crown)
+  addRaisedPyramid(geometry, [3, 3], [0.5, 0.5], 22, 6, [ 29, 0, 8.5]);  // western-half north tower
+  addYRoofedBox(geometry, [12, 12, 21], 5, 0, [55, 0, 0]);  // western room
+  addYRoofedBox(geometry, [15, 12, 24], 6, 3, [-56.5, 0, 0]);  // eastern room
+  addRaisedPyramid(geometry, [4, 4], [0.5, 0.5], 22, 4, [62, 0, 8.5]);  // northwest corner tower
+  addBox(geometry, [8, 30, 8], [0, 0, -17]);  // south tower
+  addCylinderConeTop(geometry, 1.2, 34, 0, 8, [4.8, 0, -18]);  // south tower's turret
+  addBox(geometry, [3, 16, 3], [28.5, 0, -9]);  // western-half south tower (base)
+  addCylinderConeTop(geometry, 1.5, 12, 0, 8, [28.5, 16, -9]);  // western-half south tower (top)
+  addBox(geometry, [3, 8, 3], [-29, 0, -8.5]);  // eastern-half south tower (base)
+  addCylinderConeTop(geometry, 1.5, 16, 0, 8, [-29, 8, -8.5]);  // eastern-half south tower (top)
+  addXRoofedBox(geometry, [11, 12, 7], 4, 0, [-62, 0, 0]);  // eastern  entrance (juts out 4m?)
+  return makeMesh(geometry, lat, lng);
+  }
+
 function ArtsAndIndustries(lat, lng) {
   var geometry = new THREE.Geometry();
   addBoxSides(geometry, [90, 8, 90]);  // main structure
-  addXRoofedBox(geometry, [90, 13, 20], 5, 0);
-  addYRoofedBox(geometry, [20, 13, 90], 5, 0);
+  addXRoofedBox(geometry, [90, 13, 20], 5, 0);  // east-west corridor
+  addYRoofedBox(geometry, [20, 13, 90], 5, 0);  // north-south corridor
   addPyramid(geometry, [90, 90], [60, 60], 1.5, [0, 8, 0]);  // main outer roof
   addRaisedPyramid(geometry, [4, 4], [0.5, 0.5], 16, 8, [  8, 0,  47]);
   addRaisedPyramid(geometry, [4, 4], [0.5, 0.5], 16, 8, [ -8, 0,  47]);
@@ -497,8 +523,8 @@ function ArtsAndIndustries(lat, lng) {
   addRaisedPyramid(geometry, [4, 4], [0.5, 0.5], 16, 8, [ 47, 0,  -8]);
   addRaisedPyramid(geometry, [4, 4], [0.5, 0.5], 16, 8, [-47, 0,   8]);
   addRaisedPyramid(geometry, [4, 4], [0.5, 0.5], 16, 8, [-47, 0,  -8]);
-  addCylinderConeTop(geometry, 12, 24, 6);
-  addCylinderConeTop(geometry,  3, 32, 1);
+  addCylinderConeTop(geometry, 12, 24, 6, 18);
+  addCylinderConeTop(geometry,  3, 32, 1, 18);  // cupola
   addRaisedPyramid(geometry, [12, 12], [6, 6], 11, 3, [ 43, 0,  43]);
   addRaisedPyramid(geometry, [12, 12], [6, 6], 11, 3, [-43, 0,  43]);
   addRaisedPyramid(geometry, [12, 12], [6, 6], 11, 3, [ 43, 0, -43]);
@@ -756,6 +782,7 @@ function init() {
   scene.add(Capitol(              38.889376, -77.009108));
   scene.add(RFKStadium(           38.889376, -76.971950));
   scene.add(FreerGallery(         38.888068, -77.027391));
+  scene.add(SmithsonianCastle(    38.888758, -77.026075));
   scene.add(ArtsAndIndustries(    38.888163, -77.024586));
   scene.add(Hirshhorn(            38.888175, -77.023042));
   scene.add(HirshhornFeet(        38.888175, -77.023042));
