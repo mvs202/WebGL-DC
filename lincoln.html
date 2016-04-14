@@ -310,6 +310,24 @@ function addCylinderDome(geometry, radius, baseHeight, domeHeight) {
       }
     geometry.faces.push(new THREE.Face3(sliceA + chunk - 1, sliceB + chunk - 1, top));
     }
+}
+
+function addCylinderConeTop(geometry, radius, baseHeight, coneHeight) {
+  var base = geometry.vertices.length;
+  var cylSegments = 24;
+  for (var i = 0; i < cylSegments; i++) {
+    var theta = 2*Math.PI*i/cylSegments;
+    geometry.vertices.push(new THREE.Vector3(radius*Math.sin(theta),          0, radius*Math.cos(theta)));  // floor
+    geometry.vertices.push(new THREE.Vector3(radius*Math.sin(theta), baseHeight, radius*Math.cos(theta)));  // straight up to base of cone
+    }
+  var top = geometry.vertices.length;
+  geometry.vertices.push(new THREE.Vector3(0, baseHeight + coneHeight, 0));
+  for (var i = 0; i < cylSegments; i++) {
+    var sliceA = base + 2*i;
+    var sliceB = base + 2*((i + 1) % cylSegments);
+    geometry.faces.push(new THREE.Face3(sliceA, sliceB + 1, sliceA + 1), new THREE.Face3(sliceA, sliceB, sliceB + 1));
+    geometry.faces.push(new THREE.Face3(sliceA + 1, sliceB + 1, top));
+    }
   }
 
 function addBox(geometry, dimensions, position) {
@@ -317,6 +335,14 @@ function addBox(geometry, dimensions, position) {
   addBoxSides(geometry, dimensions, position);
   // add top:
   geometry.faces.push(new THREE.Face3(base + 4, base + 6, base + 5), new THREE.Face3(base + 4, base + 7, base + 6));
+  }
+
+function addRaisedPyramid(geometry, lowerDimensions, upperDimensions, lowerHeight, upperHeight, position) {
+  // pyramid on a box
+  if (typeof position == 'undefined') {position = [0, 0, 0];}
+  addBoxSides(geometry, [lowerDimensions[0], lowerHeight, lowerDimensions[1]], position);
+  addPyramid(geometry, lowerDimensions, upperDimensions, upperHeight, [position[0], position[1] + lowerHeight, position[2]])
+  var base = geometry.vertices.length;
   }
 
 function addPyramid(geometry, lowerDimensions, upperDimensions, height, position) {
@@ -454,6 +480,29 @@ function AfricanHistoryMuseum(lat, lng) {
   addPyramid(geometry, [54, 54], [64, 64], 8.4, [0, 5, 0]);  // lower section
   addPyramid(geometry, [54, 54], [64, 64], 8.4, [0, 13.4, 0]);  // middle section
   addPyramid(geometry, [54, 54], [64, 64], 8.4, [0, 21.8, 0]);  // upper section
+  return makeMesh(geometry, lat, lng);
+  }
+
+function ArtsAndIndustries(lat, lng) {
+  var geometry = new THREE.Geometry();
+  addBoxSides(geometry, [90, 8, 90]);  // main structure
+  addXRoofedBox(geometry, [90, 13, 20], 5, 0);
+  addYRoofedBox(geometry, [20, 13, 90], 5, 0);
+  addPyramid(geometry, [90, 90], [60, 60], 1.5, [0, 8, 0]);  // main outer roof
+  addRaisedPyramid(geometry, [4, 4], [0.5, 0.5], 16, 8, [  8, 0,  47]);
+  addRaisedPyramid(geometry, [4, 4], [0.5, 0.5], 16, 8, [ -8, 0,  47]);
+  addRaisedPyramid(geometry, [4, 4], [0.5, 0.5], 16, 8, [  8, 0, -47]);
+  addRaisedPyramid(geometry, [4, 4], [0.5, 0.5], 16, 8, [ -8, 0, -47]);
+  addRaisedPyramid(geometry, [4, 4], [0.5, 0.5], 16, 8, [ 47, 0,   8]);
+  addRaisedPyramid(geometry, [4, 4], [0.5, 0.5], 16, 8, [ 47, 0,  -8]);
+  addRaisedPyramid(geometry, [4, 4], [0.5, 0.5], 16, 8, [-47, 0,   8]);
+  addRaisedPyramid(geometry, [4, 4], [0.5, 0.5], 16, 8, [-47, 0,  -8]);
+  addCylinderConeTop(geometry, 12, 24, 6);
+  addCylinderConeTop(geometry,  3, 32, 1);
+  addRaisedPyramid(geometry, [12, 12], [6, 6], 11, 3, [ 43, 0,  43]);
+  addRaisedPyramid(geometry, [12, 12], [6, 6], 11, 3, [-43, 0,  43]);
+  addRaisedPyramid(geometry, [12, 12], [6, 6], 11, 3, [ 43, 0, -43]);
+  addRaisedPyramid(geometry, [12, 12], [6, 6], 11, 3, [-43, 0, -43]);
   return makeMesh(geometry, lat, lng);
   }
 
@@ -707,6 +756,7 @@ function init() {
   scene.add(Capitol(              38.889376, -77.009108));
   scene.add(RFKStadium(           38.889376, -76.971950));
   scene.add(FreerGallery(         38.888068, -77.027391));
+  scene.add(ArtsAndIndustries(    38.888163, -77.024586));
   scene.add(Hirshhorn(            38.888175, -77.023042));
   scene.add(HirshhornFeet(        38.888175, -77.023042));
   scene.add(AirSpaceMuseum(       38.888186, -77.019922));
