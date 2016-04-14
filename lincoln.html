@@ -319,6 +319,32 @@ function addBox(geometry, dimensions, position) {
   geometry.faces.push(new THREE.Face3(base + 4, base + 6, base + 5), new THREE.Face3(base + 4, base + 7, base + 6));
   }
 
+function addPyramid(geometry, lowerDimensions, upperDimensions, height, position) {
+  if (typeof position == 'undefined') {position = [0, 0, 0];}
+  var base = geometry.vertices.length;
+  var lowerXHalf = lowerDimensions[0]/2;
+  var lowerZHalf = lowerDimensions[1]/2;
+  var upperXHalf = upperDimensions[0]/2;
+  var upperZHalf = upperDimensions[1]/2;
+  // base of box:
+  geometry.vertices.push(new THREE.Vector3( lowerXHalf + position[0], position[1],  lowerZHalf + position[2]));
+  geometry.vertices.push(new THREE.Vector3(-lowerXHalf + position[0], position[1],  lowerZHalf + position[2]));
+  geometry.vertices.push(new THREE.Vector3(-lowerXHalf + position[0], position[1], -lowerZHalf + position[2]));
+  geometry.vertices.push(new THREE.Vector3( lowerXHalf + position[0], position[1], -lowerZHalf + position[2]));
+  // top of box:
+  geometry.vertices.push(new THREE.Vector3( upperXHalf + position[0], height + position[1],  upperZHalf + position[2]));
+  geometry.vertices.push(new THREE.Vector3(-upperXHalf + position[0], height + position[1],  upperZHalf + position[2]));
+  geometry.vertices.push(new THREE.Vector3(-upperXHalf + position[0], height + position[1], -upperZHalf + position[2]));
+  geometry.vertices.push(new THREE.Vector3( upperXHalf + position[0], height + position[1], -upperZHalf + position[2]));
+  // four walls:
+  geometry.faces.push(new THREE.Face3(base + 0, base + 5, base + 1), new THREE.Face3(base + 0, base + 4, base + 5));
+  geometry.faces.push(new THREE.Face3(base + 1, base + 6, base + 2), new THREE.Face3(base + 1, base + 5, base + 6));
+  geometry.faces.push(new THREE.Face3(base + 2, base + 7, base + 3), new THREE.Face3(base + 2, base + 6, base + 7));
+  geometry.faces.push(new THREE.Face3(base + 3, base + 4, base + 0), new THREE.Face3(base + 3, base + 7, base + 4));
+  // top:
+  geometry.faces.push(new THREE.Face3(base + 4, base + 6, base + 5), new THREE.Face3(base + 4, base + 7, base + 6));
+  }
+
 function addPolygon(geometry, points, height) {
   var base = geometry.vertices.length;
   for (var i = 0; i < points.length; i++) {
@@ -399,14 +425,24 @@ function AmericanHistoryMuseum(lat, lng) {
     addBox(geometry, [7.8, 24, 2], [-70.2 + 15.6*i, 0,  26.3]);
     addBox(geometry, [7.8, 24, 2], [-70.2 + 15.6*i, 0, -26.3]);
     }
-  for (var i = 0; i < 2; i++) {
-    addBox(geometry, [2, 24, 7.8], [ 73.1, 0, -7.8 + 15.6*i]);
-    addBox(geometry, [2, 24, 7.8], [-73.1, 0, -7.8 + 15.6*i]);
+  for (var i = 0; i < 4; i++) {
+    addBox(geometry, [2, 24, 7.8], [ 73.1, 0, -23.4 + 15.6*i]);
+    addBox(geometry, [2, 24, 7.8], [-73.1, 0, -23.4 + 15.6*i]);
     }
   addBox(geometry, [144.2, 24, 50.6]);  // main structure
   addBox(geometry, [148.2,  1, 54.6], [0, 23.5, 0]);  // overhang
-  addBox(geometry, [122, 27, 46]);  //
-  addBox(geometry, [ 94, 30, 15]);  //  
+  addBox(geometry, [122, 27, 46]);  // lower roof structure
+  addBox(geometry, [ 94, 30, 15]);  // upper roof structure
+  return makeMesh(geometry, lat, lng);
+  }
+
+function AfricanHistoryMuseum(lat, lng) {
+  var geometry = new THREE.Geometry();
+  addBox(geometry, [42, 35.2, 42]);  // base
+  addBox(geometry, [54, 30.2, 54]);  // base
+  addPyramid(geometry, [54, 54], [64, 64], 8.4, [0, 5, 0]);  // base
+  addPyramid(geometry, [54, 54], [64, 64], 8.4, [0, 13.4, 0]);  // base
+  addPyramid(geometry, [54, 54], [64, 64], 8.4, [0, 21.8, 0]);  // base
   return makeMesh(geometry, lat, lng);
   }
 
@@ -650,6 +686,7 @@ function init() {
   scene.add(DupontFountain(       38.909662, -77.043415));
   scene.add(WhiteHouse(           38.897681, -77.036500));
   scene.add(KennedyCenter(        38.895927, -77.055687));
+  scene.add(AfricanHistoryMuseum( 38.891067, -77.032602));
   scene.add(AmericanHistoryMuseum(38.891218, -77.030017));
   scene.add(NaturalHistoryMuseum( 38.891338, -77.026126));
   scene.add(NGAWest(              38.891306, -77.020017));
