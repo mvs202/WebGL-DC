@@ -365,7 +365,7 @@ function NGAEast(lat, lng) {
   addPolygon(geometry, [[ 34, 3], [8.5, -6], [-17, 3], [8.5, 12]], 35.4);  // east tower
   addPolygon(geometry, [[ 34, 3], [8.5, -6], [-42.5, 12], [-42.5, 30]], 19.3);  // northern section
   addPolygon(geometry, [[ 42.5, 0], [42.5, -39], [-68, -39]], 25.4);
-  addPolygon(geometry, [[ 42.5, 0], [42.5, -39], [21.25, -31.5], [21.25, -7.5]], 35.4);   
+  addPolygon(geometry, [[ 42.5, 0], [42.5, -39], [21.25, -31.5], [21.25, -7.5]], 35.4);
   addPolygon(geometry, [[ 42.5, 0], [42.5, -9], [-42.5, -39], [-68, -39]], 35.4);
   return makeMesh(geometry, lat, lng);
   }
@@ -389,6 +389,24 @@ function NaturalHistoryMuseum(lat, lng) {
   addBox(geometry, [271, 18, 54]);
   addBox(geometry, [150, 22, 74]);
   addBox(geometry, [ 36, 24, 90]);
+  return makeMesh(geometry, lat, lng);
+  }
+
+function AmericanHistoryMuseum(lat, lng) {
+  var geometry = new THREE.Geometry();
+  addBox(geometry, [148.2, 1, 54.6]);  // base
+  for (var i = 0; i < 10; i++) {
+    addBox(geometry, [7.8, 24, 2], [-70.2 + 15.6*i, 0,  26.3]);
+    addBox(geometry, [7.8, 24, 2], [-70.2 + 15.6*i, 0, -26.3]);
+    }
+  for (var i = 0; i < 2; i++) {
+    addBox(geometry, [2, 24, 7.8], [ 73.1, 0, -7.8 + 15.6*i]);
+    addBox(geometry, [2, 24, 7.8], [-73.1, 0, -7.8 + 15.6*i]);
+    }
+  addBox(geometry, [144.2, 24, 50.6]);  // main structure
+  addBox(geometry, [148.2,  1, 54.6], [0, 23.5, 0]);  // overhang
+  addBox(geometry, [122, 27, 46]);  //
+  addBox(geometry, [ 94, 30, 15]);  //  
   return makeMesh(geometry, lat, lng);
   }
 
@@ -629,22 +647,23 @@ function init() {
     ground.rotation.z = Math.PI;  // have south end of image (the bottom) be closest to us
     scene.add(ground);
     });
-  scene.add(DupontFountain(      38.909662, -77.043415));
-  scene.add(WhiteHouse(          38.897681, -77.036500));
-  scene.add(KennedyCenter(       38.895927, -77.055687));
-  scene.add(NaturalHistoryMuseum(38.891338, -77.026126));
-  scene.add(NGAWest(             38.891306, -77.020017));
-  scene.add(NGAEast(             38.891364, -77.016696));
-  scene.add(LincolnMemorial(     38.889376, -77.050153));
-  scene.add(WashingtonMonument(  38.889457, -77.035237));
-  scene.add(Capitol(             38.889376, -77.009108));
-  scene.add(RFKStadium(          38.889376, -76.971950));
-  scene.add(Hirshhorn(           38.888175, -77.023042));
-  scene.add(HirshhornFeet(       38.888175, -77.023042));
-  scene.add(AirSpaceMuseum(      38.888186, -77.019922));
-  scene.add(JeffersonMemorial(   38.881398, -77.036513));
-  scene.add(Pentagon(            38.870998, -77.055964));
-  scene.add(AlexandriaLodge(     38.807510, -77.065934));
+  scene.add(DupontFountain(       38.909662, -77.043415));
+  scene.add(WhiteHouse(           38.897681, -77.036500));
+  scene.add(KennedyCenter(        38.895927, -77.055687));
+  scene.add(AmericanHistoryMuseum(38.891218, -77.030017));
+  scene.add(NaturalHistoryMuseum( 38.891338, -77.026126));
+  scene.add(NGAWest(              38.891306, -77.020017));
+  scene.add(NGAEast(              38.891364, -77.016696));
+  scene.add(LincolnMemorial(      38.889376, -77.050153));
+  scene.add(WashingtonMonument(   38.889457, -77.035237));
+  scene.add(Capitol(              38.889376, -77.009108));
+  scene.add(RFKStadium(           38.889376, -76.971950));
+  scene.add(Hirshhorn(            38.888175, -77.023042));
+  scene.add(HirshhornFeet(        38.888175, -77.023042));
+  scene.add(AirSpaceMuseum(       38.888186, -77.019922));
+  scene.add(JeffersonMemorial(    38.881398, -77.036513));
+  scene.add(Pentagon(             38.870998, -77.055964));
+  scene.add(AlexandriaLodge(      38.807510, -77.065934));
   lastTime = window.performance ? performance.now() : Date.now();
   }
 
