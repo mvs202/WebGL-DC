@@ -418,6 +418,17 @@ function NaturalHistoryMuseum(lat, lng) {
   return makeMesh(geometry, lat, lng);
   }
 
+function FreerGallery(lat, lng) {
+  var geometry = new THREE.Geometry();
+  addBox(geometry, [71, 14, 18], [  0, 0,  20]);  // northern section
+  addBox(geometry, [24, 14, 22], [ 23, 0,   0]);  // eastern section
+  addBox(geometry, [24, 14, 22], [-23, 0,   0]);  // western section
+  addBox(geometry, [71, 14, 14], [  0, 0, -18]);  // southern section
+  addBox(geometry, [22, 14,  1], [  0, 0, -25.5]);  // southern entrance
+  addBox(geometry, [41, 14,  3], [  0, 0,  30.5]);  // northern entrance
+  return makeMesh(geometry, lat, lng);
+  }
+
 function AmericanHistoryMuseum(lat, lng) {
   var geometry = new THREE.Geometry();
   addBox(geometry, [148.2, 1, 54.6]);  // base
@@ -438,11 +449,11 @@ function AmericanHistoryMuseum(lat, lng) {
 
 function AfricanHistoryMuseum(lat, lng) {
   var geometry = new THREE.Geometry();
-  addBox(geometry, [42, 35.2, 42]);  // base
-  addBox(geometry, [54, 30.2, 54]);  // base
-  addPyramid(geometry, [54, 54], [64, 64], 8.4, [0, 5, 0]);  // base
-  addPyramid(geometry, [54, 54], [64, 64], 8.4, [0, 13.4, 0]);  // base
-  addPyramid(geometry, [54, 54], [64, 64], 8.4, [0, 21.8, 0]);  // base
+  addBox(geometry, [42, 35.2, 42]);  // rooftop structure
+  addBox(geometry, [54, 30.2, 54]);  // central structure
+  addPyramid(geometry, [54, 54], [64, 64], 8.4, [0, 5, 0]);  // lower section
+  addPyramid(geometry, [54, 54], [64, 64], 8.4, [0, 13.4, 0]);  // middle section
+  addPyramid(geometry, [54, 54], [64, 64], 8.4, [0, 21.8, 0]);  // upper section
   return makeMesh(geometry, lat, lng);
   }
 
@@ -695,6 +706,7 @@ function init() {
   scene.add(WashingtonMonument(   38.889457, -77.035237));
   scene.add(Capitol(              38.889376, -77.009108));
   scene.add(RFKStadium(           38.889376, -76.971950));
+  scene.add(FreerGallery(         38.888068, -77.027391));
   scene.add(Hirshhorn(            38.888175, -77.023042));
   scene.add(HirshhornFeet(        38.888175, -77.023042));
   scene.add(AirSpaceMuseum(       38.888186, -77.019922));
