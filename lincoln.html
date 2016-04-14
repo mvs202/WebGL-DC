@@ -319,6 +319,22 @@ function addBox(geometry, dimensions, position) {
   geometry.faces.push(new THREE.Face3(base + 4, base + 6, base + 5), new THREE.Face3(base + 4, base + 7, base + 6));
   }
 
+function addPolygon(geometry, points, height) {
+  var base = geometry.vertices.length;
+  for (var i = 0; i < points.length; i++) {
+    geometry.vertices.push(new THREE.Vector3(-points[i][0],      0, points[i][1]));
+    geometry.vertices.push(new THREE.Vector3(-points[i][0], height, points[i][1]));
+    }
+  for (var i = 0; i < points.length; i++) {
+    var a = base + 2*i;
+    var b = base + 2*((i + 1) % points.length);
+    geometry.faces.push(new THREE.Face3(a, a + 1, b + 1), new THREE.Face3(a, b + 1, b));
+    if (i < points.length - 2) {
+      geometry.faces.push(new THREE.Face3(base + 1, a + 5, a + 3));
+      }
+    }
+  }
+
 function shiftVertices(vertices, dx, dy, dz) {
   for (var i = 0; i < vertices.length; i++) {
     vertices[i].x += dx;
@@ -337,6 +353,20 @@ function NGAWest(lat, lng) {
   addBox(geometry, [42, 32, 30]);
   addBox(geometry, [30, 32, 42]);
   addCylinderDome(geometry, 16, 34, 10);
+  return makeMesh(geometry, lat, lng);
+  }
+
+function NGAEast(lat, lng) {
+  var geometry = new THREE.Geometry();
+  addPolygon(geometry, [[-42.5, -30], [-42.5, 30], [42.5, 0]], 18.0);  // atrium; lowest space
+  addPolygon(geometry, [[-42.5, -21], [-68, -30], [-68, 39], [-42.5, 30]], 19.3);  // western section
+  addPolygon(geometry, [[-42.5,  13], [-68, 21], [-68, 39], [-42.5, 30]], 35.4);  // northwest tower
+  addPolygon(geometry, [[-42.5, -21], [-68, -30], [-68, -13], [-42.5, -4]], 35.4);  // southwest tower
+  addPolygon(geometry, [[ 34, 3], [8.5, -6], [-17, 3], [8.5, 12]], 35.4);  // east tower
+  addPolygon(geometry, [[ 34, 3], [8.5, -6], [-42.5, 12], [-42.5, 30]], 19.3);  // northern section
+  addPolygon(geometry, [[ 42.5, 0], [42.5, -39], [-68, -39]], 25.4);
+  addPolygon(geometry, [[ 42.5, 0], [42.5, -39], [21.25, -31.5], [21.25, -7.5]], 35.4);   
+  addPolygon(geometry, [[ 42.5, 0], [42.5, -9], [-42.5, -39], [-68, -39]], 35.4);
   return makeMesh(geometry, lat, lng);
   }
 
@@ -604,6 +634,7 @@ function init() {
   scene.add(KennedyCenter(       38.895927, -77.055687));
   scene.add(NaturalHistoryMuseum(38.891338, -77.026126));
   scene.add(NGAWest(             38.891306, -77.020017));
+  scene.add(NGAEast(             38.891364, -77.016696));
   scene.add(LincolnMemorial(     38.889376, -77.050153));
   scene.add(WashingtonMonument(  38.889457, -77.035237));
   scene.add(Capitol(             38.889376, -77.009108));
