@@ -530,6 +530,15 @@ function IndianMuseum(lat, lng) {
   return makeMesh(geometry, lat, lng);
   }
 
+function NatlBuildingMuseum(lat, lng) {
+  var geometry = new THREE.Geometry();
+  addBox(       geometry, [ 123, 26, 63]);  // main structure
+  addYRoofedBox(geometry, [ 38, 38, 38], 10, 0);  // north-south corridor
+  addXRoofedBox(geometry, [ 96, 30, 38], 7, 0);
+  addXRoofedBox(geometry, [ 86, 37, 10], 2, 0);
+  return makeMesh(geometry, lat, lng);
+  }
+
 function NatlArchives(lat, lng) {
   var geometry = new THREE.Geometry();
   addBox(       geometry, [ 99, 29, 66]);  // main structure
@@ -804,6 +813,7 @@ function init() {
   scene.add(DupontFountain(       38.909662, -77.043415));
   scene.add(WhiteHouse(           38.897681, -77.036500));
   scene.add(KennedyCenter(        38.895927, -77.055687));
+  scene.add(NatlBuildingMuseum(   38.897762, -77.017612));
   scene.add(NatlArchives(         38.892817, -77.023134));
   scene.add(AfricanHistoryMuseum( 38.891067, -77.032602));
   scene.add(AmericanHistoryMuseum(38.891218, -77.030017));
