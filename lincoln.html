@@ -535,11 +535,12 @@ function NatlCathedral(lat, lng) {
   addXRoofedBox(geometry, [132, 30, 16], 10, 0, [12, 0, 0]);  // nave
   addYRoofedBox(geometry, [16, 30, 62], 10, 0);  // perpendicular to nave
   addCylinderConeTop(geometry, 8, 30, 10, 10, [-54, 0, 0]);  //
-  addBox(geometry, [23, 83.8, 23]);  // central tower
-  addRaisedPyramid(geometry, [2, 2], [0.5, 0.5], 2, 6, [ 10.5, 83.8,  10.5]);  // central tower spire
-  addRaisedPyramid(geometry, [2, 2], [0.5, 0.5], 2, 6, [-10.5, 83.8,  10.5]);  // central tower spire
-  addRaisedPyramid(geometry, [2, 2], [0.5, 0.5], 2, 6, [ 10.5, 83.8, -10.5]);  // central tower spire
-  addRaisedPyramid(geometry, [2, 2], [0.5, 0.5], 2, 6, [-10.5, 83.8, -10.5]);  // central tower spire
+  addBox(geometry, [23, 82.4, 23]);  // central tower
+  addBox(geometry, [22,  1.4, 22], [0, 82.4, 0]);  // central tower top
+  addRaisedPyramid(geometry, [2, 2], [0.5, 0.5], 3.5, 6, [ 10.5, 82.4,  10.5]);  // central tower spire
+  addRaisedPyramid(geometry, [2, 2], [0.5, 0.5], 3.5, 6, [-10.5, 82.4,  10.5]);  // central tower spire
+  addRaisedPyramid(geometry, [2, 2], [0.5, 0.5], 3.5, 6, [ 10.5, 82.4, -10.5]);  // central tower spire
+  addRaisedPyramid(geometry, [2, 2], [0.5, 0.5], 3.5, 6, [-10.5, 82.4, -10.5]);  // central tower spire
   addBox(geometry, [11, 39.0, 11], [72.5, 0,  13.5]);  // north west tower base
   addBox(geometry, [ 8, 23.3,  8], [72.5, 39,  13.5]);  // north west tower upper section
   addRaisedPyramid(geometry, [2, 2], [0.5, 0.5], 2, 4, [75.5, 62.3,  16.5]);  // north west tower spire
@@ -555,6 +556,29 @@ function NatlCathedral(lat, lng) {
   addYRoofedBox(geometry, [12,  6.0, 74], 2, 0, [72.0, 0, 0]);  // lower front section
   addXRoofedBox(geometry, [132, 18, 36], 9, 0, [12, 0, 0]);  // nave hips
   addXRoofedBox(geometry, [78, 12, 48], 12, 0, [39, 0, 0]);  // nave foot
+  return makeMesh(geometry, lat, lng);
+  }
+
+function Carillon(lat, lng) {
+  var geometry = new THREE.Geometry();
+  addBox(geometry, [7.6,  0.6, 11.0]);  // floor
+  addBox(geometry, [0.6, 38.7, 0.6], [ 3.5, 0,  5.2]);  // corner vertical beam
+  addBox(geometry, [0.6, 38.7, 0.6], [-3.5, 0,  5.2]);  // corner vertical beam
+  addBox(geometry, [0.6, 38.7, 0.6], [ 3.5, 0, -5.2]);  // corner vertical beam
+  addBox(geometry, [0.6, 38.7, 0.6], [-3.5, 0, -5.2]);  // corner vertical beam
+  addBox(geometry, [7.6,  0.6, 11.0], [0, 18.6, 0]);  // lower platform
+  addBox(geometry, [7.6,  6.1, 11.0], [0, 21.6, 0]);  // cube supporting upper platform
+  addBox(geometry, [7.6, 18.6, 5.0]);  // middle section (bottom)
+  addBox(geometry, [0.6, 20.1, 0.6], [ 3.5, 18.6,  2.2]);  // upper vertical beam
+  addBox(geometry, [0.6, 20.1, 0.6], [-3.5, 18.6,  2.2]);  // upper vertical beam
+  addBox(geometry, [0.6, 20.1, 0.6], [ 3.5, 18.6, -2.2]);  // upper vertical beam
+  addBox(geometry, [0.6, 20.1, 0.6], [-3.5, 18.6, -2.2]);  // upper vertical beam
+  addBox(geometry, [7.6,  0.6, 5.0], [0, 32.8, 0]);  // roof near top
+  addBox(geometry, [3.4, 32.8, 5.0]);  // upper housing
+  addBox(geometry, [7.6,  0.6,  0.6], [ 0,   38.1,  5.2]);  // top square
+  addBox(geometry, [7.6,  0.6,  0.6], [ 0,   38.1, -5.2]);  // top square
+  addBox(geometry, [0.6,  0.6, 11.0], [ 3.5, 38.1,  0]);  // top square
+  addBox(geometry, [0.6,  0.6, 11.0], [-3.5, 38.1,  0]);  // top square
   return makeMesh(geometry, lat, lng);
   }
 
@@ -861,6 +885,7 @@ function init() {
   scene.add(AirSpaceMuseum(       38.888186, -77.019922));
   scene.add(IndianMuseum(         38.888254, -77.016539));
   scene.add(JeffersonMemorial(    38.881398, -77.036513));
+  scene.add(Carillon(             38.888208, -77.069491));
   scene.add(Pentagon(             38.870998, -77.055964));
   scene.add(AlexandriaLodge(      38.807510, -77.065934));
   lastTime = window.performance ? performance.now() : Date.now();
