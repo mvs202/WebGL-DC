@@ -559,6 +559,19 @@ function NatlCathedral(lat, lng) {
   return makeMesh(geometry, lat, lng);
   }
 
+function OldPostOffice(lat, lng) {
+  var geometry = new THREE.Geometry();
+  addBox(geometry, [ 60, 12,  84]);  // lower base
+  addRaisedPyramid(geometry, [52, 76], [48, 72], 41, 10);  // central structure
+  addYRoofedBox(geometry, [48, 1, 72], 8, 4, [0, 51, 0]);  // atrium roof
+  addYRoofedBox(geometry, [16, 41, 32], 16, 4, [ 22, 0,  26]);  // corner block
+  addYRoofedBox(geometry, [16, 41, 32], 16, 4, [-22, 0,  26]);  // corner block
+  addYRoofedBox(geometry, [16, 41, 32], 16, 4, [ 22, 0, -26]);  // corner block
+  addYRoofedBox(geometry, [16, 41, 32], 16, 4, [-22, 0, -26]);  // corner block
+  addRaisedPyramid(geometry, [12, 12], [0.5, 0.5], 80, 16, [0, 0, 33]);  // tower
+  return makeMesh(geometry, lat, lng);
+  }
+
 function Carillon(lat, lng) {
   var geometry = new THREE.Geometry();
   addBox(geometry, [7.6,  0.6, 11.0]);  // floor
@@ -867,6 +880,7 @@ function init() {
   scene.add(WhiteHouse(           38.897681, -77.036500));
   scene.add(KennedyCenter(        38.895927, -77.055687));
   scene.add(NatlBuildingMuseum(   38.897762, -77.017612));
+  scene.add(OldPostOffice(        38.894073, -77.027777));
   scene.add(NatlArchives(         38.892817, -77.023134));
   scene.add(AfricanHistoryMuseum( 38.891067, -77.032602));
   scene.add(AmericanHistoryMuseum(38.891218, -77.030017));
