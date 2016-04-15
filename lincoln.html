@@ -286,22 +286,23 @@ function addBoxSides(geometry, dimensions, position) {
   geometry.faces.push(new THREE.Face3(base + 3, base + 4, base + 0), new THREE.Face3(base + 3, base + 7, base + 4));
   }
 
-function addCylinderDome(geometry, radius, baseHeight, domeHeight) {
+function addCylinderDome(geometry, radius, baseHeight, domeHeight, position) {
+  if (typeof position == 'undefined') {position = [0, 0, 0];}
   var base = geometry.vertices.length;
   var cylSegments = 24;
   for (var i = 0; i < cylSegments; i++) {
     var theta = 2*Math.PI*i/cylSegments;
-    geometry.vertices.push(new THREE.Vector3(radius*Math.sin(theta),          0, radius*Math.cos(theta)));  // floor
-    geometry.vertices.push(new THREE.Vector3(radius*Math.sin(theta), baseHeight, radius*Math.cos(theta)));  // straight up to base of dome
+    geometry.vertices.push(new THREE.Vector3(radius*Math.sin(theta) + position[0],              position[1], radius*Math.cos(theta) + position[2]));  // floor
+    geometry.vertices.push(new THREE.Vector3(radius*Math.sin(theta) + position[0], baseHeight + position[1], radius*Math.cos(theta) + position[2]));  // straight up to base of dome
     for (var j = 1; j < 8; j++) {
       var phi = (Math.PI/2)*j/8;
       var sinPhi = Math.sin(phi);  // 0 to 1
       var cosPhi = Math.cos(phi);  // 1 to 0
-      geometry.vertices.push(new THREE.Vector3(radius*cosPhi*Math.sin(theta), baseHeight + domeHeight*sinPhi, radius*cosPhi*Math.cos(theta)));
+      geometry.vertices.push(new THREE.Vector3(radius*cosPhi*Math.sin(theta) + position[0], baseHeight + domeHeight*sinPhi + position[1], radius*cosPhi*Math.cos(theta) + position[2]));
       }
     }
   var top = geometry.vertices.length;
-  geometry.vertices.push(new THREE.Vector3(0, baseHeight + domeHeight, 0));
+  geometry.vertices.push(new THREE.Vector3(position[0], baseHeight + domeHeight + position[1], position[2]));
   var chunk = 9;  // number of points per slice
   for (var i = 0; i < cylSegments; i++) {
     var sliceA = base + chunk*i;
@@ -373,19 +374,20 @@ function addPyramid(geometry, lowerDimensions, upperDimensions, height, position
   geometry.faces.push(new THREE.Face3(base + 4, base + 6, base + 5), new THREE.Face3(base + 4, base + 7, base + 6));
   }
 
-function addPolygon(geometry, points, height) {
+function addPolygon(geometry, points, height, position) {
+  if (typeof position == 'undefined') {position = [0, 0, 0];}
   var base = geometry.vertices.length;
   for (var i = 0; i < points.length; i++) {
-    geometry.vertices.push(new THREE.Vector3(-points[i][0],      0, points[i][1]));
-    geometry.vertices.push(new THREE.Vector3(-points[i][0], height, points[i][1]));
+    geometry.vertices.push(new THREE.Vector3(-points[i][0] + position[0],          position[1], points[i][1] + position[2]));
+    geometry.vertices.push(new THREE.Vector3(-points[i][0] + position[0], height + position[1], points[i][1] + position[2]));
     }
+  var centerTop = geometry.vertices.length;
+  geometry.vertices.push(new THREE.Vector3(position[0], height + position[1], position[2]));
   for (var i = 0; i < points.length; i++) {
     var a = base + 2*i;
     var b = base + 2*((i + 1) % points.length);
     geometry.faces.push(new THREE.Face3(a, a + 1, b + 1), new THREE.Face3(a, b + 1, b));
-    if (i < points.length - 2) {
-      geometry.faces.push(new THREE.Face3(base + 1, a + 5, a + 3));
-      }
+    geometry.faces.push(new THREE.Face3(a + 1, centerTop, b + 1));
     }
   }
 
@@ -506,6 +508,17 @@ function SmithsonianCastle(lat, lng) {
   addBox(geometry, [3, 8, 3], [-29, 0, -8.5]);  // eastern-half south tower (base)
   addCylinderConeTop(geometry, 1.5, 16, 0, 8, [-29, 8, -8.5]);  // eastern-half south tower (top)
   addXRoofedBox(geometry, [11, 12, 7], 4, 0, [-62, 0, 0]);  // eastern  entrance (juts out 4m?)
+  return makeMesh(geometry, lat, lng);
+  }
+
+function IndianMuseum(lat, lng) {
+  var geometry = new THREE.Geometry();
+  addPolygon(geometry, [[38,-6],[32,-10],[25,-10],[23,-13],[20,-14],[12,-18],[10,-19],[0,-19],[-1,-20],[-2,-22],[-5,-24],[-10,-25],[-16,-27],[-20,-27],[-25,-30],[-30,-33],[-40,-35],[-50,-38],[-60,-42],[-68,-40],[-67,-30],[-68,-20],[-67,-10],[-68,-5],[-67,0],[-67,10],[-65,20],[-60,25],[-55,26],[-50,24],[-40,24],[-30,26],[-24,23],[-20,24],[-15,26],[-10,25],[-5,24],[0,25],[5,26],[15,26],[20,25],[30,21],[35,18],[39,15],[40,10],[41,4],[38, 0]], 18.0);
+  addPolygon(geometry, [[38,-6],[32,-10],[25,-10],[23,-13],[20,-14],[12,-18],[10,-19],[0,-19],[-1,-20],[-2,-22],[-5,-24],[-10,-25],[-16,-27],[-20,-27],[-25,-30],[-30,-33],[-40,-35],[-50,-38],[-60,-42],[-68,-40],[-67,-30],[-68,-20],[-67,-10],[-68,-5],[-67,0],[-67,10],[-65,20],[-60,25],[-55,26],[-50,24],[-40,24],[-30,26],[-24,23],[-20,24],[-15,26],[-10,25],[-5,24],[0,25],[5,26],[15,26],[20,25],[30,22],[38,19],[43,15],[42,10],[44,4],[42,-3]], 18.0, [0,18,0]);
+  addPolygon(geometry, [[38,-6],[32,-10],[25,-10],[23,-13],[20,-14],[12,-18],[10,-19],[0,-19],[-1,-20],[-2,-22],[-5,-24],[-10,-25],[-16,-27],[-20,-27],[-25,-30],[-30,-33],[-40,-35],[-50,-38],[-60,-42],[-68,-40],[-67,-30],[-68,-20],[-67,-10],[-68,-5],[-67,0],[-67,10],[-65,20],[-60,25],[-55,26],[-50,24],[-40,24],[-30,26],[-24,23],[-20,24],[-15,26],[-10,25],[-5,24],[0,25],[5,26],[15,26],[20,25],[30,25],[35,23],[40,20],[46,16],[48,12],[51,6],[51,1],[50,0],[45,-3]], 4.0, [0,36,0]);
+  addPolygon(geometry, [        [32,-10],[25,-10],[23,-13],[20,-14],[12,-18],[10,-19],[0,-19],[-1,-20],[-2,-22],[-5,-24],[-10,-25],[-16,-27],[-20,-27],[-25,-30],[-30,-33],[-40,-35],[-50,-38],[-60,-42],[-68,-40],[-67,-30],[-68,-20],[-67,-10],[-68,-5],[-67,0],[-67,10],[-65,20],[-60,25],[-55,26],[-50,24],[-40,24],[-30,26],[-24,23],[-20,24],[-15,26],[-10,25],[-5,24],[0,25],[5,26],[10,24],[19,20],[19,17],[22,15],[23,8],[23,2],[26,0],[33,-1],[32,-6]], 6, [0,40,0]);
+  addPolygon(geometry, [                                                              [0,-19],[-1,-20],[-2,-22],[-5,-24],[-10,-25],[-16,-27],[-20,-27],[-25,-30],[-30,-33],[-40,-35],[-50,-38],[-60,-42],[-68,-40],[-67,-30],[-68,-20],[-67,-10],[-68,-5],[-67,0],[-67,10],[-65,20],[-60,25],[-55,26],[-50,24],[-40,24],[-30,26],[-24,23],[-20,24],[-15,26],[-10,25],[-4,22], [-1,18], [3,18],[10,16],[15,14],[20,0],[15,-10],[10,-18]], 4, [0,46,0]);
+  addCylinderDome(geometry, 15, 0.5, 10, [0, 50, 0]);
   return makeMesh(geometry, lat, lng);
   }
 
@@ -787,6 +800,7 @@ function init() {
   scene.add(Hirshhorn(            38.888175, -77.023042));
   scene.add(HirshhornFeet(        38.888175, -77.023042));
   scene.add(AirSpaceMuseum(       38.888186, -77.019922));
+  scene.add(IndianMuseum(         38.888254, -77.016539));
   scene.add(JeffersonMemorial(    38.881398, -77.036513));
   scene.add(Pentagon(             38.870998, -77.055964));
   scene.add(AlexandriaLodge(      38.807510, -77.065934));
