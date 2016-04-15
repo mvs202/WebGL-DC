@@ -530,12 +530,40 @@ function IndianMuseum(lat, lng) {
   return makeMesh(geometry, lat, lng);
   }
 
+function NatlCathedral(lat, lng) {
+  var geometry = new THREE.Geometry();
+  addXRoofedBox(geometry, [132, 30, 16], 10, 0, [12, 0, 0]);  // nave
+  addYRoofedBox(geometry, [16, 30, 62], 10, 0);  // perpendicular to nave
+  addCylinderConeTop(geometry, 8, 30, 10, 10, [-54, 0, 0]);  //
+  addBox(geometry, [23, 83.8, 23]);  // central tower
+  addRaisedPyramid(geometry, [2, 2], [0.5, 0.5], 2, 6, [ 10.5, 83.8,  10.5]);  // central tower spire
+  addRaisedPyramid(geometry, [2, 2], [0.5, 0.5], 2, 6, [-10.5, 83.8,  10.5]);  // central tower spire
+  addRaisedPyramid(geometry, [2, 2], [0.5, 0.5], 2, 6, [ 10.5, 83.8, -10.5]);  // central tower spire
+  addRaisedPyramid(geometry, [2, 2], [0.5, 0.5], 2, 6, [-10.5, 83.8, -10.5]);  // central tower spire
+  addBox(geometry, [11, 39.0, 11], [72.5, 0,  13.5]);  // north west tower base
+  addBox(geometry, [ 8, 23.3,  8], [72.5, 39,  13.5]);  // north west tower upper section
+  addRaisedPyramid(geometry, [2, 2], [0.5, 0.5], 2, 4, [75.5, 62.3,  16.5]);  // north west tower spire
+  addRaisedPyramid(geometry, [2, 2], [0.5, 0.5], 2, 4, [69.5, 62.3,  16.5]);  // north west tower spire
+  addRaisedPyramid(geometry, [2, 2], [0.5, 0.5], 2, 4, [75.5, 62.3,  10.5]);  // north west tower spire
+  addRaisedPyramid(geometry, [2, 2], [0.5, 0.5], 2, 4, [69.5, 62.3,  10.5]);  // north west tower spire
+  addBox(geometry, [11, 39.0, 11], [72.5, 0, -13.5]);  // south west tower base
+  addBox(geometry, [ 8, 23.3,  8], [72.5, 39, -13.5]);  // south west tower upper section
+  addRaisedPyramid(geometry, [2, 2], [0.5, 0.5], 2, 4, [75.5, 62.3, -16.5]);  // south west tower spire
+  addRaisedPyramid(geometry, [2, 2], [0.5, 0.5], 2, 4, [69.5, 62.3, -16.5]);  // south west tower spire
+  addRaisedPyramid(geometry, [2, 2], [0.5, 0.5], 2, 4, [75.5, 62.3, -10.5]);  // south west tower spire
+  addRaisedPyramid(geometry, [2, 2], [0.5, 0.5], 2, 4, [69.5, 62.3, -10.5]);  // south west tower spire
+  addYRoofedBox(geometry, [12,  6.0, 74], 2, 0, [72.0, 0, 0]);  // lower front section
+  addXRoofedBox(geometry, [132, 18, 36], 9, 0, [12, 0, 0]);  // nave hips
+  addXRoofedBox(geometry, [78, 12, 48], 12, 0, [39, 0, 0]);  // nave foot
+  return makeMesh(geometry, lat, lng);
+  }
+
 function NatlBuildingMuseum(lat, lng) {
   var geometry = new THREE.Geometry();
   addBox(       geometry, [ 123, 26, 63]);  // main structure
-  addYRoofedBox(geometry, [ 38, 38, 38], 10, 0);  // north-south corridor
-  addXRoofedBox(geometry, [ 96, 30, 38], 7, 0);
-  addXRoofedBox(geometry, [ 86, 37, 10], 2, 0);
+  addYRoofedBox(geometry, [ 38, 38, 38], 10, 0);  // Tall center
+  addXRoofedBox(geometry, [ 96, 30, 38], 7, 0);  // attic
+  addXRoofedBox(geometry, [ 86, 37, 10], 2, 0);  // attic upper level
   return makeMesh(geometry, lat, lng);
   }
 
@@ -810,6 +838,7 @@ function init() {
     ground.rotation.z = Math.PI;  // have south end of image (the bottom) be closest to us
     scene.add(ground);
     });
+  scene.add(NatlCathedral(        38.930615, -77.070781));
   scene.add(DupontFountain(       38.909662, -77.043415));
   scene.add(WhiteHouse(           38.897681, -77.036500));
   scene.add(KennedyCenter(        38.895927, -77.055687));
