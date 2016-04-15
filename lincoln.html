@@ -559,6 +559,18 @@ function NatlCathedral(lat, lng) {
   return makeMesh(geometry, lat, lng);
   }
 
+function TreasuryDept(lat, lng) {
+  var geometry = new THREE.Geometry();
+  addXRoofedBox(geometry, [52, 14,  18], 4, 0);  // middle corridor
+  addXRoofedBox(geometry, [82, 14,  18], 4, 0, [0, 0,  61]);  // north corridor
+  addXRoofedBox(geometry, [82, 14,  18], 4, 0, [0, 0, -61]);  // south corridor
+  addYRoofedBox(geometry, [18, 14, 122], 4, 0, [ 26, 0, 0]);  // west corridor
+  addYRoofedBox(geometry, [18, 14, 122], 4, 0, [-26, 0, 0]);  // east corridor
+  addYRoofedBox(geometry, [23, 14,  31], 4, 0, [0, 0,  63.5]);  // north entrance
+  addYRoofedBox(geometry, [23, 14,  18], 4, 0, [0, 0, -70.0]);  // south entrance
+  return makeMesh(geometry, lat, lng);
+  }
+
 function OldPostOffice(lat, lng) {
   var geometry = new THREE.Geometry();
   addBox(geometry, [ 60, 12,  84]);  // lower base
@@ -878,6 +890,7 @@ function init() {
   scene.add(NatlCathedral(        38.930615, -77.070781));
   scene.add(DupontFountain(       38.909662, -77.043415));
   scene.add(WhiteHouse(           38.897681, -77.036500));
+  scene.add(TreasuryDept(         38.897582, -77.034247));
   scene.add(KennedyCenter(        38.895927, -77.055687));
   scene.add(NatlBuildingMuseum(   38.897762, -77.017612));
   scene.add(OldPostOffice(        38.894073, -77.027777));
