@@ -559,6 +559,13 @@ function NatlCathedral(lat, lng) {
   return makeMesh(geometry, lat, lng);
   }
 
+function ArlingtonHouse(lat, lng) {
+  var geometry = new THREE.Geometry();
+  addXRoofedBox(geometry, [20, 9,  18], 3, 0);  // main structure
+  addYRoofedBox(geometry, [10, 6,  42], 1.5, 5, [2, 0, 0]);  // wings
+  return makeMesh(geometry, lat, lng);
+  }
+
 function EisenhowerOffice(lat, lng) {
   var geometry = new THREE.Geometry();
   addRaisedPyramid(geometry, [34, 18], [62, 6], 12, 2);  // middle corridor
@@ -913,6 +920,7 @@ function init() {
     ground.rotation.z = Math.PI;  // have south end of image (the bottom) be closest to us
     scene.add(ground);
     });
+  scene.add(ArlingtonHouse(       38.881178, -77.072647));
   scene.add(NatlCathedral(        38.930615, -77.070781));
   scene.add(DupontFountain(       38.909662, -77.043415));
   scene.add(EisenhowerOffice(     38.897582, -77.038635));
