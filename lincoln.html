@@ -287,6 +287,7 @@ function addBoxSides(geometry, dimensions, position) {
   }
 
 function addCylinderDome(geometry, radius, baseHeight, domeHeight, position) {
+  // handle baseHeight == 0?
   if (typeof position == 'undefined') {position = [0, 0, 0];}
   var base = geometry.vertices.length;
   var cylSegments = 24;
@@ -313,7 +314,50 @@ function addCylinderDome(geometry, radius, baseHeight, domeHeight, position) {
       }
     geometry.faces.push(new THREE.Face3(sliceA + chunk - 1, sliceB + chunk - 1, top));
     }
-}
+  }
+
+function addClippedCylinderDome(geometry, radius, baseHeight, domeHeight, bounds, position) {
+  if (typeof position == 'undefined') {position = [0, 0, 0];}
+  var oldBase = geometry.vertices.length;
+  addCylinderDome(geometry, radius, baseHeight, domeHeight);
+  var newBase = geometry.vertices.length;
+  var boundsXHalf = bounds[0]/2;
+  var boundsZHalf = bounds[1]/2;
+  for (var i = oldBase; i < newBase; i++) {
+    var v = geometry.vertices[i];
+    if (Math.abs(v.x) > boundsXHalf) {
+      if (v.x < 0) {v.x = -boundsXHalf;}
+      else         {v.x =  boundsXHalf;}
+      }
+    if (Math.abs(v.z) > boundsZHalf) {
+      if (v.z < 0) {v.z = -boundsZHalf;}
+      else         {v.z =  boundsZHalf;}
+      }
+    v.x += position[0];
+    v.y += position[1];
+    v.z += position[2];
+    }
+  }
+
+function addCylinderConeTopBottom(geometry, radius, baseHeight, bottomHeight, topHeight, cylSegments, position) {
+  if (typeof position == 'undefined') {position = [0, 0, 0];}
+  var base = geometry.vertices.length;
+  for (var i = 0; i < cylSegments; i++) {
+    var theta = 2*Math.PI*(i + 0.5)/cylSegments;  // the 0.5 puts a flat edge at the axes rather than a corner
+    geometry.vertices.push(new THREE.Vector3(radius*Math.sin(theta) + position[0],              position[1], radius*Math.cos(theta) + position[2]));  // floor
+    geometry.vertices.push(new THREE.Vector3(radius*Math.sin(theta) + position[0], baseHeight + position[1], radius*Math.cos(theta) + position[2]));  // straight up to base of cone
+    }
+  var tips = geometry.vertices.length;
+  geometry.vertices.push(new THREE.Vector3(position[0],          -bottomHeight + position[1], position[2]));
+  geometry.vertices.push(new THREE.Vector3(position[0], baseHeight + topHeight + position[1], position[2]));
+  for (var i = 0; i < cylSegments; i++) {
+    var sliceA = base + 2*i;
+    var sliceB = base + 2*((i + 1) % cylSegments);
+    geometry.faces.push(new THREE.Face3(sliceA, sliceB + 1, sliceA + 1), new THREE.Face3(sliceA, sliceB, sliceB + 1));
+    geometry.faces.push(new THREE.Face3(sliceB,     sliceA,     tips));
+    geometry.faces.push(new THREE.Face3(sliceA + 1, sliceB + 1, tips + 1));
+    }
+  }
 
 function addCylinderConeTop(geometry, radius, baseHeight, coneHeight, cylSegments, position) {
   if (typeof position == 'undefined') {position = [0, 0, 0];}
@@ -556,6 +600,28 @@ function NatlCathedral(lat, lng) {
   addYRoofedBox(geometry, [12,  6.0, 74], 2, 0, [72.0, 0, 0]);  // lower front section
   addXRoofedBox(geometry, [132, 18, 36], 9, 0, [12, 0, 0]);  // nave hips
   addXRoofedBox(geometry, [78, 12, 48], 12, 0, [39, 0, 0]);  // nave foot
+  return makeMesh(geometry, lat, lng);
+  }
+
+function Airport(lat, lng) {
+  var geometry = new THREE.Geometry();
+  addBoxSides(geometry, [26.8, 17.0, 361.8]);  // main concourse
+  addBox(geometry, [40.2, 1.0, 361.8], [20.1, 10, 0]);  // west-side awning
+  addBox(geometry, [13.4, 12.0, 522.6], [-6.7, 0, 0]);  // long hallway at ends
+  for (var i = 0; i < 27; i++) {  // domes
+    addClippedCylinderDome(geometry, 9, 0, 6, [13.4, 13.4], [ 6.7, 17, (i - 13)*13.4]);
+    addClippedCylinderDome(geometry, 9, 0, 6, [13.4, 13.4], [-6.7, 17, (i - 13)*13.4]);
+    }
+  addBox(geometry, [48, 11.0, 48], [-138, 0,  226]);  // northern gates
+  addBox(geometry, [48, 11.0, 48], [-148, 0,    0]);  // center gates
+  addBox(geometry, [48, 11.0, 48], [ -98, 0, -226]);  // southern gates
+  addBox(geometry, [100.6, 11.0, 32], [-63.7, 0,  226]);
+  addBox(geometry, [110.6, 11.0, 32], [-68.7, 0,    0]);
+  addBox(geometry, [ 60.6, 11.0, 32], [-43.7, 0, -226]);
+  addCylinderConeTop(      geometry, 4.0, 60,       0.0, 10, [13.4,  0, 107.2]);  // main control tower
+  addCylinderConeTop(      geometry, 3.8,  1,       0.0, 10, [13.4, 60, 107.2]);  // top of tower
+  addCylinderConeTopBottom(geometry, 5.6, 15, 14.0, 2.8, 10, [13.4, 37, 107.2]);  // lower bulge
+  addCylinderConeTopBottom(geometry, 5.6,  1, 14.0, 2.8, 10, [13.4, 57, 107.2]);  // upper bulge
   return makeMesh(geometry, lat, lng);
   }
 
@@ -921,6 +987,7 @@ function init() {
     scene.add(ground);
     });
   scene.add(ArlingtonHouse(       38.881178, -77.072647));
+  scene.add(Airport(              38.853729, -77.043069));
   scene.add(NatlCathedral(        38.930615, -77.070781));
   scene.add(DupontFountain(       38.909662, -77.043415));
   scene.add(EisenhowerOffice(     38.897582, -77.038635));
