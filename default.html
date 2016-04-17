@@ -196,6 +196,21 @@ function addCylinderConeTopBottom(geometry, radius, baseHeight, bottomHeight, to
     }
   }
 
+function addCylinder(geometry, radius, baseHeight, cylSegments, position) {
+  if (typeof position == 'undefined') {position = [0, 0, 0];}
+  var base = geometry.vertices.length;
+  for (var i = 0; i < cylSegments; i++) {
+    var theta = 2*Math.PI*(i + 0.5)/cylSegments;  // the 0.5 puts a flat edge at the axes rather than a corner
+    geometry.vertices.push(new THREE.Vector3(radius*Math.sin(theta) + position[0],              position[1], radius*Math.cos(theta) + position[2]));  // floor
+    geometry.vertices.push(new THREE.Vector3(radius*Math.sin(theta) + position[0], baseHeight + position[1], radius*Math.cos(theta) + position[2]));  // straight up to base of cone
+    }
+  for (var i = 0; i < cylSegments; i++) {
+    var sliceA = base + 2*i;
+    var sliceB = base + 2*((i + 1) % cylSegments);
+    geometry.faces.push(new THREE.Face3(sliceA, sliceB + 1, sliceA + 1), new THREE.Face3(sliceA, sliceB, sliceB + 1));
+    }
+  }
+
 function addCylinderConeTop(geometry, radius, baseHeight, coneHeight, cylSegments, position) {
   if (typeof position == 'undefined') {position = [0, 0, 0];}
   var base = geometry.vertices.length;
@@ -657,6 +672,26 @@ function EisenhowerOffice(lat, lng) {
   return makeMesh(geometry, lat, lng);
   }
 
+function SupremeCourt(lat, lng) {
+  var geometry = new THREE.Geometry();
+  addBox(geometry, [ 118, 4.6, 30]);  // main floor (under columns)
+  addBox(geometry, [ 110, 15, 30], [-4, 4.6, 0]);  // main filler
+  addXRoofedBox(geometry, [118, 3, 30], 5.8, 0, [0, 19.6, 0]);  // main roof (over columns)
+  addBox(geometry, [ 26, 11, 68]);  // middle corridor
+  addXRoofedBox(geometry, [90, 11, 12], 2, 6, [0, 0,  39]);
+  addXRoofedBox(geometry, [90, 11, 12], 2, 6, [0, 0, -39]);
+  addYRoofedBox(geometry, [12, 11, 90], 2, 6, [ 39, 0, 0]);
+  addYRoofedBox(geometry, [12, 11, 90], 2, 6, [-39, 0, 0]);
+  for (var i = 0; i < 8; i++) {
+    addCylinder(geometry, 0.9, 15, 10, [54.1, 4.6, -14 + i*4]);
+    addCylinder(geometry, 0.9, 15, 10, [58.1, 4.6, -14 + i*4]);
+    }
+  for (var i = 0; i < 11; i++) {
+    addBox(geometry, [0.8, 4.4 - i*0.4, 30], [59.4 + i*0.8, 0, 0]);  // steps
+    }
+  return makeMesh(geometry, lat, lng);
+  }
+
 function ChinatownArch(lat, lng) {
   var geometry = new THREE.Geometry();
   addBox(geometry, [1.8, 3.2, 1.8], [0, 0, 12]);  // north pole base
@@ -1065,6 +1100,7 @@ function init() {
   scene.add(NGAEast(              38.891364, -77.016696));
   scene.add(LincolnMemorial(      38.889376, -77.050153));
   scene.add(WashingtonMonument(   38.889457, -77.035237));
+  scene.add(SupremeCourt(         38.890609, -77.004426));
   scene.add(BotanicGarden(        38.887961, -77.012979));
   scene.add(Capitol(              38.889828, -77.009144));
   scene.add(RFKStadium(           38.889376, -76.971950));
