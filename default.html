@@ -1,7 +1,8 @@
 <!DOCTYPE html>
-html>
+<html>
 <head>
 <title>Lincoln Memorial CaBi Trips</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <style>
 body {
   background-color: #000000;
@@ -327,6 +328,24 @@ function WashingtonMonument(lat, lng) {
   obeliskGeometry.faces.push(new THREE.Face3(5, 6, 8));
   obeliskGeometry.faces.push(new THREE.Face3(7, 4, 8));
   return makeMesh(obeliskGeometry, lat, lng);
+  }
+
+function ReevesBuilding(lat, lng) {
+  var geometry = new THREE.Geometry();
+  addBox(geometry, [13, 21, 74]);
+  addBox(geometry, [41, 18, 24], [21, 0, -29]);
+  addBox(geometry, [19, 18, 64], [3, 0, 15]);
+  addBox(geometry, [26, 18, 19], [-16.5, 0, 39.5]);
+  addBox(geometry, [23, 13.5, 48], [-18, 0,  6]);
+  addBox(geometry, [11, 13.5, 59], [ 12, 0,  17.5]);
+  addXRoofedBox(geometry, [6,  9, 6], 2, 0, [ -9.5, 0,  -21]);
+  addXRoofedBox(geometry, [6,  9, 6], 2, 0, [ -9.5, 0,  -27]);
+  addXRoofedBox(geometry, [9,  6, 6], 2, 0, [ -11, 0,  -27]);
+  addXRoofedBox(geometry, [9,  6, 6], 2, 0, [ -11, 0,  -33]);
+  for (var i = 0; i < 8; i++) {
+    addXRoofedBox(geometry, [6,  1.5, 6], 2, 0, [ -9.5, 13.5,  -15 + i*6]);  // rooftop triangles
+    }
+  return makeMesh(geometry, lat, lng);
   }
 
 function WhiteHouse(lat, lng) {
@@ -1083,6 +1102,7 @@ function init() {
   scene.add(ArlingtonHouse(       38.881178, -77.072647));
   scene.add(Airport(              38.853729, -77.043069));
   scene.add(NatlCathedral(        38.930615, -77.070781));
+  scene.add(ReevesBuilding(       38.917565, -77.032430));
   scene.add(ChinatownArch(        38.899820, -77.021703));
   scene.add(DupontFountain(       38.909662, -77.043415));
   scene.add(EisenhowerOffice(     38.897582, -77.038635));
