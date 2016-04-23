@@ -1,25 +1,20 @@
-/**
- * @author Jacek Jankowski / http://grey-eminence.org/
- */
+// Original version by Jacek Jankowski (http://grey-eminence.org/), inspired by OrbitControls.js
+// Demo: http://3dit.bordeaux.inria.fr/navigation_Map_Navigation.html
 
-// It is an adaptation of the three.js OrbitControls class to map environments
-
-MapControls = function ( object, renderFunction, domElement ) {
-
+MapControls = function (object, renderFunction, domElement) {
 	this.object = object;
 	this.domElement = ( domElement !== undefined ) ? domElement : document;
+	console.log(document.body.clientHeight);
 	this.render = renderFunction;
 	this.enabled = true;
 	this.target = new THREE.Vector3();
 	this.zoomSpeed = 1.0;
 	this.minDistance = 0;
-	this.maxDistance = Infinity;
+	this.maxDistance = 400;
 	this.rotateSpeed = 0.25;
-
 	// How far you can orbit vertically, upper and lower limits.
-	this.minPolarAngle = Math.PI*0.12; // radians
+	this.minPolarAngle = Math.PI*0.06; // radians
 	this.maxPolarAngle = Math.PI*0.48; // radians
-
 	// internals
 	var scope = this;
 	var EPS = 0.000001;
@@ -34,185 +29,115 @@ MapControls = function ( object, renderFunction, domElement ) {
 	var STATE = { NONE : -1, ROTATE : 0, DOLLY : 1, PAN : 2 };
 	var state = STATE.NONE;
 	var vector, projector, raycaster, intersects;
-
-
 	this.update = function () {
-
 		if ( lastPosition.distanceTo( this.object.position ) > 0 ) {
-
 			render();
 			lastPosition.copy( this.object.position );
-
 		}
-
 	};
 
-
 	function onMouseDown( event ) {
-
 		if ( scope.enabled === false ) { return; }
 		event.preventDefault();
-
 		if ( event.button === 0 ) {
-
 			state = STATE.PAN;
-
 			var mouseX = ( event.clientX / window.innerWidth ) * 2 - 1;
 			var mouseY = -( event.clientY / window.innerHeight ) * 2 + 1;
-
 			vector = new THREE.Vector3( mouseX, mouseY, camera.near );
 			//projector = new THREE.Projector();/
       vector.unproject(camera);
 			raycaster = new THREE.Raycaster( camera.position, vector.sub( camera.position ).normalize() );
 			intersects = raycaster.intersectObject( ground );
-
 			if ( intersects.length > 0 ) {
-
 				panStart = intersects[ 0 ].point;
-
 			}
-
 		} else if ( event.button === 2 ) {
-
 			state = STATE.ROTATE;
-
 			vector = new THREE.Vector3( 0, 0, camera.near );
-
 			//projector = new THREE.Projector();  // still need?
       vector.unproject(camera);
 			raycaster = new THREE.Raycaster( camera.position, vector.sub( camera.position ).normalize() );
 			intersects = raycaster.intersectObject( ground );
-
 			if ( intersects.length > 0 ) {
 				scope.target = intersects[ 0 ].point;
 			}
-
 			rotateStart.set( event.clientX, event.clientY );
-
 		}
-
 		scope.domElement.addEventListener( 'mousemove', onMouseMove, false );
 		scope.domElement.addEventListener( 'mouseup', onMouseUp, false );
-
 	}
 
 	function onMouseMove( event ) {
-
 		if ( scope.enabled === false ) return;
-
 		event.preventDefault();
-
-		var element = scope.domElement === document ? scope.domElement.body : scope.domElement;
-
 		if ( state === STATE.PAN ) {
-
 			var mouseX = ( event.clientX / window.innerWidth ) * 2 - 1;
 			var mouseY = -( event.clientY / window.innerHeight ) * 2 + 1;
-
 			vector = new THREE.Vector3( mouseX, mouseY, camera.near );
 			//projector = new THREE.Projector();
       vector.unproject(camera);
 			raycaster = new THREE.Raycaster( camera.position, vector.sub( camera.position ).normalize() );
 			intersects = raycaster.intersectObject(ground);
-
 			if ( intersects.length > 0 ) {
-
 				panDelta = intersects[ 0 ].point;
-
 				var delta = new THREE.Vector3();
 				delta.subVectors( panStart, panDelta );
-
 				scope.object.position.addVectors( scope.object.position, delta );
-
 			}
-
 		} else if ( state === STATE.ROTATE ) {
-
 			rotateEnd.set( event.clientX, event.clientY );
 			rotateDelta.subVectors( rotateEnd, rotateStart );
-
-			thetaDelta -=  2 * Math.PI * rotateDelta.x / element.clientWidth * scope.rotateSpeed;
-			phiDelta -=  2 * Math.PI * rotateDelta.y / element.clientHeight * scope.rotateSpeed;
-
+			thetaDelta -=  2 * Math.PI * rotateDelta.x / window.innerWidth * scope.rotateSpeed;
+			phiDelta -=  2 * Math.PI * rotateDelta.y / window.innerHeight * scope.rotateSpeed;
 			var position = scope.object.position;
 			var offset = position.clone().sub( scope.target );
-
 			// angle from z-axis around y-axis
 			var theta = Math.atan2( offset.x, offset.z );
-
 			// angle from y-axis
 			var phi = Math.atan2( Math.sqrt( offset.x * offset.x + offset.z * offset.z ), offset.y );
-
 			theta += thetaDelta;
 			phi += phiDelta;
-
 			// restrict phi to be between desired limits
 			phi = Math.max( scope.minPolarAngle, Math.min( scope.maxPolarAngle, phi ) );
-
 			// restrict phi to be betwee EPS and PI-EPS
 			phi = Math.max( EPS, Math.min( Math.PI - EPS, phi ) );
-
 			var radius = offset.length();
-
 			// restrict radius to be between desired limits
 			radius = Math.max( scope.minDistance, Math.min( scope.maxDistance, radius ) );
-
 			offset.x = radius * Math.sin( phi ) * Math.sin( theta );
 			offset.y = radius * Math.cos( phi );
 			offset.z = radius * Math.sin( phi ) * Math.cos( theta );
-
 			position.copy( scope.target ).add( offset );
-
 			scope.object.lookAt( scope.target );
-
 			thetaDelta = 0;
 			phiDelta = 0;
-
 			rotateStart.copy( rotateEnd );
-
 		}
-
 		scope.update();
-
 	}
 
 	function onMouseUp( /* event */ ) {
-
 		if ( scope.enabled === false ) return;
-
 		scope.domElement.removeEventListener( 'mousemove', onMouseMove, false );
 		scope.domElement.removeEventListener( 'mouseup', onMouseUp, false );
-
 		state = STATE.NONE;
-
 	}
 
 	function onMouseWheel( event ) {
-
 		if ( scope.enabled === false ) return;
-
 		var delta = 0;
-
 		if ( event.wheelDelta ) { // WebKit / Opera / Explorer 9
-
 			delta = event.wheelDelta;
-
 		} else if ( event.detail ) { // Firefox
-
 			delta = - event.detail;
-
 		}
-
 		var zoomOffset = new THREE.Vector3();
 		var te = scope.object.matrix.elements;
 		zoomOffset.set( te[8], te[9], te[10] );
 		zoomOffset.multiplyScalar( delta * -scope.zoomSpeed * scope.object.position.y/1000 );
 		scope.object.position.addVectors( scope.object.position, zoomOffset );
-
 	}
-
 	this.domElement.addEventListener( 'contextmenu', function ( event ) { event.preventDefault(); }, false );
 	this.domElement.addEventListener( 'mousedown', onMouseDown, false );
 	this.domElement.addEventListener( 'mousewheel', onMouseWheel, false );
-
 };
