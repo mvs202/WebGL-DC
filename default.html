@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Lincoln Memorial CaBi Trips</title>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>CaBi World</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <style>
 body {
   background-color: #000000;
@@ -52,8 +52,11 @@ canvas {
   background-color: rgba(255, 255, 255, 0.6);
   }
 </style>
-<script src="../../lib/three.min.js"></script>
+<script src="../../lib/three.js"></script>
 <script src="../../lib/Projector.js"></script>
+<!--
+<script src="../../lib/TrackballControls.js"></script>
+-->
 <script src="../../lib/MapControls.js"></script>
 </head>
 <body>
@@ -69,7 +72,62 @@ var worldWidth = 400;
 var worldHeight = 400;
 var lookingAt = {point: new THREE.Vector3(0, 0, 0), theta: 0};
 var cursor = {x: window.innerWidth/2, y: window.innerHeight/2};
-var LincolnTraffic = [{trips:0,name:"8th & F St NW",lat:38.896866,lng:-77.02291},{trips:0,name:"11th & K St NW",lat:38.90268,lng:-77.02674},{trips:0,name:"S Abingdon St & 36th St S",lat:38.834946,lng:-77.094},{trips:0,name:"White House [17th & State Pl NW]",lat:38.896496,lng:-77.03895},{trips:57,name:"20th & Bell St",lat:38.8561,lng:-77.0512},{trips:158,name:"18th & Eads St.",lat:38.85725,lng:-77.05332},{trips:407,name:"20th & Crystal Dr",lat:38.856213,lng:-77.04983},{trips:373,name:"15th & Crystal Dr",lat:38.86017,lng:-77.04959},{trips:82,name:"Aurora Hills Community Ctr/18th & Hayes St",lat:38.857864,lng:-77.05949},{trips:606,name:"Pentagon City Metro / 12th & S Hayes St",lat:38.862305,lng:-77.05994},{trips:609,name:"S Joyce & Army Navy Dr",lat:38.8637,lng:-77.0633},{trips:171,name:"Crystal City Metro / 18th & Bell St",lat:38.857063,lng:-77.05114},{trips:189,name:"12th & Army Navy Dr",lat:38.8629,lng:-77.0528},{trips:112,name:"27th & Crystal Dr",lat:38.848442,lng:-77.05151},{trips:71,name:"S Glebe & Potomac Ave",lat:38.8426,lng:-77.0502},{trips:120,name:"23rd & Crystal Dr",lat:38.8533,lng:-77.0498},{trips:34,name:"26th & S Clark St",lat:38.85069,lng:-77.05152},{trips:385,name:"19th St & Pennsylvania Ave NW",lat:38.9003,lng:-77.0429},{trips:218,name:"14th & V St NW",lat:38.9176,lng:-77.0321},{trips:37,name:"11th & Kenyon St NW",lat:38.929462,lng:-77.027824},{trips:130,name:"16th & Harvard St NW",lat:38.926086,lng:-77.03654},{trips:126,name:"Adams Mill & Columbia Rd NW",lat:38.922924,lng:-77.04258},{trips:79,name:"14th & Harvard St NW",lat:38.9268,lng:-77.0322},{trips:132,name:"Calvert & Biltmore St NW",lat:38.923203,lng:-77.04764},{trips:44,name:"Lamont & Mt Pleasant NW",lat:38.9319,lng:-77.0388},{trips:423,name:"4th & M St SW",lat:38.8767,lng:-77.0178},{trips:477,name:"15th & P St NW",lat:38.90985,lng:-77.03444},{trips:209,name:"14th & R St NW",lat:38.91268,lng:-77.03168},{trips:454,name:"14th & Rhode Island Ave NW",lat:38.9086,lng:-77.0323},{trips:525,name:"20th & E St NW",lat:38.8963,lng:-77.045},{trips:535,name:"21st & I St NW",lat:38.9008,lng:-77.047},{trips:10,name:"Georgia & New Hampshire Ave NW",lat:38.936043,lng:-77.02465},{trips:10,name:"14th St & Spring Rd NW",lat:38.9375,lng:-77.0328},{trips:5,name:"John McCormack Dr & Michigan Ave NE",lat:38.9346,lng:-76.9955},{trips:191,name:"5th & K St NW",lat:38.90304,lng:-77.01903},{trips:22,name:"19th & East Capitol St SE",lat:38.8896,lng:-76.9769},{trips:44,name:"Park Rd & Holmead Pl NW",lat:38.9308,lng:-77.0315},{trips:0,name:"Good Hope & Naylor Rd SE",lat:38.8601,lng:-76.9672},{trips:62,name:"Connecticut Ave & Newark St NW / Cleveland Park",lat:38.934265,lng:-77.057976},{trips:0,name:"Randle Circle & Minnesota Ave SE",lat:38.878,lng:-76.9607},{trips:1,name:"Minnesota Ave Metro/DOES",lat:38.897064,lng:-76.94745},{trips:0,name:"Nannie Helen Burroughs & Minnesota Ave NE",lat:38.901386,lng:-76.94188},{trips:0,name:"Anacostia Metro",lat:38.86267,lng:-76.99464},{trips:5,name:"Good Hope Rd & MLK Ave SE",lat:38.867374,lng:-76.98804},{trips:407,name:"19th & E Street NW",lat:38.8952,lng:-77.0436},{trips:8,name:"4th & W St NE",lat:38.91908,lng:-77.00065},{trips:50,name:"10th & U St NW",lat:38.9172,lng:-77.0259},{trips:8,name:"Georgia Ave and Fairmont St NW",lat:38.9249,lng:-77.0222},{trips:69,name:"1st & N St  SE",lat:38.8743,lng:-77.0057},{trips:250,name:"20th St & Florida Ave NW",lat:38.9154,lng:-77.0446},{trips:49,name:"7th & T St NW",lat:38.9155,lng:-77.0222},{trips:84,name:"23rd & Eads St",lat:38.85353,lng:-77.05351},{trips:91,name:"M St & New Jersey Ave SE",lat:38.8763,lng:-77.0037},{trips:1022,name:"Massachusetts Ave & Dupont Circle NW",lat:38.9101,lng:-77.0444},{trips:307,name:"1st & M St NE",lat:38.9057,lng:-77.0056},{trips:604,name:"21st & M St NW",lat:38.90534,lng:-77.046776},{trips:568,name:"17th & K St NW",lat:38.90276,lng:-77.03863},{trips:174,name:"3rd & H St NW",lat:38.899406,lng:-77.01529},{trips:308,name:"3rd & D St SE",lat:38.8851,lng:-77.0023},{trips:50,name:"Potomac & Pennsylvania Ave SE",lat:38.8803,lng:-76.9862},{trips:24,name:"14th & D St SE",lat:38.884,lng:-76.9861},{trips:264,name:"17th & Corcoran St NW",lat:38.9121,lng:-77.0387},{trips:40,name:"Van Ness Metro / UDC",lat:38.94455,lng:-77.063896},{trips:74,name:"Florida Ave & R St NW",lat:38.9126,lng:-77.0135},{trips:39,name:"8th & Eye St SE / Barracks Row",lat:38.8792,lng:-76.9953},{trips:27,name:"Ward Circle / American University",lat:38.938736,lng:-77.08717},{trips:32,name:"Wisconsin Ave & Newark St NW",lat:38.93488,lng:-77.072754},{trips:7,name:"14th St Heights / 14th & Crittenden St NW",lat:38.947773,lng:-77.03282},{trips:0,name:"Anacostia Library",lat:38.865784,lng:-76.9784},{trips:0,name:"Pennsylvania & Minnesota Ave SE",lat:38.87306,lng:-76.971016},{trips:147,name:"Eastern Market / 7th & North Carolina Ave SE",lat:38.88695,lng:-76.9968},{trips:688,name:"14th St & New York Ave NW",lat:38.89963,lng:-77.031685},{trips:0,name:"Benning Branch Library",lat:38.894,lng:-76.947975},{trips:1971,name:"USDA / 12th & Independence Ave SW",lat:38.887238,lng:-77.02823},{trips:2482,name:"Georgetown Harbor / 30th St NW",lat:38.90222,lng:-77.05922},{trips:5,name:"12th & Newton St NE",lat:38.933666,lng:-76.99101},{trips:422,name:"US Dept of State / Virginia Ave & 21st St NW",lat:38.89492,lng:-77.046585},{trips:1258,name:"L'Enfant Plaza / 7th & C St SW",lat:38.886265,lng:-77.02224},{trips:2333,name:"10th St & Constitution Ave NW",lat:38.89303,lng:-77.02602},{trips:463,name:"Kennedy Center",lat:38.897293,lng:-77.05557},{trips:287,name:"Eastern Market Metro / Pennsylvania Ave & 7th St SE",lat:38.884,lng:-76.9954},{trips:288,name:"18th & M St NW",lat:38.904743,lng:-77.0416},{trips:25,name:"Tenleytown / Wisconsin Ave & Albemarle St NW",lat:38.947605,lng:-77.079384},{trips:44,name:"13th & H St NE",lat:38.9003,lng:-76.9882},{trips:343,name:"5th & F St NW",lat:38.89722,lng:-77.01935},{trips:3735,name:"New York Ave & 15th St NW",lat:38.8991,lng:-77.0337},{trips:183,name:"Convention Center / 7th & M St NW",lat:38.90572,lng:-77.02226},{trips:189,name:"Harvard St & Adams Mill Rd NW",lat:38.92787,lng:-77.04336},{trips:198,name:"19th & L St NW",lat:38.903408,lng:-77.04365},{trips:1395,name:"C & O Canal & Wisconsin Ave NW",lat:38.90375,lng:-77.06269},{trips:300,name:"6th & Water St SW / SW Waterfront",lat:38.87675,lng:-77.02127},{trips:125,name:"D St & Maryland Ave NE",lat:38.894756,lng:-76.997116},{trips:103,name:"34th St & Wisconsin Ave NW",lat:38.916443,lng:-77.0682},{trips:372,name:"13th St & New York Ave NW",lat:38.900284,lng:-77.02982},{trips:727,name:"8th & H St NW",lat:38.8997,lng:-77.02309},{trips:3,name:"10th & Monroe St NE",lat:38.932514,lng:-76.99289},{trips:19,name:"Eckington Pl & Q St NE",lat:38.910973,lng:-77.00495},{trips:82,name:"6th & H St NE",lat:38.89997,lng:-76.998344},{trips:195,name:"3rd & H St NE",lat:38.900414,lng:-77.001945},{trips:14,name:"Bladensburg Rd & Benning Rd NE",lat:38.900414,lng:-76.98287},{trips:333,name:"4th & East Capitol St NE",lat:38.889954,lng:-77.00035},{trips:108,name:"Lincoln Park / 13th & East Capitol St NE ",lat:38.89046,lng:-76.98836},{trips:0,name:"Branch & Pennsylvania Ave SE",lat:38.8692,lng:-76.9599},{trips:41,name:"13th & D St NE",lat:38.894833,lng:-76.98763},{trips:232,name:"New Hampshire Ave & T St NW",lat:38.91554,lng:-77.03818},{trips:1087,name:"Metro Center / 12th & G St NW",lat:38.898365,lng:-77.02787},{trips:2231,name:"14th & D St NW / Ronald Reagan Building",lat:38.894512,lng:-77.03162},{trips:1117,name:"7th & F St NW / National Portrait Gallery",lat:38.89735,lng:-77.02247},{trips:695,name:"17th & K St NW / Farragut Square",lat:38.90206,lng:-77.03832},{trips:411,name:"20th & O St NW / Dupont South",lat:38.908905,lng:-77.04478},{trips:167,name:"4th & D St NW / Judiciary Square",lat:38.895344,lng:-77.016106},{trips:2948,name:"19th St & Constitution Ave NW",lat:38.8923,lng:-77.0436},{trips:555,name:"37th & O St NW / Georgetown University",lat:38.90774,lng:-77.071655},{trips:48,name:"11th & H St NE",lat:38.899982,lng:-76.99139},{trips:681,name:"25th St & Pennsylvania Ave NW",lat:38.903828,lng:-77.05348},{trips:955,name:"Columbus Circle / Union Station",lat:38.89696,lng:-77.00493},{trips:628,name:"North Capitol St & F St NW",lat:38.897446,lng:-77.00989},{trips:272,name:"11th & M St NW",lat:38.905605,lng:-77.02714},{trips:53,name:"36th & Calvert St NW / Glover Park",lat:38.92258,lng:-77.070335},{trips:1211,name:"14th & G St NW",lat:38.898067,lng:-77.03182},{trips:60,name:"Potomac Ave & 35th St S",lat:38.844013,lng:-77.05054},{trips:4900,name:"Ohio Dr & West Basin Dr SW / MLK & FDR Memorials",lat:38.88412,lng:-77.04657},{trips:529,name:"11th & F St NW",lat:38.897858,lng:-77.02698},{trips:695,name:"23rd & E St NW ",lat:38.896103,lng:-77.04988},{trips:1038,name:"Lynn & 19th St North",lat:38.897316,lng:-77.07099},{trips:711,name:"Rosslyn Metro / Wilson Blvd & Ft Myer Dr",lat:38.8946,lng:-77.0723},{trips:199,name:"Clarendon Blvd & Pierce St",lat:38.893646,lng:-77.0767},{trips:175,name:"Wilson Blvd & N Uhle St",lat:38.891697,lng:-77.0846},{trips:166,name:"N Rhodes & 16th St N",lat:38.892162,lng:-77.07938},{trips:0,name:"Fairfax Village",lat:38.86559,lng:-76.9521},{trips:1295,name:"21st St & Constitution Ave NW",lat:38.89246,lng:-77.04657},{trips:36,name:"Wilson Blvd & N Edgewood St",lat:38.889,lng:-77.0925},{trips:66,name:"Columbia Rd & Belmont St NW",lat:38.92067,lng:-77.04368},{trips:301,name:"17th & Rhode Island Ave NW",lat:38.9066,lng:-77.03879},{trips:841,name:"Thomas Circle",lat:38.9059,lng:-77.0325},{trips:55,name:"Wilson Blvd & Franklin Rd",lat:38.8904,lng:-77.0889},{trips:70,name:"Clarendon Blvd & N Fillmore St",lat:38.8881,lng:-77.09308},{trips:35,name:"Clarendon Metro / Wilson Blvd & N Highland St",lat:38.88786,lng:-77.09487},{trips:692,name:"18th St & Pennsylvania Ave NW",lat:38.89968,lng:-77.04154},{trips:3619,name:"Maryland & Independence Ave SW",lat:38.8873,lng:-77.018936},{trips:498,name:"4th & E St SW",lat:38.88412,lng:-77.01745},{trips:60,name:"3rd & G St SE",lat:38.881184,lng:-77.00183},{trips:58,name:"7th & R St NW / Shaw Library",lat:38.91272,lng:-77.022156},{trips:2,name:"9th & Upshur St NW",lat:38.9418,lng:-77.0251},{trips:45,name:"1st & Rhode Island Ave NW",lat:38.915417,lng:-77.01229},{trips:9,name:"Columbia Rd & Georgia Ave NW",lat:38.928158,lng:-77.02344},{trips:112,name:"California St & Florida Ave NW",lat:38.917763,lng:-77.04062},{trips:0,name:"Benning Rd & East Capitol St NE / Benning Rd Metro",lat:38.889935,lng:-76.93723},{trips:152,name:"3000 Connecticut Ave NW / National Zoo",lat:38.930283,lng:-77.055595},{trips:2,name:"Anacostia Ave & Benning Rd NE / River Terrace ",lat:38.896545,lng:-76.96012},{trips:1158,name:"M St & Pennsylvania Ave NW",lat:38.905125,lng:-77.056885},{trips:92,name:"15th St & Massachusetts Ave SE",lat:38.88732,lng:-76.98357},{trips:0,name:"Congress Heights Metro",lat:38.84471,lng:-76.98782},{trips:12,name:"N Quincy St & Glebe Rd",lat:38.876392,lng:-77.107735},{trips:30,name:"Wilson Blvd & N Oakland St",lat:38.8815,lng:-77.10396},{trips:52,name:"N Veitch  & 20th St N",lat:38.896923,lng:-77.0865},{trips:553,name:"10th & K St NW",lat:38.9024,lng:-77.02622},{trips:20,name:"Fairfax Dr & Wilson Blvd",lat:38.8858,lng:-77.09775},{trips:58,name:"Key Blvd & N Quinn St",lat:38.896015,lng:-77.07811},{trips:225,name:"1st & K St SE",lat:38.87861,lng:-77.006004},{trips:57,name:"39th & Calvert St NW / Stoddert",lat:38.92265,lng:-77.07727},{trips:1,name:"1st & Washington Hospital Center NW",lat:38.92874,lng:-77.01246},{trips:39,name:"Virginia Square Metro / N Monroe St & 9th St N",lat:38.88279,lng:-77.10315},{trips:64,name:"Central Library / N Quincy St & 10th St N",lat:38.88397,lng:-77.10783},{trips:43,name:"Washington Blvd & 10th St N",lat:38.884735,lng:-77.09348},{trips:15283,name:"Jefferson Dr & 14th St SW",lat:38.888554,lng:-77.03243},{trips:7802,name:"Smithsonian / Jefferson Dr & 12th St SW",lat:38.888767,lng:-77.02858},{trips:16,name:"George Mason Dr & Wilson Blvd",lat:38.87887,lng:-77.1207},{trips:958,name:"6th St & Indiana Ave NW",lat:38.894573,lng:-77.01994},{trips:34,name:"N Veitch & Key Blvd",lat:38.89324,lng:-77.086044},{trips:26,name:"N Adams St & Lee Hwy",lat:38.89593,lng:-77.089005},{trips:320,name:"15th & N Scott St",lat:38.89054,lng:-77.08095},{trips:21,name:"Washington Blvd & 7th St N",lat:38.880833,lng:-77.091125},{trips:55,name:"Ballston Metro / N Stuart & 9th St N",lat:38.881042,lng:-77.11177},{trips:102,name:"N Randolph St & Fairfax Dr",lat:38.88263,lng:-77.10937},{trips:11818,name:"Jefferson Memorial",lat:38.879818,lng:-77.037415},{trips:2,name:"Good Hope Rd & 14th St SE",lat:38.86661,lng:-76.98524},{trips:11,name:"Glebe Rd & 11th St N",lat:38.883923,lng:-77.11681},{trips:219,name:"N Quincy St & Wilson Blvd",lat:38.88015,lng:-77.10767},{trips:18,name:"Fairfax Dr & Kenmore St",lat:38.884617,lng:-77.10108},{trips:34,name:"Gallaudet / 8th St & Florida Ave NE",lat:38.90509,lng:-76.9941},{trips:271,name:"20th & L St NW",lat:38.903584,lng:-77.04479},{trips:166,name:"12th & L St NW",lat:38.90382,lng:-77.0284},{trips:335,name:"21st St & Pennsylvania Ave NW",lat:38.90154,lng:-77.04656},{trips:178,name:"19th & K St NW",lat:38.902203,lng:-77.04337},{trips:114,name:"Prince St & Union St",lat:38.803123,lng:-77.04036},{trips:67,name:"Market Square / King St & Royal St",lat:38.804718,lng:-77.043365},{trips:54,name:"Saint Asaph St & Pendleton  St",lat:38.81074,lng:-77.04466},{trips:7,name:"King St & Patrick St",lat:38.805317,lng:-77.04988},{trips:545,name:"15th & K St NW",lat:38.902,lng:-77.03353},{trips:11,name:"Commerce St & Fayette St",lat:38.80565,lng:-77.05293},{trips:4,name:"Henry St & Pendleton St",lat:38.811455,lng:-77.05028},{trips:17,name:"Braddock Rd Metro",lat:38.814575,lng:-77.05281},{trips:29,name:"King St Metro",lat:38.805767,lng:-77.06072},{trips:449,name:"24th & N St NW",lat:38.9066,lng:-77.05152},{trips:948,name:"10th & E St NW",lat:38.895912,lng:-77.02606},{trips:1293,name:"22nd & I St NW / Foggy Bottom",lat:38.90088,lng:-77.04891},{trips:21,name:"Utah St & 11th St N ",lat:38.88367,lng:-77.11391},{trips:68,name:"Barton St & 10th St N",lat:38.88496,lng:-77.08777},{trips:236,name:"Arlington Blvd & N Queen St",lat:38.889366,lng:-77.07729},{trips:11988,name:"Lincoln Memorial",lat:38.888252,lng:-77.04942},{trips:255,name:"20th St & Virginia Ave NW",lat:38.894722,lng:-77.04513},{trips:313,name:"5th St & Massachusetts Ave NW",lat:38.90093,lng:-77.01868},{trips:6,name:"39th & Veazey St NW",lat:38.943836,lng:-77.07708},{trips:4,name:"Fessenden St & Wisconsin Ave NW",lat:38.95481,lng:-77.08243},{trips:94,name:"M St & Delaware Ave NE",lat:38.90571,lng:-77.003044},{trips:218,name:"Columbia Pike & S Courthouse Rd",lat:38.863834,lng:-77.08032},{trips:2,name:"Walter Reed Community Center / Walter Reed Dr & 16th St S",lat:38.857803,lng:-77.08673},{trips:27,name:"28th St S & S Meade St",lat:38.846222,lng:-77.069275},{trips:145,name:"18th St & Wyoming Ave NW",lat:38.918808,lng:-77.04157},{trips:0,name:"5th & Kennedy St NW",lat:38.956596,lng:-77.01981},{trips:0,name:"Georgia Ave & Emerson St NW",lat:38.94966,lng:-77.027336},{trips:34,name:"14th & Upshur St NW",lat:38.942017,lng:-77.03265},{trips:4,name:"14th St & Colorado Ave NW",lat:38.956432,lng:-77.03294},{trips:17,name:"S Troy St & 26th St S",lat:38.847977,lng:-77.0751},{trips:21,name:"S Four Mile Run Dr & S Shirlington Rd",lat:38.8444,lng:-77.08593},{trips:8,name:"S Oakland St & Columbia Pike",lat:38.86079,lng:-77.09586},{trips:2,name:"S Four Mile Run & Walter Reed Dr",lat:38.84736,lng:-77.09543},{trips:62,name:"S Arlington Mill Dr & Campbell Ave",lat:38.84232,lng:-77.089554},{trips:1,name:"S Kenmore & 24th St S",lat:38.848454,lng:-77.084915},{trips:0,name:"13th St & Eastern Ave",lat:38.987,lng:-77.02942},{trips:426,name:"Wisconsin Ave & O St NW",lat:38.90849,lng:-77.06358},{trips:2,name:"S George Mason Dr & 13th St S",lat:38.85469,lng:-77.100555},{trips:6,name:"Connecticut & Nebraska Ave NW",lat:38.955017,lng:-77.069954},{trips:222,name:"17th St & Massachusetts Ave NW",lat:38.908142,lng:-77.03836},{trips:57,name:"15th & Euclid St  NW",lat:38.92333,lng:-77.0352},{trips:295,name:"8th & East Capitol St NE",lat:38.889988,lng:-76.99519},{trips:34,name:"New Jersey Ave & R St NW",lat:38.91266,lng:-77.01767},{trips:78,name:"15th & East Capitol St NE",lat:38.889908,lng:-76.98333},{trips:99,name:"8th & F St NE",lat:38.897274,lng:-76.99475},{trips:0,name:"18th St & Rhode Island Ave NE",lat:38.927094,lng:-76.97893},{trips:17,name:"15th & F St NE",lat:38.897194,lng:-76.983574},{trips:1,name:"12th & Irving St NE",lat:38.928642,lng:-76.99095},{trips:0,name:"34th St & Minnesota Ave SE",lat:38.884087,lng:-76.95746},{trips:0,name:"Alabama & MLK Ave SE",lat:38.843224,lng:-76.99939},{trips:0,name:"Pleasant St & MLK Ave SE",lat:38.863895,lng:-76.990036},{trips:18,name:"Neal St & Trinidad Ave NE",lat:38.903732,lng:-76.98721},{trips:112,name:"12th & U St NW",lat:38.916786,lng:-77.02814},{trips:3,name:"S George Mason Dr & Four Mile Run",lat:38.85225,lng:-77.10502},{trips:1,name:"S Stafford & 34th St S",lat:38.834106,lng:-77.087326},{trips:74,name:"N Pershing Dr & Wayne St",lat:38.880707,lng:-77.08596},{trips:448,name:"Columbia Pike & S Orme St",lat:38.867264,lng:-77.07231},{trips:645,name:"3rd St & Pennsylvania Ave SE",lat:38.88738,lng:-77.00195},{trips:1104,name:"8th & D St NW",lat:38.89485,lng:-77.02324},{trips:28,name:"3rd & Elm St NW",lat:38.91762,lng:-77.01597},{trips:10,name:"Rhode Island Ave & V St NE",lat:38.918156,lng:-77.004745},{trips:2134,name:"Constitution Ave & 2nd St NW/DOL",lat:38.892277,lng:-77.013916},{trips:1810,name:"Washington & Independence Ave SW/HHS",lat:38.88731,lng:-77.01397},{trips:672,name:"Independence Ave & L'Enfant Plaza SW/DOE",lat:38.887314,lng:-77.025764},{trips:1,name:"Hamlin & 7th St NE",lat:38.927498,lng:-76.99719},{trips:56,name:"Columbia Pike & S Walter Reed Dr",lat:38.862476,lng:-77.0866},{trips:1,name:"Columbia Pike & S Dinwiddie St / Arlington Mill Community Center",lat:38.85632,lng:-77.11153},{trips:9,name:"Pershing & N George Mason Dr",lat:38.871822,lng:-77.1079},{trips:0,name:"Fenton St & New York Ave ",lat:38.985405,lng:-77.02308},{trips:15,name:"Bethesda Ave & Arlington Rd",lat:38.981102,lng:-77.09743},{trips:6,name:"Montgomery Ave & Waverly St ",lat:38.983837,lng:-77.09221},{trips:0,name:"Fallsgrove Blvd & Fallsgrove Dr",lat:39.096313,lng:-77.19267},{trips:0,name:"Traville Gateway Dr & Gudelsky Dr",lat:39.093784,lng:-77.2025},{trips:0,name:"Norfolk Ave & Fairmont St",lat:38.988564,lng:-77.09654},{trips:0,name:"E Montgomery Ave & Maryland Ave",lat:39.084126,lng:-77.15129},{trips:3,name:"Cordell & Norfolk Ave",lat:38.98954,lng:-77.09803},{trips:0,name:"Frederick Ave & Horners Ln",lat:39.094772,lng:-77.14521},{trips:0,name:"Philadelphia & Maple Ave",lat:38.98128,lng:-77.01134},{trips:0,name:"Maple & Ritchie Ave",lat:38.983627,lng:-77.00631},{trips:0,name:"Silver Spring Metro/Colesville Rd & Wayne Ave",lat:38.99521,lng:-77.02918},{trips:14,name:"Montgomery & East Ln",lat:38.983524,lng:-77.09537},{trips:7,name:"Friendship Hts Metro/Wisconsin Ave & Wisconsin Cir",lat:38.96176,lng:-77.086},{trips:83,name:"14th & Belmont St NW",lat:38.921074,lng:-77.03188},{trips:77,name:"3rd & Tingey St SE",lat:38.87501,lng:-77.0024},{trips:7,name:"10th & Florida Ave NW",lat:38.920387,lng:-77.02567},{trips:7,name:"Potomac Ave & 8th St SE",lat:38.876736,lng:-76.99447},{trips:0,name:"Crabbs Branch Way & Redland Rd",lat:39.120045,lng:-77.15698},{trips:0,name:"Fallsgrove Dr & W Montgomery Ave",lat:39.099377,lng:-77.18801},{trips:0,name:"Monroe St & Monroe Pl",lat:39.08278,lng:-77.14883},{trips:0,name:"Needwood Rd & Eagles Head Ct",lat:39.123512,lng:-77.15741},{trips:0,name:"East West Hwy & Blair Mill Rd",lat:38.99025,lng:-77.02935},{trips:0,name:"Crabbs Branch Way & Calhoun Pl",lat:39.107708,lng:-77.15207},{trips:10,name:"47th & Elm St",lat:38.982456,lng:-77.09199},{trips:0,name:"Garland Ave & Walden Rd",lat:39.00058,lng:-77.00149},{trips:0,name:"Montgomery College/W Campus Dr & Mannakee St",lat:39.09566,lng:-77.15905},{trips:0,name:"Fenton St & Gist Ave",lat:38.989723,lng:-77.02386},{trips:2,name:"Carroll & Westmoreland Ave",lat:38.975,lng:-77.01121},{trips:1,name:"Carroll & Ethan Allen Ave",lat:38.977932,lng:-77.00647},{trips:4,name:"Battery Ln & Trolley Trail",lat:38.992374,lng:-77.100105},{trips:0,name:"Norfolk & Rugby Ave",lat:38.99064,lng:-77.10024},{trips:5,name:"Offutt Ln & Chevy Chase Dr",lat:38.977093,lng:-77.09459},{trips:0,name:"Broschart & Blackwell Rd",lat:39.1021,lng:-77.200325},{trips:0,name:"Taft St & E Gude Dr",lat:39.094105,lng:-77.13296},{trips:0,name:"Fleet St & Ritchie Pkwy",lat:39.076332,lng:-77.14138},{trips:0,name:"Piccard & W Gude Dr",lat:39.10221,lng:-77.17709},{trips:0,name:"Ripley & Bonifant St",lat:38.99268,lng:-77.02946},{trips:0,name:"Georgia Ave & Spring St",lat:38.99939,lng:-77.031555},{trips:0,name:"Fenton St & Ellsworth Dr ",lat:38.997032,lng:-77.025604},{trips:0,name:"King Farm Blvd & Pleasant Dr",lat:39.11469,lng:-77.171486},{trips:0,name:"King Farm Blvd & Piccard Dr",lat:39.110313,lng:-77.18267},{trips:391,name:"Calvert St & Woodley Pl NW",lat:38.923584,lng:-77.05005},{trips:47,name:"New Jersey Ave & N St NW/Dunbar HS",lat:38.90706,lng:-77.01523},{trips:1,name:"Nannie Helen Burroughs Ave & 49th St NE",lat:38.898537,lng:-76.93186},{trips:0,name:"Deanwood Rec Center",lat:38.908474,lng:-76.9331},{trips:377,name:"Hains Point/Buckeye & Ohio Dr SW",lat:38.878433,lng:-77.03023},{trips:10,name:"Arlington Blvd & Fillmore St",lat:38.873756,lng:-77.08923},{trips:160,name:"Long Bridge Park/Long Bridge Dr & 6th St S",lat:38.86646,lng:-77.04826},{trips:0,name:"Old Georgetown Rd & Southwick St",lat:38.999634,lng:-77.10965},{trips:1,name:"Friendship Blvd & Willard Ave",lat:38.96115,lng:-77.08866},{trips:134,name:"North Capitol St & G Pl NE",lat:38.899704,lng:-77.00891},{trips:3,name:"31st & Woodrow St S",lat:38.837666,lng:-77.09482},{trips:49,name:"Washington Blvd & Walter Reed Dr ",lat:38.87322,lng:-77.08211},{trips:81,name:"TJ Cmty Ctr / 2nd St & S Old Glebe Rd",lat:38.86942,lng:-77.0956},{trips:110,name:"Connecticut Ave & Tilden St NW",lat:38.941154,lng:-77.062035},{trips:0,name:"Medical Center Dr & Key West Ave",lat:39.103092,lng:-77.19644},{trips:0,name:"Shady Grove Hospital",lat:39.097637,lng:-77.19663},{trips:0,name:"Veterans Pl & Pershing Dr ",lat:38.997444,lng:-77.023895},{trips:0,name:"Rockville Metro East",lat:39.085396,lng:-77.145805},{trips:249,name:"1st & H St NW",lat:38.900356,lng:-77.01211},{trips:0,name:"Fort Totten Metro",lat:38.95237,lng:-77.00272},{trips:0,name:"Takoma Metro",lat:38.97522,lng:-77.01685},{trips:4,name:"Rhode Island Ave Metro",lat:38.92068,lng:-76.99587},{trips:118,name:"Rolfe St & 9th St S",lat:38.86647,lng:-77.07613},{trips:8,name:"Shirlington Transit Center / S Quincy & Randolph St",lat:38.839912,lng:-77.08708},{trips:0,name:"Shady Grove Metro West",lat:39.119766,lng:-77.16609},{trips:9,name:"River Rd & Landy Ln",lat:38.964993,lng:-77.10338},{trips:0,name:"Rockville Metro West",lat:39.084377,lng:-77.146866},{trips:11,name:"Bethesda Metro",lat:38.98469,lng:-77.094536},{trips:3482,name:"Iwo Jima Memorial/N Meade & 14th St N",lat:38.88992,lng:-77.071304},{trips:983,name:"34th & Water St NW",lat:38.903584,lng:-77.06779},{trips:10,name:"Duke St & John Carlyle St",lat:38.80438,lng:-77.06087},{trips:16,name:"Lee Hwy & N Cleveland St",lat:38.89494,lng:-77.09169},{trips:5,name:"Arlington Blvd & S George Mason Dr/NFATC",lat:38.869442,lng:-77.1045},{trips:421,name:"MLK Library/9th & G St NW",lat:38.898403,lng:-77.024284},{trips:90,name:"Lee Hwy & N Scott St",lat:38.897614,lng:-77.08085},{trips:624,name:"New Hampshire Ave & 24th St NW",lat:38.901756,lng:-77.05109},{trips:6,name:"Eisenhower Ave & Mill Race Ln",lat:38.80111,lng:-77.068954},{trips:19,name:"Potomac Greens Dr & Slaters Ln",lat:38.82175,lng:-77.04749},{trips:11,name:"Ballenger Ave & Dulaney St",lat:38.802677,lng:-77.06356},{trips:1,name:"Mount Vernon Ave & E Nelson Ave",lat:38.820065,lng:-77.05762},{trips:10,name:"Mount Vernon Ave & E Del Ray Ave",lat:38.82595,lng:-77.05854},{trips:10,name:"Monroe Ave & Leslie Ave",lat:38.82093,lng:-77.05309},{trips:9,name:"Mount Vernon Ave & Kennedy St",lat:38.833076,lng:-77.05982},{trips:215,name:"Court House Metro / 15th & N Uhle St ",lat:38.890614,lng:-77.0848},{trips:0,name:"Washington Adventist U / Flower Ave & Division St",lat:38.986744,lng:-77.00004},{trips:23,name:"6th & S Ball St",lat:38.8647,lng:-77.048676},{trips:0,name:"McKinley St & Connecticut Ave NW",lat:38.96497,lng:-77.07594},{trips:508,name:"15th & L St NW",lat:38.90366,lng:-77.03484},{trips:3288,name:"17th & G St NW",lat:38.89841,lng:-77.03963},{trips:2,name:"Spring St & Second Ave",lat:38.997654,lng:-77.0345},{trips:143,name:"18th & R St NW",lat:38.912647,lng:-77.04183},{trips:197,name:"S Joyce & 16th St S",lat:38.859253,lng:-77.06328},{trips:24,name:"Union Market/6th St & Neal Pl NE",lat:38.90801,lng:-76.99699},{trips:12,name:"N Nelson St & Lee Hwy",lat:38.895927,lng:-77.10525},{trips:22,name:"21st St N & N Pierce St",lat:38.898983,lng:-77.078316},{trips:9,name:"Lee Hwy & N Kirkwood Rd",lat:38.89538,lng:-77.09713},{trips:267,name:"19th & G St NW",lat:38.89841,lng:-77.04318},{trips:67,name:"Army Navy Dr & S Nash St",lat:38.86247,lng:-77.068245},{trips:52,name:"11th & S St NW",lat:38.91376,lng:-77.02702},{trips:9,name:"S Walter Reed Dr & 8th St S",lat:38.86612,lng:-77.08787},{trips:64,name:"2nd & G St NE",lat:38.89967,lng:-77.00367},{trips:48,name:"8th & O St NW",lat:38.90864,lng:-77.02277},{trips:0,name:"Georgia & Missouri Ave NW",lat:38.961338,lng:-77.027855},{trips:2,name:"Oklahoma Ave & D St NE",lat:38.894474,lng:-76.97483},{trips:6,name:"Maryland Ave & E St NE",lat:38.896133,lng:-76.9929},{trips:0,name:"New York Ave & Hecht Ave NE",lat:38.915604,lng:-76.98368}];
+var LincolnTraffic = [{trips:2,name:"8th & F St NW",id:"31232",lat:38.896866,lng:-77.02291},{trips:1,name:"11th & K St NW",id:"31263",lat:38.90268,lng:-77.02674},{trips:0,name:"S Abingdon St & 36th St S",id:"39999",lat:38.834946,lng:-77.094},{trips:0,name:"White House [17th & State Pl NW]",id:"1",lat:38.896496,lng:-77.03895},{trips:0,name:"20th & Bell St",id:"31000",lat:38.8561,lng:-77.0512},{trips:1,name:"18th & Eads St.",id:"31001",lat:38.85725,lng:-77.05332},{trips:4,name:"20th & Crystal Dr",id:"31002",lat:38.856213,lng:-77.04983},{trips:1,name:"15th & Crystal Dr",id:"31003",lat:38.86017,lng:-77.04959},{trips:0,name:"Aurora Hills Community Ctr/18th & Hayes St",id:"31004",lat:38.857864,lng:-77.05949},{trips:3,name:"Pentagon City Metro / 12th & S Hayes St",id:"31005",lat:38.862305,lng:-77.05994},{trips:9,name:"S Joyce & Army Navy Dr",id:"31006",lat:38.8637,lng:-77.0633},{trips:1,name:"Crystal City Metro / 18th & Bell St",id:"31007",lat:38.857063,lng:-77.05114},{trips:1,name:"12th & Army Navy Dr",id:"31008",lat:38.8629,lng:-77.0528},{trips:0,name:"27th & Crystal Dr",id:"31009",lat:38.848442,lng:-77.05151},{trips:3,name:"S Glebe & Potomac Ave",id:"31010",lat:38.8426,lng:-77.0502},{trips:2,name:"23rd & Crystal Dr",id:"31011",lat:38.8533,lng:-77.0498},{trips:0,name:"26th & S Clark St",id:"31012",lat:38.85069,lng:-77.05152},{trips:4,name:"19th St & Pennsylvania Ave NW",id:"31100",lat:38.9003,lng:-77.0429},{trips:2,name:"14th & V St NW",id:"31101",lat:38.9176,lng:-77.0321},{trips:0,name:"11th & Kenyon St NW",id:"31102",lat:38.929462,lng:-77.027824},{trips:1,name:"16th & Harvard St NW",id:"31103",lat:38.926086,lng:-77.03654},{trips:1,name:"Adams Mill & Columbia Rd NW",id:"31104",lat:38.922924,lng:-77.04258},{trips:0,name:"14th & Harvard St NW",id:"31105",lat:38.9268,lng:-77.0322},{trips:0,name:"Calvert & Biltmore St NW",id:"31106",lat:38.923203,lng:-77.04764},{trips:0,name:"Lamont & Mt Pleasant NW",id:"31107",lat:38.9319,lng:-77.0388},{trips:0,name:"4th & M St SW",id:"31108",lat:38.8767,lng:-77.0178},{trips:9,name:"15th & P St NW",id:"31201",lat:38.90985,lng:-77.03444},{trips:0,name:"14th & R St NW",id:"31202",lat:38.91268,lng:-77.03168},{trips:1,name:"14th & Rhode Island Ave NW",id:"31203",lat:38.9086,lng:-77.0323},{trips:5,name:"20th & E St NW",id:"31204",lat:38.8963,lng:-77.045},{trips:2,name:"21st & I St NW",id:"31205",lat:38.9008,lng:-77.047},{trips:0,name:"Georgia & New Hampshire Ave NW",id:"31400",lat:38.936043,lng:-77.02465},{trips:0,name:"14th St & Spring Rd NW",id:"31401",lat:38.9375,lng:-77.0328},{trips:0,name:"John McCormack Dr & Michigan Ave NE",id:"31502",lat:38.9346,lng:-76.9955},{trips:0,name:"5th & K St NW",id:"31600",lat:38.90304,lng:-77.01903},{trips:0,name:"19th & East Capitol St SE",id:"31601",lat:38.8896,lng:-76.9769},{trips:0,name:"Park Rd & Holmead Pl NW",id:"31602",lat:38.9308,lng:-77.0315},{trips:0,name:"Good Hope & Naylor Rd SE",id:"31700",lat:38.8601,lng:-76.9672},{trips:0,name:"Connecticut Ave & Newark St NW / Cleveland Park",id:"31305",lat:38.934265,lng:-77.057976},{trips:0,name:"Randle Circle & Minnesota Ave SE",id:"31702",lat:38.878,lng:-76.9607},{trips:0,name:"Minnesota Ave Metro/DOES",id:"31703",lat:38.897064,lng:-76.94745},{trips:0,name:"Nannie Helen Burroughs & Minnesota Ave NE",id:"31704",lat:38.901386,lng:-76.94188},{trips:0,name:"Anacostia Metro",id:"31801",lat:38.86267,lng:-76.99464},{trips:0,name:"Good Hope Rd & MLK Ave SE",id:"31802",lat:38.867374,lng:-76.98804},{trips:0,name:"19th & E Street NW",id:"31206",lat:38.8952,lng:-77.0436},{trips:0,name:"4th & W St NE",id:"31500",lat:38.91908,lng:-77.00065},{trips:0,name:"10th & U St NW",id:"31111",lat:38.9172,lng:-77.0259},{trips:0,name:"Georgia Ave and Fairmont St NW",id:"31207",lat:38.9249,lng:-77.0222},{trips:1,name:"1st & N St  SE",id:"31209",lat:38.8743,lng:-77.0057},{trips:0,name:"20th St & Florida Ave NW",id:"31110",lat:38.9154,lng:-77.0446},{trips:1,name:"7th & T St NW",id:"31109",lat:38.9155,lng:-77.0222},{trips:0,name:"23rd & Eads St",id:"31013",lat:38.85353,lng:-77.05351},{trips:0,name:"M St & New Jersey Ave SE",id:"31208",lat:38.8763,lng:-77.0037},{trips:9,name:"Massachusetts Ave & Dupont Circle NW",id:"31200",lat:38.9101,lng:-77.0444},{trips:1,name:"1st & M St NE",id:"31603",lat:38.9057,lng:-77.0056},{trips:2,name:"21st & M St NW",id:"31212",lat:38.90534,lng:-77.046776},{trips:2,name:"17th & K St NW",id:"31213",lat:38.90276,lng:-77.03863},{trips:0,name:"3rd & H St NW",id:"31604",lat:38.899406,lng:-77.01529},{trips:1,name:"3rd & D St SE",id:"31605",lat:38.8851,lng:-77.0023},{trips:0,name:"Potomac & Pennsylvania Ave SE",id:"31606",lat:38.8803,lng:-76.9862},{trips:0,name:"14th & D St SE",id:"31607",lat:38.884,lng:-76.9861},{trips:3,name:"17th & Corcoran St NW",id:"31214",lat:38.9121,lng:-77.0387},{trips:0,name:"Van Ness Metro / UDC",id:"31300",lat:38.94455,lng:-77.063896},{trips:0,name:"Florida Ave & R St NW",id:"31503",lat:38.9126,lng:-77.0135},{trips:0,name:"8th & Eye St SE / Barracks Row",id:"31608",lat:38.8792,lng:-76.9953},{trips:0,name:"Ward Circle / American University",id:"31301",lat:38.938736,lng:-77.08717},{trips:0,name:"Wisconsin Ave & Newark St NW",id:"31302",lat:38.93488,lng:-77.072754},{trips:0,name:"14th St Heights / 14th & Crittenden St NW",id:"31402",lat:38.947773,lng:-77.03282},{trips:0,name:"Anacostia Library",id:"31804",lat:38.865784,lng:-76.9784},{trips:0,name:"Pennsylvania & Minnesota Ave SE",id:"31805",lat:38.87306,lng:-76.971016},{trips:0,name:"Eastern Market / 7th & North Carolina Ave SE",id:"31610",lat:38.88695,lng:-76.9968},{trips:3,name:"14th St & New York Ave NW",id:"31216",lat:38.89963,lng:-77.031685},{trips:0,name:"Benning Branch Library",id:"31705",lat:38.894,lng:-76.947975},{trips:5,name:"USDA / 12th & Independence Ave SW",id:"31217",lat:38.887238,lng:-77.02823},{trips:11,name:"Georgetown Harbor / 30th St NW",id:"31215",lat:38.90222,lng:-77.05922},{trips:0,name:"12th & Newton St NE",id:"31501",lat:38.933666,lng:-76.99101},{trips:1,name:"US Dept of State / Virginia Ave & 21st St NW",id:"31220",lat:38.89492,lng:-77.046585},{trips:8,name:"L'Enfant Plaza / 7th & C St SW",id:"31218",lat:38.886265,lng:-77.02224},{trips:5,name:"10th St & Constitution Ave NW",id:"31219",lat:38.89303,lng:-77.02602},{trips:0,name:"Kennedy Center",id:"31211",lat:38.897293,lng:-77.05557},{trips:1,name:"Eastern Market Metro / Pennsylvania Ave & 7th St SE",id:"31613",lat:38.884,lng:-76.9954},{trips:2,name:"18th & M St NW",id:"31221",lat:38.904743,lng:-77.0416},{trips:0,name:"Tenleytown / Wisconsin Ave & Albemarle St NW",id:"31303",lat:38.947605,lng:-77.079384},{trips:0,name:"13th & H St NE",id:"31611",lat:38.9003,lng:-76.9882},{trips:1,name:"5th & F St NW",id:"31620",lat:38.89722,lng:-77.01935},{trips:11,name:"New York Ave & 15th St NW",id:"31222",lat:38.8991,lng:-77.0337},{trips:0,name:"Convention Center / 7th & M St NW",id:"31223",lat:38.90572,lng:-77.02226},{trips:1,name:"Harvard St & Adams Mill Rd NW",id:"31112",lat:38.92787,lng:-77.04336},{trips:2,name:"19th & L St NW",id:"31224",lat:38.903408,lng:-77.04365},{trips:6,name:"C & O Canal & Wisconsin Ave NW",id:"31225",lat:38.90375,lng:-77.06269},{trips:2,name:"6th & Water St SW / SW Waterfront",id:"31609",lat:38.87675,lng:-77.02127},{trips:0,name:"D St & Maryland Ave NE",id:"31612",lat:38.894756,lng:-76.997116},{trips:0,name:"34th St & Wisconsin Ave NW",id:"31226",lat:38.916443,lng:-77.0682},{trips:0,name:"13th St & New York Ave NW",id:"31227",lat:38.900284,lng:-77.02982},{trips:0,name:"8th & H St NW",id:"31228",lat:38.8997,lng:-77.02309},{trips:2,name:"10th & Monroe St NE",id:"31504",lat:38.932514,lng:-76.99289},{trips:0,name:"Eckington Pl & Q St NE",id:"31505",lat:38.910973,lng:-77.00495},{trips:0,name:"6th & H St NE",id:"31615",lat:38.89997,lng:-76.998344},{trips:2,name:"3rd & H St NE",id:"31616",lat:38.900414,lng:-77.001945},{trips:1,name:"Bladensburg Rd & Benning Rd NE",id:"31617",lat:38.900414,lng:-76.98287},{trips:5,name:"4th & East Capitol St NE",id:"31618",lat:38.889954,lng:-77.00035},{trips:0,name:"Lincoln Park / 13th & East Capitol St NE ",id:"31619",lat:38.89046,lng:-76.98836},{trips:0,name:"Branch & Pennsylvania Ave SE",id:"31701",lat:38.8692,lng:-76.9599},{trips:0,name:"13th & D St NE",id:"31622",lat:38.894833,lng:-76.98763},{trips:0,name:"New Hampshire Ave & T St NW",id:"31229",lat:38.91554,lng:-77.03818},{trips:7,name:"Metro Center / 12th & G St NW",id:"31230",lat:38.898365,lng:-77.02787},{trips:11,name:"14th & D St NW / Ronald Reagan Building",id:"31231",lat:38.894512,lng:-77.03162},{trips:0,name:"7th & F St NW / National Portrait Gallery",id:"31232",lat:38.89735,lng:-77.02247},{trips:2,name:"17th & K St NW / Farragut Square",id:"31233",lat:38.90206,lng:-77.03832},{trips:6,name:"20th & O St NW / Dupont South",id:"31234",lat:38.908905,lng:-77.04478},{trips:0,name:"4th & D St NW / Judiciary Square",id:"31621",lat:38.895344,lng:-77.016106},{trips:7,name:"19th St & Constitution Ave NW",id:"31235",lat:38.8923,lng:-77.0436},{trips:1,name:"37th & O St NW / Georgetown University",id:"31236",lat:38.90774,lng:-77.071655},{trips:0,name:"11th & H St NE",id:"31614",lat:38.899982,lng:-76.99139},{trips:5,name:"25th St & Pennsylvania Ave NW",id:"31237",lat:38.903828,lng:-77.05348},{trips:9,name:"Columbus Circle / Union Station",id:"31623",lat:38.89696,lng:-77.00493},{trips:2,name:"North Capitol St & F St NW",id:"31624",lat:38.897446,lng:-77.00989},{trips:1,name:"11th & M St NW",id:"31266",lat:38.905605,lng:-77.02714},{trips:0,name:"36th & Calvert St NW / Glover Park",id:"31304",lat:38.92258,lng:-77.070335},{trips:3,name:"14th & G St NW",id:"31238",lat:38.898067,lng:-77.03182},{trips:0,name:"Potomac Ave & 35th St S",id:"31052",lat:38.844013,lng:-77.05054},{trips:13,name:"Ohio Dr & West Basin Dr SW / MLK & FDR Memorials",id:"31240",lat:38.88412,lng:-77.04657},{trips:12,name:"11th & F St NW",id:"31262",lat:38.897858,lng:-77.02698},{trips:1,name:"23rd & E St NW ",id:"31260",lat:38.896103,lng:-77.04988},{trips:5,name:"Lynn & 19th St North",id:"31014",lat:38.897316,lng:-77.07099},{trips:7,name:"Rosslyn Metro / Wilson Blvd & Ft Myer Dr",id:"31015",lat:38.8946,lng:-77.0723},{trips:0,name:"Clarendon Blvd & Pierce St",id:"31016",lat:38.893646,lng:-77.0767},{trips:4,name:"Wilson Blvd & N Uhle St",id:"31017",lat:38.891697,lng:-77.0846},{trips:2,name:"N Rhodes & 16th St N",id:"31018",lat:38.892162,lng:-77.07938},{trips:0,name:"Fairfax Village",id:"31706",lat:38.86559,lng:-76.9521},{trips:9,name:"21st St & Constitution Ave NW",id:"31261",lat:38.89246,lng:-77.04657},{trips:1,name:"Wilson Blvd & N Edgewood St",id:"31019",lat:38.889,lng:-77.0925},{trips:0,name:"Columbia Rd & Belmont St NW",id:"31113",lat:38.92067,lng:-77.04368},{trips:1,name:"17th & Rhode Island Ave NW",id:"31239",lat:38.9066,lng:-77.03879},{trips:7,name:"Thomas Circle",id:"31241",lat:38.9059,lng:-77.0325},{trips:0,name:"Wilson Blvd & Franklin Rd",id:"31020",lat:38.8904,lng:-77.0889},{trips:1,name:"Clarendon Blvd & N Fillmore St",id:"31021",lat:38.8881,lng:-77.09308},{trips:0,name:"Clarendon Metro / Wilson Blvd & N Highland St",id:"31022",lat:38.88786,lng:-77.09487},{trips:2,name:"18th St & Pennsylvania Ave NW",id:"31242",lat:38.89968,lng:-77.04154},{trips:12,name:"Maryland & Independence Ave SW",id:"31243",lat:38.8873,lng:-77.018936},{trips:14,name:"4th & E St SW",id:"31244",lat:38.88412,lng:-77.01745},{trips:0,name:"3rd & G St SE",id:"31625",lat:38.881184,lng:-77.00183},{trips:0,name:"7th & R St NW / Shaw Library",id:"31245",lat:38.91272,lng:-77.022156},{trips:0,name:"9th & Upshur St NW",id:"31404",lat:38.9418,lng:-77.0251},{trips:0,name:"1st & Rhode Island Ave NW",id:"31506",lat:38.915417,lng:-77.01229},{trips:0,name:"Columbia Rd & Georgia Ave NW",id:"31115",lat:38.928158,lng:-77.02344},{trips:0,name:"California St & Florida Ave NW",id:"31116",lat:38.917763,lng:-77.04062},{trips:0,name:"Benning Rd & East Capitol St NE / Benning Rd Metro",id:"31707",lat:38.889935,lng:-76.93723},{trips:1,name:"3000 Connecticut Ave NW / National Zoo",id:"31307",lat:38.930283,lng:-77.055595},{trips:0,name:"Anacostia Ave & Benning Rd NE / River Terrace ",id:"31708",lat:38.896545,lng:-76.96012},{trips:4,name:"M St & Pennsylvania Ave NW",id:"31246",lat:38.905125,lng:-77.056885},{trips:1,name:"15th St & Massachusetts Ave SE",id:"31626",lat:38.88732,lng:-76.98357},{trips:0,name:"Congress Heights Metro",id:"31806",lat:38.84471,lng:-76.98782},{trips:0,name:"N Quincy St & Glebe Rd",id:"31035",lat:38.876392,lng:-77.107735},{trips:0,name:"Wilson Blvd & N Oakland St",id:"31033",lat:38.8815,lng:-77.10396},{trips:0,name:"N Veitch  & 20th St N",id:"31029",lat:38.896923,lng:-77.0865},{trips:0,name:"10th & K St NW",id:"31263",lat:38.9024,lng:-77.02622},{trips:0,name:"Fairfax Dr & Wilson Blvd",id:"31023",lat:38.8858,lng:-77.09775},{trips:0,name:"Key Blvd & N Quinn St",id:"31027",lat:38.896015,lng:-77.07811},{trips:4,name:"1st & K St SE",id:"31628",lat:38.87861,lng:-77.006004},{trips:1,name:"39th & Calvert St NW / Stoddert",id:"31306",lat:38.92265,lng:-77.07727},{trips:0,name:"1st & Washington Hospital Center NW",id:"31507",lat:38.92874,lng:-77.01246},{trips:3,name:"Virginia Square Metro / N Monroe St & 9th St N",id:"31024",lat:38.88279,lng:-77.10315},{trips:0,name:"Central Library / N Quincy St & 10th St N",id:"31025",lat:38.88397,lng:-77.10783},{trips:0,name:"Washington Blvd & 10th St N",id:"31026",lat:38.884735,lng:-77.09348},{trips:72,name:"Jefferson Dr & 14th St SW",id:"31247",lat:38.888554,lng:-77.03243},{trips:23,name:"Smithsonian / Jefferson Dr & 12th St SW",id:"31248",lat:38.888767,lng:-77.02858},{trips:0,name:"George Mason Dr & Wilson Blvd",id:"31036",lat:38.87887,lng:-77.1207},{trips:6,name:"6th St & Indiana Ave NW",id:"31264",lat:38.894573,lng:-77.01994},{trips:1,name:"N Veitch & Key Blvd",id:"31028",lat:38.89324,lng:-77.086044},{trips:0,name:"N Adams St & Lee Hwy",id:"31030",lat:38.89593,lng:-77.089005},{trips:0,name:"15th & N Scott St",id:"31031",lat:38.89054,lng:-77.08095},{trips:0,name:"Washington Blvd & 7th St N",id:"31032",lat:38.880833,lng:-77.091125},{trips:0,name:"Ballston Metro / N Stuart & 9th St N",id:"31037",lat:38.881042,lng:-77.11177},{trips:2,name:"N Randolph St & Fairfax Dr",id:"31034",lat:38.88263,lng:-77.10937},{trips:42,name:"Jefferson Memorial",id:"31249",lat:38.879818,lng:-77.037415},{trips:1,name:"Good Hope Rd & 14th St SE",id:"31803",lat:38.86661,lng:-76.98524},{trips:0,name:"Glebe Rd & 11th St N",id:"31038",lat:38.883923,lng:-77.11681},{trips:0,name:"N Quincy St & Wilson Blvd",id:"31039",lat:38.88015,lng:-77.10767},{trips:0,name:"Fairfax Dr & Kenmore St",id:"31040",lat:38.884617,lng:-77.10108},{trips:2,name:"Gallaudet / 8th St & Florida Ave NE",id:"31508",lat:38.90509,lng:-76.9941},{trips:0,name:"20th & L St NW",id:"31250",lat:38.903584,lng:-77.04479},{trips:0,name:"12th & L St NW",id:"31251",lat:38.90382,lng:-77.0284},{trips:2,name:"21st St & Pennsylvania Ave NW",id:"31252",lat:38.90154,lng:-77.04656},{trips:2,name:"19th & K St NW",id:"31253",lat:38.902203,lng:-77.04337},{trips:0,name:"Prince St & Union St",id:"31041",lat:38.803123,lng:-77.04036},{trips:0,name:"Market Square / King St & Royal St",id:"31042",lat:38.804718,lng:-77.043365},{trips:0,name:"Saint Asaph St & Pendleton  St",id:"31043",lat:38.81074,lng:-77.04466},{trips:0,name:"King St & Patrick St",id:"31044",lat:38.805317,lng:-77.04988},{trips:9,name:"15th & K St NW",id:"31254",lat:38.902,lng:-77.03353},{trips:0,name:"Commerce St & Fayette St",id:"31045",lat:38.80565,lng:-77.05293},{trips:0,name:"Henry St & Pendleton St",id:"31046",lat:38.811455,lng:-77.05028},{trips:0,name:"Braddock Rd Metro",id:"31047",lat:38.814575,lng:-77.05281},{trips:0,name:"King St Metro",id:"31048",lat:38.805767,lng:-77.06072},{trips:2,name:"24th & N St NW",id:"31255",lat:38.9066,lng:-77.05152},{trips:4,name:"10th & E St NW",id:"31256",lat:38.895912,lng:-77.02606},{trips:6,name:"22nd & I St NW / Foggy Bottom",id:"31257",lat:38.90088,lng:-77.04891},{trips:1,name:"Utah St & 11th St N ",id:"31049",lat:38.88367,lng:-77.11391},{trips:1,name:"Barton St & 10th St N",id:"31050",lat:38.88496,lng:-77.08777},{trips:5,name:"Arlington Blvd & N Queen St",id:"31051",lat:38.889366,lng:-77.07729},{trips:82,name:"Lincoln Memorial",id:"31258",lat:38.888252,lng:-77.04942},{trips:0,name:"20th St & Virginia Ave NW",id:"31259",lat:38.894722,lng:-77.04513},{trips:2,name:"5th St & Massachusetts Ave NW",id:"31265",lat:38.90093,lng:-77.01868},{trips:0,name:"39th & Veazey St NW",id:"31308",lat:38.943836,lng:-77.07708},{trips:0,name:"Fessenden St & Wisconsin Ave NW",id:"31309",lat:38.95481,lng:-77.08243},{trips:1,name:"M St & Delaware Ave NE",id:"31627",lat:38.90571,lng:-77.003044},{trips:4,name:"Columbia Pike & S Courthouse Rd",id:"31053",lat:38.863834,lng:-77.08032},{trips:0,name:"Walter Reed Community Center / Walter Reed Dr & 16th St S",id:"31054",lat:38.857803,lng:-77.08673},{trips:0,name:"28th St S & S Meade St",id:"31055",lat:38.846222,lng:-77.069275},{trips:0,name:"18th St & Wyoming Ave NW",id:"31114",lat:38.918808,lng:-77.04157},{trips:0,name:"5th & Kennedy St NW",id:"31403",lat:38.956596,lng:-77.01981},{trips:0,name:"Georgia Ave & Emerson St NW",id:"31405",lat:38.94966,lng:-77.027336},{trips:2,name:"14th & Upshur St NW",id:"31406",lat:38.942017,lng:-77.03265},{trips:0,name:"14th St & Colorado Ave NW",id:"31407",lat:38.956432,lng:-77.03294},{trips:0,name:"S Troy St & 26th St S",id:"31056",lat:38.847977,lng:-77.0751},{trips:0,name:"S Four Mile Run Dr & S Shirlington Rd",id:"31057",lat:38.8444,lng:-77.08593},{trips:0,name:"S Oakland St & Columbia Pike",id:"31058",lat:38.86079,lng:-77.09586},{trips:0,name:"S Four Mile Run & Walter Reed Dr",id:"31059",lat:38.84736,lng:-77.09543},{trips:0,name:"S Arlington Mill Dr & Campbell Ave",id:"31060",lat:38.84232,lng:-77.089554},{trips:0,name:"S Kenmore & 24th St S",id:"31061",lat:38.848454,lng:-77.084915},{trips:0,name:"13th St & Eastern Ave",id:"32006",lat:38.987,lng:-77.02942},{trips:1,name:"Wisconsin Ave & O St NW",id:"31312",lat:38.90849,lng:-77.06358},{trips:0,name:"S George Mason Dr & 13th St S",id:"31062",lat:38.85469,lng:-77.100555},{trips:0,name:"Connecticut & Nebraska Ave NW",id:"31310",lat:38.955017,lng:-77.069954},{trips:9,name:"17th St & Massachusetts Ave NW",id:"31267",lat:38.908142,lng:-77.03836},{trips:0,name:"15th & Euclid St  NW",id:"31117",lat:38.92333,lng:-77.0352},{trips:2,name:"8th & East Capitol St NE",id:"31629",lat:38.889988,lng:-76.99519},{trips:2,name:"New Jersey Ave & R St NW",id:"31509",lat:38.91266,lng:-77.01767},{trips:2,name:"15th & East Capitol St NE",id:"31630",lat:38.889908,lng:-76.98333},{trips:2,name:"8th & F St NE",id:"31631",lat:38.897274,lng:-76.99475},{trips:0,name:"18th St & Rhode Island Ave NE",id:"31510",lat:38.927094,lng:-76.97893},{trips:0,name:"15th & F St NE",id:"31632",lat:38.897194,lng:-76.983574},{trips:0,name:"12th & Irving St NE",id:"31511",lat:38.928642,lng:-76.99095},{trips:0,name:"34th St & Minnesota Ave SE",id:"31709",lat:38.884087,lng:-76.95746},{trips:0,name:"Alabama & MLK Ave SE",id:"31800",lat:38.843224,lng:-76.99939},{trips:0,name:"Pleasant St & MLK Ave SE",id:"31807",lat:38.863895,lng:-76.990036},{trips:0,name:"Neal St & Trinidad Ave NE",id:"31512",lat:38.903732,lng:-76.98721},{trips:2,name:"12th & U St NW",id:"31268",lat:38.916786,lng:-77.02814},{trips:0,name:"S George Mason Dr & Four Mile Run",id:"31063",lat:38.85225,lng:-77.10502},{trips:0,name:"S Stafford & 34th St S",id:"31064",lat:38.834106,lng:-77.087326},{trips:2,name:"N Pershing Dr & Wayne St",id:"31065",lat:38.880707,lng:-77.08596},{trips:0,name:"Columbia Pike & S Orme St",id:"31066",lat:38.867264,lng:-77.07231},{trips:3,name:"3rd St & Pennsylvania Ave SE",id:"31269",lat:38.88738,lng:-77.00195},{trips:8,name:"8th & D St NW",id:"31270",lat:38.89485,lng:-77.02324},{trips:0,name:"3rd & Elm St NW",id:"31118",lat:38.91762,lng:-77.01597},{trips:0,name:"Rhode Island Ave & V St NE",id:"31513",lat:38.918156,lng:-77.004745},{trips:15,name:"Constitution Ave & 2nd St NW/DOL",id:"31271",lat:38.892277,lng:-77.013916},{trips:12,name:"Washington & Independence Ave SW/HHS",id:"31272",lat:38.88731,lng:-77.01397},{trips:7,name:"Independence Ave & L'Enfant Plaza SW/DOE",id:"31633",lat:38.887314,lng:-77.025764},{trips:0,name:"Hamlin & 7th St NE",id:"31514",lat:38.927498,lng:-76.99719},{trips:1,name:"Columbia Pike & S Walter Reed Dr",id:"31067",lat:38.862476,lng:-77.0866},{trips:0,name:"Columbia Pike & S Dinwiddie St / Arlington Mill Community Center",id:"31068",lat:38.85632,lng:-77.11153},{trips:0,name:"Pershing & N George Mason Dr",id:"31069",lat:38.871822,lng:-77.1079},{trips:0,name:"Fenton St & New York Ave ",id:"32001",lat:38.985405,lng:-77.02308},{trips:0,name:"Bethesda Ave & Arlington Rd",id:"32002",lat:38.981102,lng:-77.09743},{trips:0,name:"Montgomery Ave & Waverly St ",id:"32003",lat:38.983837,lng:-77.09221},{trips:0,name:"Fallsgrove Blvd & Fallsgrove Dr",id:"32004",lat:39.096313,lng:-77.19267},{trips:0,name:"Traville Gateway Dr & Gudelsky Dr",id:"32005",lat:39.093784,lng:-77.2025},{trips:0,name:"Norfolk Ave & Fairmont St",id:"32000",lat:38.988564,lng:-77.09654},{trips:0,name:"E Montgomery Ave & Maryland Ave",id:"32007",lat:39.084126,lng:-77.15129},{trips:0,name:"Cordell & Norfolk Ave",id:"32008",lat:38.98954,lng:-77.09803},{trips:0,name:"Frederick Ave & Horners Ln",id:"32009",lat:39.094772,lng:-77.14521},{trips:0,name:"Philadelphia & Maple Ave",id:"32010",lat:38.98128,lng:-77.01134},{trips:0,name:"Maple & Ritchie Ave",id:"32011",lat:38.983627,lng:-77.00631},{trips:0,name:"Silver Spring Metro/Colesville Rd & Wayne Ave",id:"32012",lat:38.99521,lng:-77.02918},{trips:0,name:"Montgomery & East Ln",id:"32013",lat:38.983524,lng:-77.09537},{trips:0,name:"Friendship Hts Metro/Wisconsin Ave & Wisconsin Cir",id:"32014",lat:38.96176,lng:-77.086},{trips:0,name:"14th & Belmont St NW",id:"31119",lat:38.921074,lng:-77.03188},{trips:1,name:"3rd & Tingey St SE",id:"31634",lat:38.87501,lng:-77.0024},{trips:0,name:"10th & Florida Ave NW",id:"31120",lat:38.920387,lng:-77.02567},{trips:0,name:"Potomac Ave & 8th St SE",id:"31635",lat:38.876736,lng:-76.99447},{trips:0,name:"Crabbs Branch Way & Redland Rd",id:"32015",lat:39.120045,lng:-77.15698},{trips:0,name:"Fallsgrove Dr & W Montgomery Ave",id:"32016",lat:39.099377,lng:-77.18801},{trips:0,name:"Monroe St & Monroe Pl",id:"32017",lat:39.08278,lng:-77.14883},{trips:0,name:"Needwood Rd & Eagles Head Ct",id:"32018",lat:39.123512,lng:-77.15741},{trips:0,name:"East West Hwy & Blair Mill Rd",id:"32019",lat:38.99025,lng:-77.02935},{trips:0,name:"Crabbs Branch Way & Calhoun Pl",id:"32020",lat:39.107708,lng:-77.15207},{trips:0,name:"47th & Elm St",id:"32021",lat:38.982456,lng:-77.09199},{trips:0,name:"Garland Ave & Walden Rd",id:"32022",lat:39.00058,lng:-77.00149},{trips:0,name:"Montgomery College/W Campus Dr & Mannakee St",id:"32023",lat:39.09566,lng:-77.15905},{trips:0,name:"Fenton St & Gist Ave",id:"32024",lat:38.989723,lng:-77.02386},{trips:0,name:"Carroll & Westmoreland Ave",id:"32025",lat:38.975,lng:-77.01121},{trips:0,name:"Carroll & Ethan Allen Ave",id:"32026",lat:38.977932,lng:-77.00647},{trips:0,name:"Battery Ln & Trolley Trail",id:"32027",lat:38.992374,lng:-77.100105},{trips:0,name:"Norfolk & Rugby Ave",id:"32028",lat:38.99064,lng:-77.10024},{trips:0,name:"Offutt Ln & Chevy Chase Dr",id:"32029",lat:38.977093,lng:-77.09459},{trips:0,name:"Broschart & Blackwell Rd",id:"32030",lat:39.1021,lng:-77.200325},{trips:0,name:"Taft St & E Gude Dr",id:"32031",lat:39.094105,lng:-77.13296},{trips:0,name:"Fleet St & Ritchie Pkwy",id:"32032",lat:39.076332,lng:-77.14138},{trips:0,name:"Piccard & W Gude Dr",id:"32033",lat:39.10221,lng:-77.17709},{trips:0,name:"Ripley & Bonifant St",id:"32034",lat:38.99268,lng:-77.02946},{trips:0,name:"Georgia Ave & Spring St",id:"32035",lat:38.99939,lng:-77.031555},{trips:0,name:"Fenton St & Ellsworth Dr ",id:"32036",lat:38.997032,lng:-77.025604},{trips:0,name:"King Farm Blvd & Pleasant Dr",id:"32037",lat:39.11469,lng:-77.171486},{trips:0,name:"King Farm Blvd & Piccard Dr",id:"32038",lat:39.110313,lng:-77.18267},{trips:0,name:"Calvert St & Woodley Pl NW",id:"31121",lat:38.923584,lng:-77.05005},{trips:1,name:"New Jersey Ave & N St NW/Dunbar HS",id:"31636",lat:38.90706,lng:-77.01523},{trips:0,name:"Nannie Helen Burroughs Ave & 49th St NE",id:"31710",lat:38.898537,lng:-76.93186},{trips:0,name:"Deanwood Rec Center",id:"31711",lat:38.908474,lng:-76.9331},{trips:2,name:"Hains Point/Buckeye & Ohio Dr SW",id:"31273",lat:38.878433,lng:-77.03023},{trips:1,name:"Arlington Blvd & Fillmore St",id:"31070",lat:38.873756,lng:-77.08923},{trips:1,name:"Long Bridge Park/Long Bridge Dr & 6th St S",id:"31071",lat:38.86646,lng:-77.04826},{trips:0,name:"Old Georgetown Rd & Southwick St",id:"32039",lat:38.999634,lng:-77.10965},{trips:0,name:"Friendship Blvd & Willard Ave",id:"32040",lat:38.96115,lng:-77.08866},{trips:1,name:"North Capitol St & G Pl NE",id:"31637",lat:38.899704,lng:-77.00891},{trips:0,name:"31st & Woodrow St S",id:"31072",lat:38.837666,lng:-77.09482},{trips:0,name:"Washington Blvd & Walter Reed Dr ",id:"31073",lat:38.87322,lng:-77.08211},{trips:0,name:"TJ Cmty Ctr / 2nd St & S Old Glebe Rd",id:"31074",lat:38.86942,lng:-77.0956},{trips:1,name:"Connecticut Ave & Tilden St NW",id:"31313",lat:38.941154,lng:-77.062035},{trips:0,name:"Medical Center Dr & Key West Ave",id:"32041",lat:39.103092,lng:-77.19644},{trips:0,name:"Shady Grove Hospital",id:"32042",lat:39.097637,lng:-77.19663},{trips:0,name:"Veterans Pl & Pershing Dr ",id:"32043",lat:38.997444,lng:-77.023895},{trips:0,name:"Rockville Metro East",id:"32044",lat:39.085396,lng:-77.145805},{trips:0,name:"1st & H St NW",id:"31638",lat:38.900356,lng:-77.01211},{trips:0,name:"Fort Totten Metro",id:"31515",lat:38.95237,lng:-77.00272},{trips:0,name:"Takoma Metro",id:"31408",lat:38.97522,lng:-77.01685},{trips:0,name:"Rhode Island Ave Metro",id:"31516",lat:38.92068,lng:-76.99587},{trips:0,name:"Rolfe St & 9th St S",id:"31075",lat:38.86647,lng:-77.07613},{trips:0,name:"Shirlington Transit Center / S Quincy & Randolph St",id:"31076",lat:38.839912,lng:-77.08708},{trips:0,name:"Shady Grove Metro West",id:"32045",lat:39.119766,lng:-77.16609},{trips:0,name:"River Rd & Landy Ln",id:"32046",lat:38.964993,lng:-77.10338},{trips:0,name:"Rockville Metro West",id:"32047",lat:39.084377,lng:-77.146866},{trips:0,name:"Bethesda Metro",id:"32048",lat:38.98469,lng:-77.094536},{trips:29,name:"Iwo Jima Memorial/N Meade & 14th St N",id:"31077",lat:38.88992,lng:-77.071304},{trips:3,name:"34th & Water St NW",id:"31314",lat:38.903584,lng:-77.06779},{trips:0,name:"Duke St & John Carlyle St",id:"31081",lat:38.80438,lng:-77.06087},{trips:1,name:"Lee Hwy & N Cleveland St",id:"31079",lat:38.89494,lng:-77.09169},{trips:0,name:"Arlington Blvd & S George Mason Dr/NFATC",id:"31078",lat:38.869442,lng:-77.1045},{trips:0,name:"MLK Library/9th & G St NW",id:"31274",lat:38.898403,lng:-77.024284},{trips:1,name:"Lee Hwy & N Scott St",id:"31080",lat:38.897614,lng:-77.08085},{trips:1,name:"New Hampshire Ave & 24th St NW",id:"31275",lat:38.901756,lng:-77.05109},{trips:0,name:"Eisenhower Ave & Mill Race Ln",id:"31082",lat:38.80111,lng:-77.068954},{trips:0,name:"Potomac Greens Dr & Slaters Ln",id:"31083",lat:38.82175,lng:-77.04749},{trips:0,name:"Ballenger Ave & Dulaney St",id:"31084",lat:38.802677,lng:-77.06356},{trips:0,name:"Mount Vernon Ave & E Nelson Ave",id:"31085",lat:38.820065,lng:-77.05762},{trips:0,name:"Mount Vernon Ave & E Del Ray Ave",id:"31086",lat:38.82595,lng:-77.05854},{trips:0,name:"Monroe Ave & Leslie Ave",id:"31087",lat:38.82093,lng:-77.05309},{trips:0,name:"Mount Vernon Ave & Kennedy St",id:"31088",lat:38.833076,lng:-77.05982},{trips:3,name:"Court House Metro / 15th & N Uhle St ",id:"31089",lat:38.890614,lng:-77.0848},{trips:0,name:"Washington Adventist U / Flower Ave & Division St",id:"32049",lat:38.986744,lng:-77.00004},{trips:0,name:"6th & S Ball St",id:"31090",lat:38.8647,lng:-77.048676},{trips:0,name:"McKinley St & Connecticut Ave NW",id:"31315",lat:38.96497,lng:-77.07594},{trips:3,name:"15th & L St NW",id:"31276",lat:38.90366,lng:-77.03484},{trips:4,name:"17th & G St NW",id:"31277",lat:38.89841,lng:-77.03963},{trips:0,name:"Spring St & Second Ave",id:"32050",lat:38.997654,lng:-77.0345},{trips:1,name:"18th & R St NW",id:"31278",lat:38.912647,lng:-77.04183},{trips:5,name:"S Joyce & 16th St S",id:"31091",lat:38.859253,lng:-77.06328},{trips:1,name:"Union Market/6th St & Neal Pl NE",id:"31517",lat:38.90801,lng:-76.99699},{trips:0,name:"N Nelson St & Lee Hwy",id:"31092",lat:38.895927,lng:-77.10525},{trips:0,name:"21st St N & N Pierce St",id:"31093",lat:38.898983,lng:-77.078316},{trips:0,name:"Lee Hwy & N Kirkwood Rd",id:"31094",lat:38.89538,lng:-77.09713},{trips:2,name:"19th & G St NW",id:"31279",lat:38.89841,lng:-77.04318},{trips:4,name:"Army Navy Dr & S Nash St",id:"31095",lat:38.86247,lng:-77.068245},{trips:1,name:"11th & S St NW",id:"31280",lat:38.91376,lng:-77.02702},{trips:0,name:"S Walter Reed Dr & 8th St S",id:"31096",lat:38.86612,lng:-77.08787},{trips:2,name:"2nd & G St NE",id:"31639",lat:38.89967,lng:-77.00367},{trips:0,name:"8th & O St NW",id:"31281",lat:38.90864,lng:-77.02277},{trips:0,name:"Georgia & Missouri Ave NW",id:"31411",lat:38.961338,lng:-77.027855},{trips:0,name:"Oklahoma Ave & D St NE",id:"31712",lat:38.894474,lng:-76.97483},{trips:0,name:"Maryland Ave & E St NE",id:"31640",lat:38.896133,lng:-76.9929},{trips:0,name:"New York Ave & Hecht Ave NE",id:"31518",lat:38.915604,lng:-76.98368}];
+var caBiModel;
+var CaBiSplineIndex = -1;
+var CaBiSplineDelta = 0;
+var CaBiSplineSteps = 24;
+var showStations = true;
+var showDocks = false;
+
+function getCaBiData() {
+  var xmlhttp = new XMLHttpRequest();
+  xmlhttp.onreadystatechange = function() {
+    if (xmlhttp.readyState == 4) {
+      if (xmlhttp.status == 200) renderCaBiData(xmlhttp.responseText);
+      else                       alert("status: " + xmlhttp.status);
+      }
+    };
+  xmlhttp.open("GET", "http://www.mvjantzen.com/cabi/cabidata.php?details=true");
+  xmlhttp.send();
+  }
+
+function renderCaBiData(responseText) {
+  try {
+    var cabiData = JSON.parse(responseText);
+    var stations = cabiData.station;
+    var totalBikes = 0;
+    var totalDocks = 0;
+    for (var i = 0; i < stations.length; i++) {
+      var j = 0;
+      while (j < LincolnTraffic.length && LincolnTraffic[j].id != stations[i].terminalName) {
+        j++;
+        }
+      if (j < LincolnTraffic.length) {
+        var lat = parseFloat(stations[i].lat);
+        var lng = parseFloat(stations[i].long);
+        LincolnTraffic[j].bikes = parseInt(stations[i].nbBikes);
+        LincolnTraffic[j].docks = parseInt(stations[i].nbEmptyDocks);
+        totalBikes += LincolnTraffic[j].bikes;
+        totalDocks += LincolnTraffic[j].docks;
+        for (var k = 0; k < LincolnTraffic[j].bikes; k++) {
+          scene.add(makeMesh(caBiModel, lat, lng, k*12, [0.2, 0.7, 0.8]));
+          }
+        }
+      else {
+        console.log("Unrecognized station: " + stations[i].terminalName + " ( " + stations[i].name + ")");
+        }
+      }
+    updateLabels();
+    console.log("totalBikes: " + totalBikes);
+    console.log("totalDocks: " + totalDocks);
+    }
+  catch(e) {
+    console.log("PARSE ERROR:", e);
+    console.log(responseText);
+    return;
+    }
+  }
 
 function addXRoofedBox(geometry, dimensions, roofHeight, roofIndent, position) {
   if (typeof position == 'undefined') {position = [0, 0, 0];}
@@ -124,13 +182,12 @@ function addBoxSides(geometry, dimensions, position) {
   geometry.faces.push(new THREE.Face3(base + 3, base + 4, base + 0), new THREE.Face3(base + 3, base + 7, base + 4));
   }
 
-function addCylinderDome(geometry, radius, baseHeight, domeHeight, position) {
+function addCylinderDome(geometry, radius, baseHeight, domeHeight, segments, position) {
   // handle baseHeight == 0?
   if (typeof position == 'undefined') {position = [0, 0, 0];}
   var base = geometry.vertices.length;
-  var cylSegments = 24;
-  for (var i = 0; i < cylSegments; i++) {
-    var theta = 2*Math.PI*i/cylSegments;
+  for (var i = 0; i < segments; i++) {
+    var theta = 2*Math.PI*(i + 0.5)/segments;
     geometry.vertices.push(new THREE.Vector3(radius*Math.sin(theta) + position[0],              position[1], radius*Math.cos(theta) + position[2]));  // floor
     geometry.vertices.push(new THREE.Vector3(radius*Math.sin(theta) + position[0], baseHeight + position[1], radius*Math.cos(theta) + position[2]));  // straight up to base of dome
     for (var j = 1; j < 8; j++) {
@@ -143,9 +200,9 @@ function addCylinderDome(geometry, radius, baseHeight, domeHeight, position) {
   var top = geometry.vertices.length;
   geometry.vertices.push(new THREE.Vector3(position[0], baseHeight + domeHeight + position[1], position[2]));
   var chunk = 9;  // number of points per slice
-  for (var i = 0; i < cylSegments; i++) {
+  for (var i = 0; i < segments; i++) {
     var sliceA = base + chunk*i;
-    var sliceB = base + chunk*((i + 1) % cylSegments);
+    var sliceB = base + chunk*((i + 1) % segments);
     for (var j = 0; j < chunk - 1; j++) {
       var k = j + 1;
       geometry.faces.push(new THREE.Face3(sliceA + j, sliceB + k, sliceA + k), new THREE.Face3(sliceA + j, sliceB + j, sliceB + k));
@@ -154,10 +211,183 @@ function addCylinderDome(geometry, radius, baseHeight, domeHeight, position) {
     }
   }
 
+function addCircle(geometry, radius, segments, position) {
+  if (typeof position == 'undefined') {position = [0, 0, 0];}
+  for (var i = 0; i < segments; i++) {
+    var theta = 2*Math.PI*i/segments;
+    geometry.vertices.push(new THREE.Vector3(radius*Math.sin(theta) + position[0], position[1], radius*Math.cos(theta) + position[2]));
+    }
+  var center = geometry.vertices.length;
+  geometry.vertices.push(new THREE.Vector3(position[0], position[1], position[2]));
+  for (var i = 0; i < segments; i++) {
+    var j = (i + 1) % segments;
+    geometry.faces.push(new THREE.Face3(i, j, center));
+    }
+  }
+
+function CaBiBikeModel(scale) {
+  var geometry = new THREE.Geometry();
+  x=0;y=0;z=0;
+  // handlebars to front wheel:
+  // slope of head tube/fork is 0.07 x / 0.19 y
+  addTube(geometry, 0.03*scale, 12, true, [{P1: [x + 0.32*scale, y + 1.09*scale, z + 0.18*scale], P2: [x + 0.40*scale, y + 1.10*scale, z]}]);  // upper-right handlebar
+  addTube(geometry, 0.03*scale, 12, true, [{P1: [x + 0.32*scale, y + 1.09*scale, z - 0.18*scale], P2: [x + 0.40*scale, y + 1.10*scale, z]}]);  // upper-left handlebar
+  addTube(geometry, 0.03*scale, 12, false, [{P1: [x + 0.40*scale, y + 1.10*scale, z],              P2: [x + 0.47*scale, y + 0.91*scale, z]}]);  // upper head tube
+  addTube(geometry, 0.03*scale, 12, false, [{P1: [x + 0.47*scale, y + 0.91*scale, z],              P2: [x + 0.547*scale, y + 0.701*scale, z]}], [2, 1, 3]);  // lower head tube
+  addTube(geometry, 0.03*scale, 12, false, [{P1: [x + 0.54*scale, y + 0.72*scale, z + 0.06*scale], P2: [x + 0.68*scale, y + 0.34*scale, z + 0.06*scale]}]);  // right fork
+  addTube(geometry, 0.03*scale, 12, false, [{P1: [x + 0.54*scale, y + 0.72*scale, z - 0.06*scale], P2: [x + 0.68*scale, y + 0.34*scale, z - 0.06*scale]}]);  // left fork
+  addTube(geometry, 0.05*scale, 12, false, [{P1: [x + 0.487*scale, y + 0.834*scale, z],            P2: [x + 0.16*scale, y + 0.36*scale, z]}], [1, 2, 1]);  // down tube
+  addTube(geometry, 0.05*scale, 12, false, [{P1: [x + 0.16*scale, y + 0.36*scale, z],            P2: [x - 0.07*scale, y + 0.36*scale, z]}], [1, 1, 2]);  // chain stay
+  addTube(geometry, 0.03*scale, 12, false, [{P1: [x - 0.07*scale, y + 0.36*scale, z + 0.06*scale], P2: [x - 0.42*scale, y + 0.36*scale, z + 0.06*scale]}]);  // chain stay right fork
+  addTube(geometry, 0.03*scale, 12, false, [{P1: [x - 0.07*scale, y + 0.36*scale, z - 0.06*scale], P2: [x - 0.42*scale, y + 0.36*scale, z - 0.06*scale]}]);  // chain stay left fork
+  // seat support:
+  addTube(geometry, 0.03*scale, 12, false, [{P1: [x - 0.23*scale, y + 0.91*scale, z],            P2: [x - 0.02*scale, y + 0.36*scale, z]}]);  // seat post
+  addTube(geometry, 0.02*scale, 12, false, [{P1: [x - 0.13*scale, y + 0.66*scale, z], P2: [x - 0.23*scale, y + 0.62*scale, z + 0.06*scale]}]);  // upper-right seat stay
+  addTube(geometry, 0.02*scale, 10, false, [{P1: [x - 0.13*scale, y + 0.66*scale, z], P2: [x - 0.23*scale, y + 0.62*scale, z - 0.06*scale]}]);  // upper-left seat stay
+  addTube(geometry, 0.02*scale, 10, false, [{P1: [x - 0.44*scale, y + 0.34*scale, z + 0.06*scale], P2: [x - 0.23*scale, y + 0.62*scale, z + 0.06*scale]}]);  // lower-right seat stay
+  addTube(geometry, 0.02*scale, 10, false, [{P1: [x - 0.44*scale, y + 0.34*scale, z - 0.06*scale], P2: [x - 0.23*scale, y + 0.62*scale, z - 0.06*scale]}]);  // lower-left seat stay
+  addWheel(geometry, 0.32*scale, 0.02*scale, 16, 6, [x - 0.44*scale, y + 0.34*scale, z]);  // rear wheel
+  addWheel(geometry, 0.32*scale, 0.02*scale, 16, 6, [x + 0.68*scale, y + 0.34*scale, z]);  // front wheel
+  addXRects(geometry, [[-0.1*scale, 0.03*scale, 0.02*scale], [-0.07*scale, 0.04*scale, 0.06*scale], [0, 0.03*scale, 0.06*scale], [0.05*scale, 0.02*scale, 0.03*scale], [0.12*scale, 0.02*scale, 0.02*scale]], [x - 0.23*scale, y + 0.91*scale, z]);  // saddle
+  return geometry;
+  }
+
+function CaBiBike(lat, lng, floor, scale, color) {
+  return makeMesh(CaBiBikeModel(scale), lat, lng, floor, color);  // yellow: [0.98, 0.78, 0.00]
+  }
+
+function addXRects(geometry, rectCorners, position) {
+  if (typeof position == 'undefined') {position = [0, 0, 0];}
+  var top = geometry.vertices.length;
+  for (var i = 0; i < rectCorners.length; i++) {
+    // mirror along the X axis
+    geometry.vertices.push(new THREE.Vector3(position[0] + rectCorners[i][0], position[1] + rectCorners[i][1], position[2] + rectCorners[i][2]));
+    geometry.vertices.push(new THREE.Vector3(position[0] + rectCorners[i][0], position[1] - rectCorners[i][1], position[2] + rectCorners[i][2]));
+    geometry.vertices.push(new THREE.Vector3(position[0] + rectCorners[i][0], position[1] - rectCorners[i][1], position[2] - rectCorners[i][2]));
+    geometry.vertices.push(new THREE.Vector3(position[0] + rectCorners[i][0], position[1] + rectCorners[i][1], position[2] - rectCorners[i][2]));
+    }
+  geometry.faces.push(new THREE.Face3(top, top + 2, top + 1), new THREE.Face3(top, top + 3, top + 2));
+  for (var i = 0; i < rectCorners.length - 1; i++) {
+    var section = top + 4*i;
+    geometry.faces.push(new THREE.Face3(section + 0, section + 4, section + 7), new THREE.Face3(section + 0, section + 7, section + 3));
+    geometry.faces.push(new THREE.Face3(section + 1, section + 5, section + 4), new THREE.Face3(section + 1, section + 4, section + 0));
+    geometry.faces.push(new THREE.Face3(section + 2, section + 6, section + 5), new THREE.Face3(section + 2, section + 5, section + 1));
+    geometry.faces.push(new THREE.Face3(section + 3, section + 7, section + 6), new THREE.Face3(section + 3, section + 6, section + 2));
+    }
+  top += 4*(rectCorners.length - 1);
+  geometry.faces.push(new THREE.Face3(top, top + 1, top + 2), new THREE.Face3(top, top + 2, top + 3));
+  }
+
+function addWheel(geometry, majorRadius, minorRadius, majorSegments, minorSegments, position) {
+  // add a torus in the XY plane
+  if (typeof position == 'undefined') {position = [0, 0, 0];}
+  var z = position[2];
+  var top = geometry.vertices.length;
+  for (var i = 0; i < majorSegments; i++) {
+    var majorTheta = 2*Math.PI*i/majorSegments;
+    var x = majorRadius*Math.sin(majorTheta) + position[0];
+    var y = majorRadius*Math.cos(majorTheta) + position[1];
+    for (var j = 0; j < minorSegments; j++) {
+      var minorTheta = 2*Math.PI*j/minorSegments;
+      geometry.vertices.push(new THREE.Vector3(x + minorRadius*Math.sin(majorTheta)*Math.cos(minorTheta), y + minorRadius*Math.cos(majorTheta)*Math.cos(minorTheta), z + minorRadius*Math.sin(minorTheta)));
+      }
+    }
+  for (var i = 0; i < majorSegments; i++) {
+    var a = top + minorSegments*i;
+    var b = top + minorSegments*((i + 1) % majorSegments);
+    for (var j = 0; j < minorSegments; j++) {
+      var k = (j + 1) % minorSegments;
+      geometry.faces.push(new THREE.Face3(a + j, a + k, b + k), new THREE.Face3(a + j, b + k, b + j));
+      }
+    }
+  }
+
+function addTube(geometry, radius, segments, capFirstPoint, cylinders, scale) {
+  if (typeof scale == 'undefined') {scale = [1, 1, 1];}
+  for (var i = 0; i < cylinders.length; i++) {
+    var bases = createCylinderVertices(geometry, radius, segments, cylinders[i].P1, cylinders[i].P2, scale);
+    if (capFirstPoint) {
+      var top = geometry.vertices.length;
+      geometry.vertices.push(new THREE.Vector3(cylinders[0].P1[0], cylinders[0].P1[1], cylinders[0].P1[2]));
+      }
+    for (var j = 0; j < bases.C1.length; j++) {
+      var k = (j + 1) % bases.C1.length;
+      geometry.faces.push(new THREE.Face3(bases.C1[j], bases.C2[k], bases.C2[j]), new THREE.Face3(bases.C1[j], bases.C1[k], bases.C2[k]));
+      if (capFirstPoint) {
+        geometry.faces.push(new THREE.Face3(bases.C1[j], top, bases.C1[k]));
+        }
+      }
+    }
+  }
+
+function createCylinderVertices(geometry, radius, segments, P1, P2, scale) {
+  if (typeof scale == 'undefined') {scale = [1, 1, 1];}
+  // given a line segment from P1 to P2,
+  // add to "geometry" the vertices needed to form the top and bottom circular bases of a cylinder of a given radius,
+  // each circle having "segments" number of points
+  var result = {C1: [], C2: []};
+  // Q = P1→P2 moved to origin
+  var Qx = P2[0] - P1[0];
+  var Qy = P2[1] - P1[1];
+  var Qz = P2[2] - P1[2];
+  // Create vectors U and V that are (1) mutually perpendicular and (2) perpendicular to Q
+  if (Qx != 0) {  // create a perpendicular vector on the XY plane
+    // there are an infinite number of potential vectors; arbitrarily select y = 1
+    var Ux = -Qy/Qx;
+    var Uy = 1;
+    var Uz = 0;
+    // to prove U is perpendicular to Q:
+    // (Qx, Qy, Qz)·(Ux, Uy, Uz) = Qx·Ux + Qy·Uy + Qz·Uz = Qx·-Qy/Qx + Qy·1 + Qz·0 = -Qy + Qy + 0 = 0
+    }
+  else if (Qy != 0) {  // create a perpendicular vector on the YZ plane
+    var Ux = 0;
+    var Uy = -Qz/Qy;
+    var Uz = 1;
+    }
+  else {  // assume Qz != 0; create a perpendicular vector on the XZ plane
+    var Ux = 1;
+    var Uy = 0;
+    var Uz = -Qx/Qz;
+    }
+  // The cross product of two vectors is perpendicular to both, so to find V:
+  // (Vx, Vy, Vz) = (Qx, Qy, Qz)×(Ux, Uy, Uz) = (Qy×Uz - Qz×Uy, Qz×Ux - Qx×Uz, Qx×Uy - Qy×Ux)
+  var Vx = Qy*Uz - Qz*Uy;
+  var Vy = Qz*Ux - Qx*Uz;
+  var Vz = Qx*Uy - Qy*Ux;
+  // normalize U and V:
+  var Ulength = Math.sqrt(Math.pow(Ux, 2) + Math.pow(Uy, 2) + Math.pow(Uz, 2));
+  var Vlength = Math.sqrt(Math.pow(Vx, 2) + Math.pow(Vy, 2) + Math.pow(Vz, 2));
+  Ux /= Ulength;
+  Uy /= Ulength;
+  Uz /= Ulength;
+  Vx /= Vlength;
+  Vy /= Vlength;
+  Vz /= Vlength;
+  for (var i = 0; i < segments; i++) {
+    var theta = 2*Math.PI*i/segments;  // theta
+    var dx = scale[0]*radius*(Math.cos(theta)*Ux + Math.sin(theta)*Vx);
+    var dy = scale[1]*radius*(Math.cos(theta)*Uy + Math.sin(theta)*Vy);
+    var dz = scale[2]*radius*(Math.cos(theta)*Uz + Math.sin(theta)*Vz);
+    result.C1.push(geometry.vertices.length);
+    geometry.vertices.push(new THREE.Vector3(P1[0] + dx, P1[1] + dy, P1[2] + dz));
+    result.C2.push(geometry.vertices.length);
+    geometry.vertices.push(new THREE.Vector3(P2[0] + dx, P2[1] + dy, P2[2] + dz));
+    }
+  return result;
+  }
+
+function drawLine(x1, y1, z1, x2, y2, z2, color) {
+  var material = new THREE.LineBasicMaterial({color: color});
+  var linegeo = new THREE.Geometry();
+  linegeo.vertices.push(new THREE.Vector3(x1, y1, z1), new THREE.Vector3(x2, y2, z2));
+  var line = new THREE.Line( linegeo, material );
+  scene.add(line);
+  }
+
 function addClippedCylinderDome(geometry, radius, baseHeight, domeHeight, bounds, position) {
   if (typeof position == 'undefined') {position = [0, 0, 0];}
   var oldBase = geometry.vertices.length;
-  addCylinderDome(geometry, radius, baseHeight, domeHeight);
+  addCylinderDome(geometry, radius, baseHeight, domeHeight, 24);
   var newBase = geometry.vertices.length;
   var boundsXHalf = bounds[0]/2;
   var boundsZHalf = bounds[1]/2;
@@ -327,25 +557,7 @@ function WashingtonMonument(lat, lng) {
   obeliskGeometry.faces.push(new THREE.Face3(6, 7, 8));
   obeliskGeometry.faces.push(new THREE.Face3(5, 6, 8));
   obeliskGeometry.faces.push(new THREE.Face3(7, 4, 8));
-  return makeMesh(obeliskGeometry, lat, lng);
-  }
-
-function ReevesBuilding(lat, lng) {
-  var geometry = new THREE.Geometry();
-  addBox(geometry, [13, 21, 74]);
-  addBox(geometry, [41, 18, 24], [21, 0, -29]);
-  addBox(geometry, [19, 18, 64], [3, 0, 15]);
-  addBox(geometry, [26, 18, 19], [-16.5, 0, 39.5]);
-  addBox(geometry, [23, 13.5, 48], [-18, 0,  6]);
-  addBox(geometry, [11, 13.5, 59], [ 12, 0,  17.5]);
-  addXRoofedBox(geometry, [6,  9, 6], 2, 0, [ -9.5, 0,  -21]);
-  addXRoofedBox(geometry, [6,  9, 6], 2, 0, [ -9.5, 0,  -27]);
-  addXRoofedBox(geometry, [9,  6, 6], 2, 0, [ -11, 0,  -27]);
-  addXRoofedBox(geometry, [9,  6, 6], 2, 0, [ -11, 0,  -33]);
-  for (var i = 0; i < 8; i++) {
-    addXRoofedBox(geometry, [6,  1.5, 6], 2, 0, [ -9.5, 13.5,  -15 + i*6]);  // rooftop triangles
-    }
-  return makeMesh(geometry, lat, lng);
+  return makeMesh(obeliskGeometry, lat, lng, 0);
   }
 
 function WhiteHouse(lat, lng) {
@@ -381,7 +593,7 @@ function WhiteHouse(lat, lng) {
   column.position.set( 6.5, 5.5, 25.5);  column.updateMatrix();  geometry.merge(column.geometry, column.matrix);
   column.position.set( 6.5, 5.5, 21.5);  column.updateMatrix();  geometry.merge(column.geometry, column.matrix);
   column.position.set( 6.5, 5.5, 18.5);  column.updateMatrix();  geometry.merge(column.geometry, column.matrix);
-  return makeMesh(geometry, lat, lng);
+  return makeMesh(geometry, lat, lng, 0);
   }
 
 function makeRoundObject(pattern, segments, lat, lng) {
@@ -457,7 +669,7 @@ function AirSpaceMuseum(lat, lng) {
   box = makeBox( 22, 17, 12, 4);  box.position.x = -59.0; box.position.z = -27.5; box.updateMatrix();  geometry.merge(box.geometry, box.matrix);
   box = makeBox( 22, 17, 12, 4);                          box.position.z = -27.5; box.updateMatrix();  geometry.merge(box.geometry, box.matrix);
   box = makeBox( 22, 17, 12, 4);  box.position.x =  59.0; box.position.z = -27.5; box.updateMatrix();  geometry.merge(box.geometry, box.matrix);
-  return makeMesh(geometry, lat, lng);
+  return makeMesh(geometry, lat, lng, 0);
   }
 
 function AlexandriaLodge(lat, lng) {
@@ -473,7 +685,7 @@ function AlexandriaLodge(lat, lng) {
   for (var i = 0; i < 10; i++) {
     box = makeBox(7 - i*0.5, 87.4 + 1.4*i, 9 - i*0.5,  0.0);  geometry.merge(box.geometry, box.matrix);  // pyramidal top
     }
-  return makeMesh(geometry, lat, lng);
+  return makeMesh(geometry, lat, lng, 0);
   }
 
 function shiftVertices(vertices, dx, dy, dz) {
@@ -482,6 +694,49 @@ function shiftVertices(vertices, dx, dy, dz) {
     vertices[i].y += dy;
     vertices[i].z += dz;
     }
+  }
+
+function LOC_Jefferson(lat, lng) {
+  var geometry = new THREE.Geometry();
+  addCylinderConeTop(geometry, 21.5, 31, 0, 8);  // base of main reading room
+  addCylinderDome(geometry, 17.0, 5, 11, 8, [0, 31, 0]);  // dome of main reading room
+  addCylinderConeTop(geometry, 5, 16, 0, 8, [0, 31, 0]);  // cupola base
+  addCylinderDome(geometry, 3.5, 18, 4, 8, [0, 31, 0]);  // cupola
+  addBox(geometry, [8, 28, 12], [23.5, 0, 0]);  // Great Hall to main reading room
+  addYRoofedBox(geometry, [32, 30, 43], 5, 16, [43.5, 0, 0]);  // Great Hall
+  addBox(geometry, [37, 25, 109], [-13.5, 0, 0]);  // eastern container
+  addYRoofedBox(geometry, [23, 5, 109], 2, 11, [-20.5, 25, 0]);  // eastern upper portion
+  addXRoofedBox(geometry, [67, 25, 12], 1, 0, [1.5, 0,  60.5]);  // northern hall
+  addXRoofedBox(geometry, [67, 25, 12], 1, 0, [1.5, 0, -60.5]);  // southern hall
+  addYRoofedBox(geometry, [12, 25, 109], 1, 0, [41, 0, 0]);  // western hall
+  addYRoofedBox(geometry, [12, 25, 109], 1, 0, [-38, 0, 0]);  // eastern hall
+  addRaisedPyramid(geometry, [16, 16], [2, 2], 27.5, 2.5, [ 41, 0,  60.5]);  // corner square
+  addRaisedPyramid(geometry, [16, 16], [2, 2], 27.5, 2.5, [-38, 0,  60.5]);  // corner square
+  addRaisedPyramid(geometry, [16, 16], [2, 2], 27.5, 2.5, [ 41, 0, -60.5]);  // corner square
+  addRaisedPyramid(geometry, [16, 16], [2, 2], 27.5, 2.5, [-38, 0, -60.5]);  // corner square
+  addBox(geometry, [2, 30, 7.5], [60.5, 0, 17.6]);  // Great Hall bump-out
+  addBox(geometry, [2, 30, 7.5], [60.5, 0, -17.6]);  // Great Hall bump-out
+  addBox(geometry, [24, 27.5, 26], [-38, 0, 0]);  // eastern structure
+  addBox(geometry, [10, 5, 14], [64.5, 0, 0]);  // western porch
+  return makeMesh(geometry, lat, lng, 0);
+  }
+
+function ReevesBuilding(lat, lng) {
+  var geometry = new THREE.Geometry();
+  addBox(geometry, [13, 21, 74]);
+  addBox(geometry, [41, 18, 24], [21, 0, -29]);
+  addBox(geometry, [19, 18, 64], [3, 0, 15]);
+  addBox(geometry, [26, 18, 19], [-16.5, 0, 39.5]);
+  addBox(geometry, [23, 13.5, 48], [-18, 0,  6]);
+  addBox(geometry, [11, 13.5, 59], [ 12, 0,  17.5]);
+  addXRoofedBox(geometry, [6,  9, 6], 2, 0, [ -9.5, 0,  -21]);
+  addXRoofedBox(geometry, [6,  9, 6], 2, 0, [ -9.5, 0,  -27]);
+  addXRoofedBox(geometry, [9,  6, 6], 2, 0, [ -11, 0,  -27]);
+  addXRoofedBox(geometry, [9,  6, 6], 2, 0, [ -11, 0,  -33]);
+  for (var i = 0; i < 8; i++) {
+    addXRoofedBox(geometry, [6,  1.5, 6], 2, 0, [ -9.5, 13.5,  -15 + i*6]);  // rooftop triangles
+    }
+  return makeMesh(geometry, lat, lng, 0);
   }
 
 function NGAWest(lat, lng) {
@@ -493,8 +748,8 @@ function NGAWest(lat, lng) {
   addBox(geometry, [42, 24, 90], [ 75, 0, 0]);
   addBox(geometry, [42, 32, 30]);
   addBox(geometry, [30, 32, 42]);
-  addCylinderDome(geometry, 16, 34, 10);
-  return makeMesh(geometry, lat, lng);
+  addCylinderDome(geometry, 16, 34, 10, 24);
+  return makeMesh(geometry, lat, lng, 0);
   }
 
 function NGAEast(lat, lng) {
@@ -508,14 +763,19 @@ function NGAEast(lat, lng) {
   addPolygon(geometry, [[ 42.5, 0], [42.5, -39], [-68, -39]], 25.4, false);
   addPolygon(geometry, [[ 42.5, 0], [42.5, -39], [21.25, -31.5], [21.25, -7.5]], 35.4, false);
   addPolygon(geometry, [[ 42.5, 0], [42.5, -9], [-42.5, -39], [-68, -39]], 35.4, false);
-  return makeMesh(geometry, lat, lng);
+  return makeMesh(geometry, lat, lng, 0);
   }
 
-function makeMesh(geometry, lat, lng) {
+function makeMesh(geometry, lat, lng, elv, color) {
   geometry.computeFaceNormals();  // required to show directional light
-  var mesh = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({vertexColors: THREE.VertexColors}));
+  if (typeof color != 'undefined') {
+    for (var i = 0; i < geometry.faces.length; i++) {
+      geometry.faces[i].color.setRGB(color[0], color[1], color[2]);
+      }
+    }
+  var mesh = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial({vertexColors: THREE.VertexColors}));  // skip side: THREE.DoubleSide
   mesh.scale.x = mesh.scale.y = mesh.scale.z = globalScale;
-  mesh.position.set(lngToX(lng), 0, latToZ(lat));
+  mesh.position.set(lngToX(lng), elv*globalScale, latToZ(lat));
   mesh.updateMatrix();
   return mesh;
   }
@@ -525,12 +785,12 @@ function NaturalHistoryMuseum(lat, lng) {
   addXRoofedBox(geometry, [36,  28, 28], 6, 0);
   addYRoofedBox(geometry, [28,  28, 42], 6, 0);
   addBox(geometry, [170, 24, 36]);
-  addCylinderDome(geometry, 12, 34, 10);
+  addCylinderDome(geometry, 12, 34, 10, 24);
   shiftVertices(geometry.vertices, 0, 0, -43);  // move south
   addBox(geometry, [271, 18, 54]);
   addBox(geometry, [150, 22, 74]);
   addBox(geometry, [ 36, 24, 90]);
-  return makeMesh(geometry, lat, lng);
+  return makeMesh(geometry, lat, lng, 0);
   }
 
 function FreerGallery(lat, lng) {
@@ -541,7 +801,7 @@ function FreerGallery(lat, lng) {
   addBox(geometry, [71, 14, 14], [  0, 0, -18]);  // southern section
   addBox(geometry, [22, 14,  1], [  0, 0, -25.5]);  // southern entrance
   addBox(geometry, [41, 14,  3], [  0, 0,  30.5]);  // northern entrance
-  return makeMesh(geometry, lat, lng);
+  return makeMesh(geometry, lat, lng, 0);
   }
 
 function AmericanHistoryMuseum(lat, lng) {
@@ -559,7 +819,7 @@ function AmericanHistoryMuseum(lat, lng) {
   addBox(geometry, [148.2,  1, 54.6], [0, 23.5, 0]);  // overhang
   addBox(geometry, [122, 27, 46]);  // lower roof structure
   addBox(geometry, [ 94, 30, 15]);  // upper roof structure
-  return makeMesh(geometry, lat, lng);
+  return makeMesh(geometry, lat, lng, 0);
   }
 
 function AfricanHistoryMuseum(lat, lng) {
@@ -569,7 +829,7 @@ function AfricanHistoryMuseum(lat, lng) {
   addPyramid(geometry, [54, 54], [64, 64], 8.4, [0, 5, 0]);  // lower section
   addPyramid(geometry, [54, 54], [64, 64], 8.4, [0, 13.4, 0]);  // middle section
   addPyramid(geometry, [54, 54], [64, 64], 8.4, [0, 21.8, 0]);  // upper section
-  return makeMesh(geometry, lat, lng);
+  return makeMesh(geometry, lat, lng, 0);
   }
 
 function SmithsonianCastle(lat, lng) {
@@ -593,7 +853,7 @@ function SmithsonianCastle(lat, lng) {
   addBox(geometry, [3, 8, 3], [-29, 0, -8.5]);  // eastern-half south tower (base)
   addCylinderConeTop(geometry, 1.5, 16, 0, 8, [-29, 8, -8.5]);  // eastern-half south tower (top)
   addXRoofedBox(geometry, [11, 12, 7], 4, 0, [-62, 0, 0]);  // eastern  entrance (juts out 4m?)
-  return makeMesh(geometry, lat, lng);
+  return makeMesh(geometry, lat, lng, 0);
   }
 
 function IndianMuseum(lat, lng) {
@@ -603,8 +863,8 @@ function IndianMuseum(lat, lng) {
   addPolygon(geometry, [[38,-6],[32,-10],[25,-10],[23,-13],[20,-14],[12,-18],[10,-19],[0,-19],[-1,-20],[-2,-22],[-5,-24],[-10,-25],[-16,-27],[-20,-27],[-25,-30],[-30,-33],[-40,-35],[-50,-38],[-60,-42],[-68,-40],[-67,-30],[-68,-20],[-67,-10],[-68,-5],[-67,0],[-67,10],[-65,20],[-60,25],[-55,26],[-50,24],[-40,24],[-30,26],[-24,23],[-20,24],[-15,26],[-10,25],[-5,24],[0,25],[5,26],[15,26],[20,25],[30,25],[35,23],[40,20],[46,16],[48,12],[51,6],[51,1],[50,0],[45,-3]], 4.0, true, [0,36,0]);
   addPolygon(geometry, [        [32,-10],[25,-10],[23,-13],[20,-14],[12,-18],[10,-19],[0,-19],[-1,-20],[-2,-22],[-5,-24],[-10,-25],[-16,-27],[-20,-27],[-25,-30],[-30,-33],[-40,-35],[-50,-38],[-60,-42],[-68,-40],[-67,-30],[-68,-20],[-67,-10],[-68,-5],[-67,0],[-67,10],[-65,20],[-60,25],[-55,26],[-50,24],[-40,24],[-30,26],[-24,23],[-20,24],[-15,26],[-10,25],[-5,24],[0,25],[5,26],[10,24],[19,20],[19,17],[22,15],[23,8],[23,2],[26,0],[33,-1],[32,-6]], 6, true, [0,40,0]);
   addPolygon(geometry, [                                                              [0,-19],[-1,-20],[-2,-22],[-5,-24],[-10,-25],[-16,-27],[-20,-27],[-25,-30],[-30,-33],[-40,-35],[-50,-38],[-60,-42],[-68,-40],[-67,-30],[-68,-20],[-67,-10],[-68,-5],[-67,0],[-67,10],[-65,20],[-60,25],[-55,26],[-50,24],[-40,24],[-30,26],[-24,23],[-20,24],[-15,26],[-10,25],[-4,22], [-1,18], [3,18],[10,16],[15,14],[20,0],[15,-10],[10,-18]], 4, true, [0,46,0]);
-  addCylinderDome(geometry, 15, 0.5, 10, [0, 50, 0]);
-  return makeMesh(geometry, lat, lng);
+  addCylinderDome(geometry, 15, 0.5, 10, 24, [0, 50, 0]);
+  return makeMesh(geometry, lat, lng, 0);
   }
 
 function NatlCathedral(lat, lng) {
@@ -633,7 +893,7 @@ function NatlCathedral(lat, lng) {
   addYRoofedBox(geometry, [12,  6.0, 74], 2, 0, [72.0, 0, 0]);  // lower front section
   addXRoofedBox(geometry, [132, 18, 36], 9, 0, [12, 0, 0]);  // nave hips
   addXRoofedBox(geometry, [78, 12, 48], 12, 0, [39, 0, 0]);  // nave foot
-  return makeMesh(geometry, lat, lng);
+  return makeMesh(geometry, lat, lng, 0);
   }
 
 function Airport(lat, lng) {
@@ -655,14 +915,14 @@ function Airport(lat, lng) {
   addCylinderConeTop(      geometry, 3.8,  1,       0.0, 10, [13.4, 60, 107.2]);  // top of tower
   addCylinderConeTopBottom(geometry, 5.6, 15, 14.0, 2.8, 10, [13.4, 37, 107.2]);  // lower bulge
   addCylinderConeTopBottom(geometry, 5.6,  1, 14.0, 2.8, 10, [13.4, 57, 107.2]);  // upper bulge
-  return makeMesh(geometry, lat, lng);
+  return makeMesh(geometry, lat, lng, 0);
   }
 
 function ArlingtonHouse(lat, lng) {
   var geometry = new THREE.Geometry();
   addXRoofedBox(geometry, [20, 9,  18], 3, 0);  // main structure
   addYRoofedBox(geometry, [10, 6,  42], 1.5, 5, [2, 0, 0]);  // wings
-  return makeMesh(geometry, lat, lng);
+  return makeMesh(geometry, lat, lng, 0);
   }
 
 function EisenhowerOffice(lat, lng) {
@@ -688,7 +948,7 @@ function EisenhowerOffice(lat, lng) {
   addBox(geometry, [11, 1, 3], [ 32, 16,  19]);  // NW extrusion raised roof
   addBox(geometry, [11, 1, 3], [-32, 16, -19]);  // SE extrusion raised roof
   addBox(geometry, [11, 1, 3], [ 32, 16, -19]);  // SW extrusion raised roof
-  return makeMesh(geometry, lat, lng);
+  return makeMesh(geometry, lat, lng, 0);
   }
 
 function SupremeCourt(lat, lng) {
@@ -708,7 +968,7 @@ function SupremeCourt(lat, lng) {
   for (var i = 0; i < 11; i++) {
     addBox(geometry, [0.8, 4.4 - i*0.4, 30], [59.4 + i*0.8, 0, 0]);  // steps
     }
-  return makeMesh(geometry, lat, lng);
+  return makeMesh(geometry, lat, lng, 0);
   }
 
 function ChinatownArch(lat, lng) {
@@ -736,7 +996,7 @@ function ChinatownArch(lat, lng) {
   addPyramid(geometry, [2.6, 5.8], [0.8, 4.0], 1.5, [0, 17.7, 8.1]);
   addPyramid(geometry, [0.8, 4.0], [2.6, 5.8], 1.5, [0, 16.2, -8.1]);
   addPyramid(geometry, [2.6, 5.8], [0.8, 4.0], 1.5, [0, 17.7, -8.1]);
-  return makeMesh(geometry, lat, lng);
+  return makeMesh(geometry, lat, lng, 0);
   }
 
 function BotanicGarden(lat, lng) {
@@ -754,7 +1014,7 @@ function BotanicGarden(lat, lng) {
   addRaisedPyramid(geometry, [30, 24], [20, 24], 2, 2);  // center atrium base
   addRaisedPyramid(geometry, [20, 24], [10, 18], 16, 6, [0, 4, 0]);  // center atrium middle level
   addRaisedPyramid(geometry, [9, 17], [1, 9], 1, 3, [0, 26, 0]);  // center atrium middle top
-  return makeMesh(geometry, lat, lng);
+  return makeMesh(geometry, lat, lng, 0);
   }
 
 function PortraitGallery(lat, lng) {
@@ -768,7 +1028,7 @@ function PortraitGallery(lat, lng) {
   addYRoofedBox(geometry, [ 20, 20, 84], 4, 10.5, [ 50, 0,   0]);  // east corridor
   addXRoofedBox(geometry, [ 15, 20, 22], 4,  0,   [-60, 0,   0]);  // east entrance
   addClippedCylinderDome(geometry, 45, 1, 3, [80, 38], [0, 20, 0]);  // atrium canopy
-  return makeMesh(geometry, lat, lng);
+  return makeMesh(geometry, lat, lng, 0);
   }
 
 function TreasuryDept(lat, lng) {
@@ -780,7 +1040,7 @@ function TreasuryDept(lat, lng) {
   addYRoofedBox(geometry, [18, 14, 122], 4, 0, [-26, 0, 0]);  // east corridor
   addYRoofedBox(geometry, [23, 14,  31], 4, 0, [0, 0,  63.5]);  // north entrance
   addYRoofedBox(geometry, [23, 14,  18], 4, 0, [0, 0, -70.0]);  // south entrance
-  return makeMesh(geometry, lat, lng);
+  return makeMesh(geometry, lat, lng, 0);
   }
 
 function OldPostOffice(lat, lng) {
@@ -793,7 +1053,7 @@ function OldPostOffice(lat, lng) {
   addYRoofedBox(geometry, [16, 41, 32], 16, 4, [ 22, 0, -26]);  // corner block
   addYRoofedBox(geometry, [16, 41, 32], 16, 4, [-22, 0, -26]);  // corner block
   addRaisedPyramid(geometry, [12, 12], [0.5, 0.5], 80, 16, [0, 0, 33]);  // tower
-  return makeMesh(geometry, lat, lng);
+  return makeMesh(geometry, lat, lng, 0);
   }
 
 function Carillon(lat, lng) {
@@ -816,7 +1076,7 @@ function Carillon(lat, lng) {
   addBox(geometry, [7.6,  0.6,  0.6], [ 0,   38.1, -5.2]);  // top square
   addBox(geometry, [0.6,  0.6, 11.0], [ 3.5, 38.1,  0]);  // top square
   addBox(geometry, [0.6,  0.6, 11.0], [-3.5, 38.1,  0]);  // top square
-  return makeMesh(geometry, lat, lng);
+  return makeMesh(geometry, lat, lng, 0);
   }
 
 function NatlBuildingMuseum(lat, lng) {
@@ -825,7 +1085,7 @@ function NatlBuildingMuseum(lat, lng) {
   addYRoofedBox(geometry, [ 38, 38, 38], 10, 0);  // Tall center
   addXRoofedBox(geometry, [ 96, 30, 38], 7, 0);  // attic
   addXRoofedBox(geometry, [ 86, 37, 10], 2, 0);  // attic upper level
-  return makeMesh(geometry, lat, lng);
+  return makeMesh(geometry, lat, lng, 0);
   }
 
 function NatlArchives(lat, lng) {
@@ -836,7 +1096,7 @@ function NatlArchives(lat, lng) {
   addYRoofedBox(geometry, [ 33, 29, 87], 8, 0);  // north-south corridor
   addBox(       geometry, [ 85, 41, 49]);  // upper section
   addBox(       geometry, [ 75, 46, 39]);  // upper setback
-  return makeMesh(geometry, lat, lng);
+  return makeMesh(geometry, lat, lng, 0);
   }
 
 function ArtsAndIndustries(lat, lng) {
@@ -859,7 +1119,7 @@ function ArtsAndIndustries(lat, lng) {
   addRaisedPyramid(geometry, [12, 12], [6, 6], 11, 3, [-43, 0,  43]);
   addRaisedPyramid(geometry, [12, 12], [6, 6], 11, 3, [ 43, 0, -43]);
   addRaisedPyramid(geometry, [12, 12], [6, 6], 11, 3, [-43, 0, -43]);
-  return makeMesh(geometry, lat, lng);
+  return makeMesh(geometry, lat, lng, 0);
   }
 
 function DupontFountain(lat, lng) {
@@ -871,7 +1131,7 @@ function DupontFountain(lat, lng) {
   var cyl = makeCylinder( 2.2,  3.5, 0.3, 24, 4.1);  geometry.merge(cyl.geometry, cyl.matrix);  // pedestal base's bevel
   var cyl = makeCylinder( 2.2,  2.2, 9.0, 24, 0.0);  geometry.merge(cyl.geometry, cyl.matrix);  // pedestal column
   var cyl = makeCylinder( 5.3,  2.3, 1.4, 24, 9.0);  geometry.merge(cyl.geometry, cyl.matrix);  // upper bowl
-  return makeMesh(geometry, lat, lng);
+  return makeMesh(geometry, lat, lng, 0);
   }
 
 function Hirshhorn(lat, lng) {
@@ -884,7 +1144,7 @@ function Hirshhorn(lat, lng) {
                 {x: 35.0, y: 21.7},  // exterior top; upper bevel
                 {x: 17.5, y: 21.7},  // interior top
                 {x: 17.5, y:  4.3}];
-  return makeRoundObject(museum, 32, lat, lng);
+  return makeRoundObject(museum, 32, lat, lng, 0);
   }
 
 function HirshhornFeet(lat, lng) {
@@ -907,7 +1167,7 @@ function HirshhornFeet(lat, lng) {
     geometry.faces.push(new THREE.Face3(segment + 5, segment + 7, segment + 4), new THREE.Face3(segment + 5, segment + 6, segment + 7));
     geometry.faces.push(new THREE.Face3(segment + 1, segment + 4, segment + 0), new THREE.Face3(segment + 1, segment + 5, segment + 4));
     }
-  return makeMesh(geometry, lat, lng);
+  return makeMesh(geometry, lat, lng, 0);
   }
 
 function RFKStadium(lat, lng) {
@@ -920,7 +1180,7 @@ function RFKStadium(lat, lng) {
                  {x:  74, y: 22.5},  // bottom of upper seating area
                  {x:  86, y: 16.3},  // top of lower seating area
                  {x:  55, y:  0.0}]  // bottom of lower seating area
-  return makeRoundObject(stadium, 32, lat, lng);
+  return makeRoundObject(stadium, 32, lat, lng, 0);
   }
 
 function Pentagon(lat, lng) {
@@ -939,7 +1199,7 @@ function Pentagon(lat, lng) {
     geometry.faces.push(new THREE.Face3(a + 1, a + 2, b + 2), new THREE.Face3(a + 1, b + 2, b + 1));  // roof
     geometry.faces.push(new THREE.Face3(a + 2, a + 3, b + 3), new THREE.Face3(a + 2, b + 3, b + 2));  // outer wall
     }
-  return makeMesh(geometry, lat, lng);
+  return makeMesh(geometry, lat, lng, 0);
   }
 
 function JeffersonMemorial(lat, lng) {
@@ -965,7 +1225,7 @@ function JeffersonMemorial(lat, lng) {
     column.updateMatrix();
     geometry.merge(column.geometry, column.matrix);
     }
-  return makeMesh(geometry, lat, lng);
+  return makeMesh(geometry, lat, lng, 0);
   }
 
 function KennedyCenter(lat, lng) {
@@ -985,7 +1245,7 @@ function KennedyCenter(lat, lng) {
     cylinder.position.set(42.75 - 9.5*i, 10.05,  104.75);  cylinder.updateMatrix();  geometry.merge(cylinder.geometry, cylinder.matrix);
     cylinder.position.set(42.75 - 9.5*i, 10.05, -104.75);  cylinder.updateMatrix();  geometry.merge(cylinder.geometry, cylinder.matrix);
     }
-  return makeMesh(geometry, lat, lng);
+  return makeMesh(geometry, lat, lng, 0);
   }
 
 function LincolnMemorial(lat, lng) {
@@ -1007,7 +1267,7 @@ function LincolnMemorial(lat, lng) {
     cylinder.updateMatrix();
     geometry.merge(cylinder.geometry, cylinder.matrix);
     }
-  return makeMesh(geometry, lat, lng);
+  return makeMesh(geometry, lat, lng, 0);
   }
 
 function Capitol(lat, lng) {
@@ -1028,7 +1288,7 @@ function Capitol(lat, lng) {
   dome.scale.y = 1.3333333;
   dome.updateMatrix();
   geometry.merge(dome.geometry, dome.matrix);
-  return makeMesh(geometry, lat, lng);
+  return makeMesh(geometry, lat, lng, 0);
   }
 
 function latToZ(lat) {
@@ -1060,6 +1320,18 @@ function init() {
   camera.position.y = 0.4;
   camera.up.set(0, 1, 0);
   controls = new MapControls(camera, render);
+  /*
+  controls = new THREE.TrackballControls( camera );
+				controls.rotateSpeed = 1.0;
+				controls.zoomSpeed = 1.2;
+				controls.panSpeed = 0.8;
+				controls.noZoom = false;
+				controls.noPan = false;
+				controls.staticMoving = true;
+				controls.dynamicDampingFactor = 0.3;
+				controls.keys = [ 65, 83, 68 ];
+				controls.addEventListener( 'change', render );
+        */
   lookingAt.point.x = lngToX(-77.035246);
   lookingAt.point.z = latToZ( 38.889376);
   camera.lookAt(lookingAt.point);
@@ -1085,10 +1357,10 @@ function init() {
       LincolnTraffic[i].splineObject[j - 1] = new THREE.Line(geometry, material);
       }
     LincolnTraffic[i].label = document.createElement('div');
-    LincolnTraffic[i].label.innerHTML = LincolnTraffic[i].name + ":<br>" + LincolnTraffic[i].trips + " trips";
     LincolnTraffic[i].label.className = "cabistation";
     document.body.appendChild(LincolnTraffic[i].label);
     }
+  updateLabels();
   var groundGeometry = new THREE.PlaneGeometry(worldWidth, worldHeight);
   var groundMaterial = new THREE.MeshBasicMaterial({side: THREE.DoubleSide});
   var textureLoader = new THREE.TextureLoader();
@@ -1121,6 +1393,7 @@ function init() {
   scene.add(LincolnMemorial(      38.889376, -77.050153));
   scene.add(WashingtonMonument(   38.889457, -77.035237));
   scene.add(SupremeCourt(         38.890609, -77.004426));
+  scene.add(LOC_Jefferson(        38.888652, -77.004717));
   scene.add(BotanicGarden(        38.887961, -77.012979));
   scene.add(Capitol(              38.889828, -77.009144));
   scene.add(RFKStadium(           38.889376, -76.971950));
@@ -1135,7 +1408,21 @@ function init() {
   scene.add(Carillon(             38.888208, -77.069491));
   scene.add(Pentagon(             38.870998, -77.055964));
   scene.add(AlexandriaLodge(      38.807510, -77.065934));
+  //scene.add(CaBiBike(             38.889057, -77.035037, 0, 100, [0.93, 0.15, 0.11]));  // giant bike on Mall
+  caBiModel = CaBiBikeModel(10);  // 1 indicates normal scale
   lastTime = window.performance ? performance.now() : Date.now();
+  }
+
+function updateLabels() {
+  for (var i = 0; i < LincolnTraffic.length; i++) {
+    LincolnTraffic[i].label.innerHTML = LincolnTraffic[i].name;
+    if (CaBiSplineDelta > 0) {
+      LincolnTraffic[i].label.innerHTML += "<br>" + LincolnTraffic[i].trips + " trips";
+      }
+    if (showDocks) {
+      LincolnTraffic[i].label.innerHTML += "<br>" + LincolnTraffic[i].bikes + " bikes, " + LincolnTraffic[i].docks + " docks";
+      }
+    }
   }
 
 function checkMouse(e) {
@@ -1231,13 +1518,13 @@ function render() {
   renderer.render(scene, camera);
   }
 
-var CaBiSplineIndex = -1;
-var CaBiSplineDelta = 0;
-var CaBiSplineSteps = 24;
-var showStations = true;
-
 function toggleStns() {
   showStations = !showStations;
+  }
+
+function toggleDocks() {
+  showDocks = !showDocks;
+  getCaBiData();
   }
 
 function toggleData() {
@@ -1259,7 +1546,8 @@ animate();
   k: look at Kennedy Center<br>
   l: look at Lincoln Memorial<br>
   w: look at Washington Monument<br>
-  <label><input type=checkbox id=cbox1 checked onchange="toggleStns()">show CaBi stations</label><br>
+  <label><input type=checkbox id=cbox1 checked onchange="toggleStns()">show CaBi labels</label><br>
+  <label><input type=checkbox id=cbox1 onchange="toggleDocks()">show CaBi dock statuses</label><br>
   <label><input type=checkbox id=cbox1 onchange="toggleData()">show CaBi data</label>
 </body>
 </html>
