@@ -7,12 +7,12 @@
 body {
   background-color: #000000;
   font-family: Monospace;
-  cursor: url(cursor.png), auto;
   margin: 0;
   height: 100%;
   overflow: hidden;
   }
 canvas {
+cursor: url(cursor.png), auto;
   position: absolute;
   top: 0;
   left: 0;
@@ -44,6 +44,7 @@ canvas {
   margin-left: -2px;
   }
 #controls {
+  cursor: auto;
   position: absolute;
   padding: 0px 8px;
   left: 0px;
@@ -79,6 +80,7 @@ var CaBiSplineDelta = 0;
 var CaBiSplineSteps = 24;
 var showStations = true;
 var showDocks = false;
+var showData = false;
 
 function getCaBiData() {
   var xmlhttp = new XMLHttpRequest();
@@ -111,7 +113,13 @@ function renderCaBiData(responseText) {
         totalBikes += LincolnTraffic[j].bikes;
         totalDocks += LincolnTraffic[j].docks;
         for (var k = 0; k < LincolnTraffic[j].bikes; k++) {
-          scene.add(makeMesh(caBiModel, lat, lng, k*12, [0.2, 0.7, 0.8]));
+          //scene.add(makeMesh(caBiModel, lat, lng, k*12, [0.2, 0.7, 0.8]));
+          edges = new THREE.EdgesHelper(CaBiBike(38.889057, -77.03505, 0, 10*globalScale, [0.93, 0.15, 0.11]), 0x00ff00);
+          edges.position.x = lngToX(lng);
+          edges.position.y = k*12*globalScale;
+          edges.position.z = latToZ(lat);
+          edges.updateMatrix();
+          scene.add(edges);
           }
         }
       else {
@@ -1348,7 +1356,7 @@ function init() {
     for (var j = 1; j <= CaBiSplineSteps; j++) {
       var curve = new THREE.CatmullRomCurve3([
         new THREE.Vector3(lngToX(-77.049426), 0, latToZ(38.888251)),  // LincolnMemorial cabi station
-        new THREE.Vector3(lngToX((LincolnTraffic[i].lng + -77.050153)/2), 0.002*LincolnTraffic[i].trips*j/CaBiSplineSteps, latToZ((LincolnTraffic[i].lat + 38.889376)/2)),
+        new THREE.Vector3(lngToX((LincolnTraffic[i].lng + -77.050153)/2), 0.1*LincolnTraffic[i].trips*j/CaBiSplineSteps, latToZ((LincolnTraffic[i].lat + 38.889376)/2)),
         new THREE.Vector3(lngToX(LincolnTraffic[i].lng), 0, latToZ(LincolnTraffic[i].lat))
         ]);
       var geometry = new THREE.Geometry();
@@ -1409,14 +1417,20 @@ function init() {
   scene.add(Pentagon(             38.870998, -77.055964));
   scene.add(AlexandriaLodge(      38.807510, -77.065934));
   //scene.add(CaBiBike(             38.889057, -77.035037, 0, 100, [0.93, 0.15, 0.11]));  // giant bike on Mall
-  caBiModel = CaBiBikeModel(10);  // 1 indicates normal scale
+  //caBiModel = CaBiBikeModel(10);  // parameter is scale (1 is normal)
+  //caBiEdgeModel = CaBiBikeModel(1);  // needs a different scale
+  //edges = new THREE.EdgesHelper(makeMesh(caBiEdgeModel, 38.889057, -77.03505, 0), 0x00ff00);
+  //edges.position.x = lngToX(-77.03505);
+  //edges.position.z = latToZ(38.889057);
+  //edges.updateMatrix();
+  //scene.add(edges);
   lastTime = window.performance ? performance.now() : Date.now();
   }
 
 function updateLabels() {
   for (var i = 0; i < LincolnTraffic.length; i++) {
     LincolnTraffic[i].label.innerHTML = LincolnTraffic[i].name;
-    if (CaBiSplineDelta > 0) {
+    if (showData) {
       LincolnTraffic[i].label.innerHTML += "<br>" + LincolnTraffic[i].trips + " trips";
       }
     if (showDocks) {
@@ -1484,6 +1498,7 @@ function animate() {
   var widthHalf = 0.5*renderer.context.canvas.width;
   var heightHalf = 0.5*renderer.context.canvas.height;
   if (CaBiSplineDelta != 0) {
+    // animate data splines:
     var prevIndex = CaBiSplineIndex;
     if (CaBiSplineIndex + CaBiSplineDelta < -1 || CaBiSplineIndex + CaBiSplineDelta >= CaBiSplineSteps) {
       CaBiSplineDelta = 0;
@@ -1528,12 +1543,14 @@ function toggleDocks() {
   }
 
 function toggleData() {
+  showData = !showData;
   if (CaBiSplineIndex < CaBiSplineSteps/2) {
     CaBiSplineDelta = 1;
     }
   else {
     CaBiSplineDelta = -1;
     }
+  updateLabels();
   }
 
 document.addEventListener("keydown", checkKeyboard);
@@ -1546,8 +1563,8 @@ animate();
   k: look at Kennedy Center<br>
   l: look at Lincoln Memorial<br>
   w: look at Washington Monument<br>
-  <label><input type=checkbox id=cbox1 checked onchange="toggleStns()">show CaBi labels</label><br>
-  <label><input type=checkbox id=cbox1 onchange="toggleDocks()">show CaBi dock statuses</label><br>
-  <label><input type=checkbox id=cbox1 onchange="toggleData()">show CaBi data</label>
+  <label><input type=checkbox checked onchange="toggleStns()">show CaBi labels</label><br>
+  <label><input type=checkbox onchange="toggleDocks()">show CaBi dock statuses</label><br>
+  <label><input type=checkbox id=showCaBiData onchange="toggleData()">show CaBi data</label>
 </body>
 </html>
